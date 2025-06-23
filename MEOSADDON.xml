@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="repository.jewrepo"
+       name="JewRepo"
+       version="1.6.2"
+       provider-name="JewBMX">
+
+    <extension point="xbmc.addon.repository" name="JewRepo">
+        <dir>
+            <info compressed="false">https://raw.githubusercontent.com/jewbmx/repo/master/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/jewbmx/repo/master/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/jewbmx/repo/master/zips/</datadir>
+        </dir>
+    </extension>
+
+    <extension point="xbmc.addon.metadata">
+        <summary>Free the People, Free the World!</summary>
+        <description>This is the official Kodi repository maintained by JewBMX, featuring independent streaming add-ons and tools.</description>
+        <platform>all</platform>
+        <license>MIT</license>
+        <author>JewBMX</author>
+        <source>https://github.com/jewbmx/repo</source>
+        <assets>
+            <icon>icon.png</icon>
+            <fanart>fanart.jpg</fanart>
+        </assets>
+        <disclaimer>Use responsibly and abide by your region’s streaming regulations.</disclaimer>
+        <news>Improved compatibility with Kodi versions 18 through 21. Updated zips and metadata structure.</news>
+        <forum>https://github.com/jewbmx/repo/discussions</forum>
+    </extension>
+
+    <!-- Kodi version compatibility -->
+    <requires>
+        <kodi minversion="18.0" maxversion="21.9.9"/>
+    </requires>
+
+</addon>
