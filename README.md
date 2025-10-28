@@ -25,3 +25,26 @@ Enhance your Amazon Firestick 4K with Manifesto Electronics' custom Kodi configu
 ## 🗺️ Roadmap
 - Q4 2025: Add voice control and ALS-friendly UI
 - Q1 2026: Improve setup wizard for non-technical users
+
+# MEOS Retro Console – Atari to PSP
+
+A plug-and-play retro gaming console built on Raspberry Pi 3+ using RetroPie, EmulationStation, and Kodi. Supports Atari, NES, SNES, PSP, and many more.
+
+## 🔧 Features
+- EmulationStation frontend with custom themes and improved software
+- Kodi integration for media playback
+- Modular ROM packs and controller profiles
+
+## 🛠️ Setup
+1. Boot Pi and follow on-screen setup
+2. Exit Kodi APP to Gaming Consoles to setup Wifi
+3. Within Gaming console named setup allows Wifi settings
+4. Reboot, Test Movie, Show, ETC 
+
+## 🔀 Feature Toggles
+- `ENABLE_KODI`: Launch Kodi on boot
+- `ENABLE_GAMING`: Launch Gaming Consoles on boot
+
+## 🗺️ Roadmap
+- Q1 2026: Add online multiplayer support
+- Q2 2026: Publish controller remapping tool
