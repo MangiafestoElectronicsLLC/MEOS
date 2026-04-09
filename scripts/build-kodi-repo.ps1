@@ -14,6 +14,8 @@ $ZipsRoot = Join-Path $Root "zips"
 $AddonsXmlPath = Join-Path $Root "addons.xml"
 $AddonsMd5Path = Join-Path $Root "addons.xml.md5"
 $RepositoryZipConveniencePath = Join-Path $Root "repository.meos.zip"
+$SingleInstallZipPath = Join-Path $Root "MEOS_ADDON.zip"
+$KodiInstallDir = Join-Path $Root "KodiInstall"
 
 function Get-NextPatchVersion {
     param(
@@ -116,6 +118,8 @@ Copy-Item -Path (Join-Path $PluginSourceDir "*") -Destination $pluginStagingDir 
 New-ZipFromFolder -SourceFolder $pluginStagingRoot -DestinationZip $pluginZipPath
 Remove-Item -Path $pluginStagingRoot -Recurse -Force
 
+Copy-Item -Path $pluginZipPath -Destination $SingleInstallZipPath -Force
+
 $addonsXmlContent = @(
     '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
     '<addons>'
@@ -151,6 +155,13 @@ Remove-Item -Path $repositoryStagingRoot -Recurse -Force
 
 Copy-Item -Path $repositoryZipPath -Destination $RepositoryZipConveniencePath -Force
 
+if (-not (Test-Path $KodiInstallDir)) {
+    New-Item -ItemType Directory -Path $KodiInstallDir | Out-Null
+}
+
+Copy-Item -Path $SingleInstallZipPath -Destination (Join-Path $KodiInstallDir "MEOS_ADDON.zip") -Force
+Copy-Item -Path $RepositoryZipConveniencePath -Destination (Join-Path $KodiInstallDir "repository.meos.zip") -Force
+
 Write-Host "Build completed"
 if (-not $NoAutoBump) {
     Write-Host "Plugin version: $($pluginBump.OldVersion) -> $($pluginBump.NewVersion)"
@@ -160,8 +171,10 @@ else {
     Write-Host "Auto version bump skipped (-NoAutoBump)"
 }
 Write-Host "Plugin zip: $pluginZipPath"
+Write-Host "Single install zip: $SingleInstallZipPath"
 Write-Host "Repository zip: $repositoryZipPath"
 Write-Host "Repository zip (convenience): $RepositoryZipConveniencePath"
+Write-Host "KodiInstall folder: $KodiInstallDir"
 Write-Host "Updated: $AddonsXmlPath"
 Write-Host "Updated: $AddonsMd5Path"
 Write-Host "Repository zip includes: addon.xml, addons.xml, addons.xml.md5, and zips/"
