@@ -21,8 +21,4 @@
     <disclaimer>Use responsibly and abide by your region's streaming regulations.</disclaimer>
     <news>Initial release of MEOS Repository.</news>
   </extension>
-  <!-- Kodi version compatibility -->
-  <requires>
-    <kodi minversion="18.0" />
-  </requires>
 </addon>

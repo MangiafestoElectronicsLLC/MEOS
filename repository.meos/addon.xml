@@ -14,8 +14,7 @@
     </assets>
     <disclaimer>Use responsibly.</disclaimer>
   </extension>
-  <!-- Kodi version compatibility -->
   <requires>
-    <kodi minversion="18.0" />
+    <import addon="xbmc.python" version="2.25.0" />
   </requires>
 </addon>

@@ -1,5 +1,4 @@
 import sys
-import urllib.parse
 
 import xbmc
 import xbmcaddon
@@ -7,6 +6,12 @@ import xbmcgui
 import xbmcplugin
 
 from providers import get_providers
+
+try:
+    from urllib import urlencode
+    from urlparse import parse_qsl
+except ImportError:
+    from urllib.parse import urlencode, parse_qsl
 
 
 ADDON = xbmcaddon.Addon()
@@ -17,7 +22,7 @@ PROVIDERS = {provider.id: provider for provider in get_providers()}
 
 
 def build_url(query):
-    return BASE_URL + "?" + urllib.parse.urlencode(query)
+    return BASE_URL + "?" + urlencode(query)
 
 
 def get_auth_state(provider_id):
@@ -170,4 +175,4 @@ def router(params):
     list_root()
 
 
-router(dict(urllib.parse.parse_qsl(sys.argv[2][1:])))
+router(dict(parse_qsl(sys.argv[2][1:])))
