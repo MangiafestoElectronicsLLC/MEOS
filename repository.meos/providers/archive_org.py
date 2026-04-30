@@ -30,10 +30,10 @@ _DL_URL = "https://archive.org/download/{}/{}"
 
 # Archive.org search queries per UI category
 _CATEGORY_QUERY = {
-    "movies": "collection:feature_films AND mediatype:movies",
-    "tv": "(subject:television OR subject:sitcom OR subject:cartoon) AND mediatype:movies",
-    "docs": "subject:documentary AND mediatype:movies",
-    "sports": "(subject:sports OR subject:baseball OR subject:football OR subject:boxing) AND mediatype:movies",
+    "movies": "(collection:feature_films OR subject:feature film OR subject:cinema) AND mediatype:movies",
+    "tv": "(subject:television OR subject:sitcom OR subject:cartoon OR subject:series) AND mediatype:movies",
+    "docs": "(subject:documentary OR description:documentary) AND mediatype:movies",
+    "sports": "(subject:sports OR subject:baseball OR subject:football OR subject:boxing OR subject:wrestling) AND mediatype:movies",
 }
 
 # Hardcoded free legal live channels
@@ -61,7 +61,30 @@ _LIVE_CATALOG = [
     },
 ]
 
-_ROWS_PER_PAGE = 50
+_ROWS_PER_PAGE = 80
+
+_AWARD_TERMS = {
+    ("oscar", "winner"): [
+        "academy award winner",
+        "oscar winner",
+        "academy award-winning",
+    ],
+    ("oscar", "nominee"): [
+        "academy award nominee",
+        "oscar nominee",
+        "academy award nominated",
+    ],
+    ("emmy", "winner"): [
+        "emmy award winner",
+        "primetime emmy winner",
+        "emmy-winning",
+    ],
+    ("emmy", "nominee"): [
+        "emmy award nominee",
+        "primetime emmy nominee",
+        "emmy-nominated",
+    ],
+}
 
 
 def _fetch_json(url):
@@ -103,6 +126,14 @@ def _search_archive(query, rows=_ROWS_PER_PAGE, page=1):
             "genre": "Archive",
         })
     return results
+
+
+def _build_award_query(award, result, year):
+    terms = _AWARD_TERMS.get((award, result), [])
+    if not terms:
+        return ""
+    term_query = " OR ".join('subject:"{}" OR description:"{}" OR title:"{}"'.format(t, t, t) for t in terms)
+    return "mediatype:movies AND year:{} AND ({})".format(year, term_query)
 
 
 def _best_video_file(files):
@@ -153,15 +184,21 @@ class ArchiveOrgProvider(BaseProvider):
     name = "MEOS"
     requires_oauth = False
 
-    def get_catalog(self, auth_state, category=None, query=None):
+    def get_catalog(self, auth_state, category=None, query=None, year=None, award=None, result=None):
         if category == "live":
             return [
                 {"media_id": ch["media_id"], "title": ch["title"], "genre": ch["genre"]}
                 for ch in _LIVE_CATALOG
             ]
 
+        if category == "award" and year and award and result:
+            award_query = _build_award_query(award, result, year)
+            if not award_query:
+                return []
+            return _search_archive(award_query)
+
         if query:
-            full_query = "mediatype:movies AND ({})".format(query)
+            full_query = "(mediatype:movies OR mediatype:audio) AND ({})".format(query)
             return _search_archive(full_query)
 
         archive_query = _CATEGORY_QUERY.get(category or "movies", _CATEGORY_QUERY["movies"])

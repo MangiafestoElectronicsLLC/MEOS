@@ -6,7 +6,7 @@ class BaseProvider:
     def start_device_authorization(self):
         return None
 
-    def get_catalog(self, auth_state, category=None, query=None):
+    def get_catalog(self, auth_state, category=None, query=None, year=None, award=None, result=None):
         return []
 
     def check_entitlement(self, media_id, auth_state):

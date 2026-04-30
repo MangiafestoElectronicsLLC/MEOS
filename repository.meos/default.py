@@ -31,6 +31,14 @@ MENU_CATEGORIES = [
     ("Live Channels", "live"),
     ("Sports", "sports"),
 ]
+AWARD_MENU = [
+    ("Oscar Winners", "oscar", "winner"),
+    ("Oscar Nominees", "oscar", "nominee"),
+    ("Emmy Winners", "emmy", "winner"),
+    ("Emmy Nominees", "emmy", "nominee"),
+]
+YEAR_MIN = 1927
+YEAR_MAX = 2026
 
 PROVIDERS = {provider.id: provider for provider in get_providers()}
 
@@ -62,8 +70,11 @@ def add_playable_item(label, query, info=None, art=None):
 
 
 def list_root():
+    add_folder_item("One-Click Live TV", {"action": "list_category", "provider": "pluto_tv", "category": "live"})
+    add_folder_item("One-Click Movies", {"action": "list_category", "provider": PRIMARY_PROVIDER_ID, "category": "movies"})
     for label, category in MENU_CATEGORIES:
         add_folder_item(label, {"action": "list_sources", "category": category})
+    add_folder_item("Awards", {"action": "awards_menu"})
     add_folder_item("Search All", {"action": "search_all"})
     add_folder_item("Settings", {"action": "open_settings"})
     xbmcplugin.endOfDirectory(HANDLE)
@@ -71,11 +82,56 @@ def list_root():
 
 def list_sources(category):
     """Show one folder per provider that supports this category."""
+    xbmcplugin.setPluginCategory(HANDLE, category.title())
     for provider in sorted(PROVIDERS.values(), key=lambda p: p.name.lower()):
         add_folder_item(
             provider.name,
             {"action": "list_category", "provider": provider.id, "category": category},
         )
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_awards_menu():
+    xbmcplugin.setPluginCategory(HANDLE, "Awards")
+    for label, award, result in AWARD_MENU:
+        add_folder_item(
+            label,
+            {"action": "awards_years", "award": award, "result": result, "sort": "desc"},
+        )
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_award_years(award, result, sort="desc"):
+    if award not in ("oscar", "emmy") or result not in ("winner", "nominee"):
+        xbmcgui.Dialog().notification("MEOS", "Invalid award filter", xbmcgui.NOTIFICATION_ERROR, 2500)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    current_sort = "desc" if sort != "asc" else "asc"
+    next_sort = "asc" if current_sort == "desc" else "desc"
+    sort_label = "Year: Newest First" if current_sort == "desc" else "Year: Oldest First"
+
+    xbmcplugin.setPluginCategory(HANDLE, "{} {}".format(award.title(), result.title()))
+    add_folder_item(
+        "Sort: {}".format(sort_label),
+        {"action": "awards_years", "award": award, "result": result, "sort": next_sort},
+    )
+
+    years = list(range(YEAR_MIN, YEAR_MAX + 1))
+    years.sort(reverse=(current_sort == "desc"))
+    for year in years:
+        add_folder_item(
+            str(year),
+            {
+                "action": "list_award_year",
+                "provider": PRIMARY_PROVIDER_ID,
+                "award": award,
+                "result": result,
+                "year": str(year),
+            },
+        )
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL)
     xbmcplugin.endOfDirectory(HANDLE)
 
 
@@ -174,10 +230,41 @@ def list_category(provider_id, category):
             {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
             {"title": item["title"], "genre": item.get("genre", "")},
         )
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
 
 
-def search_catalog(provider_id):
+def list_award_year(provider_id, award, result, year):
+    provider = PROVIDERS.get(provider_id)
+    if not provider:
+        xbmcgui.Dialog().notification("MEOS", "Unknown provider", xbmcgui.NOTIFICATION_ERROR, 2500)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    auth_state = get_auth_state(provider.id)
+    catalog = provider.get_catalog(
+        auth_state,
+        category="award",
+        query=None,
+        year=year,
+        award=award,
+        result=result,
+    )
+    if not catalog:
+        xbmcgui.Dialog().notification("MEOS", "No award items for this year", xbmcgui.NOTIFICATION_INFO, 2500)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    for item in catalog:
+        add_playable_item(
+            item["title"],
+            {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
+            {"title": item["title"], "genre": item.get("genre", "")},
+        )
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
 def search_catalog(provider_id=None):
     keyboard = xbmc.Keyboard("", "Search MEOS")
     keyboard.doModal()
@@ -205,6 +292,7 @@ def search_catalog(provider_id=None):
             found += 1
     if not found:
         xbmcgui.Dialog().notification("MEOS", "No results found", xbmcgui.NOTIFICATION_INFO, 2500)
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
 
 
@@ -269,6 +357,23 @@ def router(params):
 
     if action == "list_category":
         list_category(params.get("provider", ""), params.get("category", ""))
+        return
+
+    if action == "awards_menu":
+        list_awards_menu()
+        return
+
+    if action == "awards_years":
+        list_award_years(params.get("award", ""), params.get("result", ""), params.get("sort", "desc"))
+        return
+
+    if action == "list_award_year":
+        list_award_year(
+            params.get("provider", PRIMARY_PROVIDER_ID),
+            params.get("award", ""),
+            params.get("result", ""),
+            params.get("year", ""),
+        )
         return
 
     if action == "list_sources":
