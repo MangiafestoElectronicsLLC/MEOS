@@ -78,6 +78,9 @@ $pluginVersion = $pluginXml.addon.version
 $repositoryId = $repositoryXml.addon.id
 $repositoryVersion = $repositoryXml.addon.version
 
+Set-RepositoryFeedUrls -AddonXmlPath $RepositoryAddonXmlPath -Version $repositoryVersion
+[xml]$repositoryXml = Get-Content -Path $RepositoryAddonXmlPath
+
 if ([string]::IsNullOrWhiteSpace($pluginId) -or [string]::IsNullOrWhiteSpace($pluginVersion)) {
     throw "Plugin addon.xml is missing id or version"
 }
@@ -164,6 +167,25 @@ function Set-PluginPythonDependencyVersion {
     $xmlDoc.Save($AddonXmlPath)
 }
 
+function Set-RepositoryFeedUrls {
+    param(
+        [Parameter(Mandatory = $true)] [string]$AddonXmlPath,
+        [Parameter(Mandatory = $true)] [string]$Version
+    )
+
+    [xml]$xmlDoc = Get-Content -Path $AddonXmlPath
+    $repoExt = $xmlDoc.addon.extension | Where-Object { $_.point -eq "xbmc.addon.repository" } | Select-Object -First 1
+    if (-not $repoExt -or -not $repoExt.dir) {
+        throw "Missing repository <dir> in $AddonXmlPath"
+    }
+
+    $baseRaw = "https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main"
+    $repoExt.dir.info = "{0}/addons-{1}.xml" -f $baseRaw, $Version
+    $repoExt.dir.checksum = "{0}/addons-{1}.xml.md5" -f $baseRaw, $Version
+    $repoExt.dir.datadir = "{0}/zips/" -f $baseRaw
+    $xmlDoc.Save($AddonXmlPath)
+}
+
 if (-not (Test-Path $ZipsRoot)) {
     New-Item -ItemType Directory -Path $ZipsRoot | Out-Null
 }
@@ -227,6 +249,11 @@ $addonsXmlContent = @(
 
 $md5Hash = (Get-FileHash -Path $AddonsXmlPath -Algorithm MD5).Hash.ToLowerInvariant()
 Set-Content -Path $AddonsMd5Path -Value $md5Hash -Encoding ASCII
+
+$VersionedAddonsXmlPath = Join-Path $Root ("addons-{0}.xml" -f $repositoryVersion)
+$VersionedAddonsMd5Path = Join-Path $Root ("addons-{0}.xml.md5" -f $repositoryVersion)
+Copy-Item -Path $AddonsXmlPath -Destination $VersionedAddonsXmlPath -Force
+Copy-Item -Path $AddonsMd5Path -Destination $VersionedAddonsMd5Path -Force
 
 $repositoryZipPath = Join-Path $Root ("{0}-{1}.zip" -f $repositoryId, $repositoryVersion)
 $repositoryStagingRoot = Join-Path $env:TEMP ("meos-repo-stage-{0}" -f [guid]::NewGuid().ToString("N"))
