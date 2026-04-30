@@ -1,4 +1,5 @@
 import sys
+import random
 
 import xbmc
 import xbmcaddon
@@ -17,6 +18,19 @@ except ImportError:
 ADDON = xbmcaddon.Addon()
 HANDLE = int(sys.argv[1])
 BASE_URL = sys.argv[0]
+DEFAULT_ART = {"thumb": "icon.png", "icon": "icon.png", "fanart": "fanart.jpg"}
+DEFAULT_SAMPLE_STREAMS = [
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+]
+PRIMARY_PROVIDER_ID = "archive_org"
+MENU_CATEGORIES = [
+    ("Movies", "movies"),
+    ("TV Shows", "tv"),
+    ("Documentaries", "docs"),
+    ("Live Channels", "live"),
+    ("Sports", "sports"),
+]
 
 PROVIDERS = {provider.id: provider for provider in get_providers()}
 
@@ -35,30 +49,32 @@ def set_auth_state(provider_id, state):
 
 def add_folder_item(label, query, art=None):
     item = xbmcgui.ListItem(label=label)
-    item.setArt(art or {"thumb": "icon.png", "fanart": "fanart.jpg"})
+    item.setArt(art or DEFAULT_ART)
     xbmcplugin.addDirectoryItem(HANDLE, build_url(query), item, isFolder=True)
 
 
 def add_playable_item(label, query, info=None, art=None):
     item = xbmcgui.ListItem(label=label)
-    item.setArt(art or {"thumb": "icon.png", "fanart": "fanart.jpg"})
+    item.setArt(art or DEFAULT_ART)
     item.setInfo("video", info or {"title": label})
     item.setProperty("IsPlayable", "true")
     xbmcplugin.addDirectoryItem(HANDLE, build_url(query), item, isFolder=False)
 
 
 def list_root():
-    add_playable_item(
-        "Quick Test Stream",
-        {"action": "play_sample"},
-        {"title": "Quick Test Stream", "genre": "Demo"},
-    )
-    add_folder_item("Official Integrations", {"action": "list_providers"})
+    for label, category in MENU_CATEGORIES:
+        add_folder_item(label, {"action": "list_category", "provider": PRIMARY_PROVIDER_ID, "category": category})
+    add_folder_item("Search", {"action": "search", "provider": PRIMARY_PROVIDER_ID})
+    add_folder_item("Settings", {"action": "open_settings"})
     xbmcplugin.endOfDirectory(HANDLE)
 
 
 def play_sample():
-    stream_url = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+    configured_stream = ADDON.getSetting("sample_stream_url").strip()
+    if configured_stream:
+        stream_url = configured_stream
+    else:
+        stream_url = random.choice(DEFAULT_SAMPLE_STREAMS)
     item = xbmcgui.ListItem(path=stream_url)
     xbmcplugin.setResolvedUrl(HANDLE, True, item)
 
@@ -78,13 +94,27 @@ def connect_provider(provider):
         xbmcgui.Dialog().ok("Connect Account", "Provider does not support device authorization yet.")
         return False
 
-    message = "Open: {0}\nCode: {1}".format(payload["verification_uri"], payload["user_code"])
+    verification_uri = payload.get("verification_uri") or ADDON.getSetting("partner_auth_url")
+    user_code = payload.get("user_code") or "MEOS-0000"
+
+    message = "Open: {0}\nCode: {1}".format(verification_uri, user_code)
     xbmcgui.Dialog().ok("Connect Account", message)
 
-    # This is a legal integration scaffold. Replace this with real token polling when wiring an official API.
-    set_auth_state(provider.id, "connected")
-    xbmcgui.Dialog().notification("MEOS", "Account marked connected", xbmcgui.NOTIFICATION_INFO, 2500)
-    return True
+    # This scaffold keeps legal integration boundaries while allowing manual verification in test environments.
+    confirmed = xbmcgui.Dialog().yesno(
+        "MEOS",
+        "Did you complete account linking on the website?",
+        "This enables your linked provider features.",
+        yeslabel="Yes",
+        nolabel="No",
+    )
+    if confirmed:
+        set_auth_state(provider.id, "connected")
+        xbmcgui.Dialog().notification("MEOS", "Account connected", xbmcgui.NOTIFICATION_INFO, 2500)
+        return True
+
+    xbmcgui.Dialog().notification("MEOS", "Account not connected", xbmcgui.NOTIFICATION_WARNING, 2500)
+    return False
 
 
 def list_provider_catalog(provider_id):
@@ -100,12 +130,79 @@ def list_provider_catalog(provider_id):
         return
 
     catalog = provider.get_catalog(auth_state)
+    if not catalog:
+        xbmcgui.Dialog().notification("MEOS", "No content available for this provider", xbmcgui.NOTIFICATION_INFO, 3000)
+        add_folder_item("No content available", {"action": "list_providers"})
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
     for item in catalog:
         add_playable_item(
             item["title"],
             {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
             {"title": item["title"], "genre": item.get("genre", "")},
         )
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_category(provider_id, category):
+    provider = PROVIDERS.get(provider_id)
+    if not provider:
+        xbmcgui.Dialog().notification("MEOS", "Unknown provider", xbmcgui.NOTIFICATION_ERROR, 2500)
+        return
+
+    auth_state = get_auth_state(provider.id)
+    catalog = provider.get_catalog(auth_state, category=category)
+    if not catalog:
+        xbmcgui.Dialog().notification("MEOS", "No items in this category", xbmcgui.NOTIFICATION_INFO, 2500)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    for item in catalog:
+        add_playable_item(
+            item["title"],
+            {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
+            {"title": item["title"], "genre": item.get("genre", "")},
+        )
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def search_catalog(provider_id):
+    provider = PROVIDERS.get(provider_id)
+    if not provider:
+        xbmcgui.Dialog().notification("MEOS", "Unknown provider", xbmcgui.NOTIFICATION_ERROR, 2500)
+        return
+
+    keyboard = xbmc.Keyboard("", "Search MEOS")
+    keyboard.doModal()
+    if not keyboard.isConfirmed():
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    query = keyboard.getText().strip()
+    if not query:
+        xbmcgui.Dialog().notification("MEOS", "Search text is empty", xbmcgui.NOTIFICATION_INFO, 2500)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    auth_state = get_auth_state(provider.id)
+    catalog = provider.get_catalog(auth_state, query=query)
+    if not catalog:
+        xbmcgui.Dialog().notification("MEOS", "No results found", xbmcgui.NOTIFICATION_INFO, 2500)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    for item in catalog:
+        add_playable_item(
+            item["title"],
+            {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
+            {"title": item["title"], "genre": item.get("genre", "")},
+        )
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def open_settings():
+    ADDON.openSettings()
     xbmcplugin.endOfDirectory(HANDLE)
 
 
@@ -129,6 +226,13 @@ def play_provider_item(provider_id, media_id):
         return
 
     item = xbmcgui.ListItem(path=playback["stream_url"])
+    item.setArt(DEFAULT_ART)
+    item.setInfo("video", {"title": playback.get("title", media_id)})
+    item.setContentLookup(False)
+
+    mime_type = playback.get("mime_type", "").strip()
+    if mime_type:
+        item.setMimeType(mime_type)
 
     if playback.get("license_url"):
         item.setProperty("inputstream", "inputstream.adaptive")
@@ -154,6 +258,18 @@ def router(params):
 
     if action == "list_providers":
         list_providers()
+        return
+
+    if action == "list_category":
+        list_category(params.get("provider", PRIMARY_PROVIDER_ID), params.get("category", ""))
+        return
+
+    if action == "search":
+        search_catalog(params.get("provider", PRIMARY_PROVIDER_ID))
+        return
+
+    if action == "open_settings":
+        open_settings()
         return
 
     if action == "provider_auth":

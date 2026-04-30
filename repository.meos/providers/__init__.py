@@ -1,9 +1,7 @@
-from .official_partner import OfficialPartnerProvider
-from .youtube_official import YouTubeOfficialProvider
+from .archive_org import ArchiveOrgProvider
 
 
 def get_providers():
     return [
-        OfficialPartnerProvider(),
-        YouTubeOfficialProvider(),
+        ArchiveOrgProvider(),
     ]

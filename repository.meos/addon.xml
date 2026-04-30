@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.meos" name="MEOS Test" version="1.0.0" provider-name="MEOS">
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.meos" name="MEOS" version="1.0.4" provider-name="MEOS">
   <extension point="xbmc.python.pluginsource" library="default.py">
     <provides>video</provides>
   </extension>
   <extension point="xbmc.addon.metadata">
-    <summary>Test addon for MEOS</summary>
-    <description>This is a test Kodi addon for MEOS streaming.</description>
+    <summary>MEOS official demo video add-on</summary>
+    <description>MEOS demo catalog with legal test streams and official integration scaffolding.</description>
     <platform>all</platform>
     <license>MIT</license>
     <author>MEOS</author>
@@ -16,6 +16,6 @@
     <disclaimer>Use responsibly.</disclaimer>
   </extension>
   <requires>
-    <import addon="xbmc.python" version="2.25.0" />
+    <import addon="xbmc.python" version="3.0.0" />
   </requires>
 </addon>

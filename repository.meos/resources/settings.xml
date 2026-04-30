@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<settings>
+  <category label="MEOS">
+    <setting id="sample_stream_url" type="text" label="Sample stream URL override" default="" />
+    <setting id="partner_auth_url" type="text" label="Partner auth website" default="https://www.mangiafestoelectronics.com/" />
+  </category>
+</settings>

@@ -173,6 +173,11 @@ if (-not (Test-Path $pluginZipDir)) {
     New-Item -ItemType Directory -Path $pluginZipDir | Out-Null
 }
 
+$legacyPluginZipPath = Join-Path $ZipsRoot ("{0}.zip" -f $pluginId)
+if (Test-Path $legacyPluginZipPath) {
+    Remove-Item -Path $legacyPluginZipPath -Force
+}
+
 $k18PluginZipPath = Join-Path $pluginZipDir ("{0}-{1}.zip" -f $pluginId, $pluginVersion)
 $k21PluginZipPath = Join-Path $pluginZipDir ("{0}-{1}-k21.zip" -f $pluginId, $pluginVersion)
 
