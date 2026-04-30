@@ -178,8 +178,8 @@ if (Test-Path $legacyPluginZipPath) {
     Remove-Item -Path $legacyPluginZipPath -Force
 }
 
-$k18PluginZipPath = Join-Path $pluginZipDir ("{0}-{1}.zip" -f $pluginId, $pluginVersion)
-$k21PluginZipPath = Join-Path $pluginZipDir ("{0}-{1}-k21.zip" -f $pluginId, $pluginVersion)
+$k18PluginZipPath = Join-Path $pluginZipDir ("{0}-{1}-k18.zip" -f $pluginId, $pluginVersion)
+$k21PluginZipPath = Join-Path $pluginZipDir ("{0}-{1}.zip" -f $pluginId, $pluginVersion)
 
 $profileDefinitions = @(
     @{
@@ -219,7 +219,7 @@ $addonsXmlContent = @(
     '</addons>'
 ) -join [Environment]::NewLine
 
-Set-Content -Path $AddonsXmlPath -Value $addonsXmlContent -Encoding UTF8
+[System.IO.File]::WriteAllText($AddonsXmlPath, $addonsXmlContent, (New-Object System.Text.UTF8Encoding($false)))
 
 $md5Hash = (Get-FileHash -Path $AddonsXmlPath -Algorithm MD5).Hash.ToLowerInvariant()
 Set-Content -Path $AddonsMd5Path -Value $md5Hash -Encoding ASCII
