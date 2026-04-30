@@ -223,7 +223,7 @@ class PlutoTvProvider(BaseProvider):
     """
 
     id = "pluto_tv"
-    name = "Pluto TV"
+    name = "MEOS"
     requires_oauth = False
 
     def get_catalog(self, auth_state, category=None, query=None, year=None, award=None, result=None):

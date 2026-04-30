@@ -216,7 +216,7 @@ class ArchiveOrgProvider(BaseProvider):
     """
 
     id = "archive_org"
-    name = "MEOS"
+    name = "MEOS Archive"
     requires_oauth = False
 
     def get_catalog(self, auth_state, category=None, query=None, year=None, award=None, result=None):

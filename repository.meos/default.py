@@ -81,11 +81,11 @@ def add_playable_item(label, query, info=None, art=None):
 
 
 def list_root():
-    add_folder_item("One-Click Live TV", {"action": "list_category", "provider": "pluto_tv", "category": "live"})
-    add_folder_item("One-Click Movies", {"action": "list_category", "provider": PRIMARY_PROVIDER_ID, "category": "movies"})
+    add_folder_item("One-Click Live TV", {"action": "list_category", "provider": "all", "category": "live"})
+    add_folder_item("One-Click Movies", {"action": "list_category", "provider": "all", "category": "movies"})
     add_folder_item("Sports Hub", {"action": "sports_menu"})
     for label, category in MENU_CATEGORIES:
-        add_folder_item(label, {"action": "list_sources", "category": category})
+        add_folder_item(label, {"action": "list_category", "provider": "all", "category": category})
     add_folder_item("Awards", {"action": "awards_menu"})
     add_folder_item("Search All", {"action": "search_all"})
     add_folder_item("Settings", {"action": "open_settings"})
@@ -257,6 +257,31 @@ def list_provider_catalog(provider_id):
 
 
 def list_category(provider_id, category):
+    if provider_id == "all":
+        found = 0
+        seen = set()
+        for provider in sorted(PROVIDERS.values(), key=lambda p: p.name.lower()):
+            auth_state = get_auth_state(provider.id)
+            catalog = provider.get_catalog(auth_state, category=category)
+            for item in catalog:
+                key = (provider.id, item.get("media_id", ""))
+                if key in seen:
+                    continue
+                seen.add(key)
+                label = "[{}] {}".format(provider.name, item["title"])
+                add_playable_item(
+                    label,
+                    {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
+                    {"title": item["title"], "genre": item.get("genre", "")},
+                )
+                found += 1
+
+        if not found:
+            xbmcgui.Dialog().notification("MEOS", "No items in this category", xbmcgui.NOTIFICATION_INFO, 2500)
+        xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
     provider = PROVIDERS.get(provider_id)
     if not provider:
         xbmcgui.Dialog().notification("MEOS", "Unknown provider", xbmcgui.NOTIFICATION_ERROR, 2500)

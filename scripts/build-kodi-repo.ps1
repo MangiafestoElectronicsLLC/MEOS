@@ -78,6 +78,14 @@ $pluginVersion = $pluginXml.addon.version
 $repositoryId = $repositoryXml.addon.id
 $repositoryVersion = $repositoryXml.addon.version
 
+# Keep repository root clean: only current generated versioned artifacts.
+Get-ChildItem -Path $Root -Filter "repository.meos-*.zip" -File -ErrorAction SilentlyContinue |
+Remove-Item -Force -ErrorAction SilentlyContinue
+Get-ChildItem -Path $Root -Filter "addons-*.xml" -File -ErrorAction SilentlyContinue |
+Remove-Item -Force -ErrorAction SilentlyContinue
+Get-ChildItem -Path $Root -Filter "addons-*.xml.md5" -File -ErrorAction SilentlyContinue |
+Remove-Item -Force -ErrorAction SilentlyContinue
+
 if ([string]::IsNullOrWhiteSpace($pluginId) -or [string]::IsNullOrWhiteSpace($pluginVersion)) {
     throw "Plugin addon.xml is missing id or version"
 }
@@ -286,14 +294,17 @@ if (-not (Test-Path $KodiInstallDir)) {
     New-Item -ItemType Directory -Path $KodiInstallDir | Out-Null
 }
 
+# Keep installer options minimal in KodiInstall.
+Get-ChildItem -Path $KodiInstallDir -Filter "MEOS_ADDON-*.zip" -File -ErrorAction SilentlyContinue |
+Remove-Item -Force -ErrorAction SilentlyContinue
+Get-ChildItem -Path $KodiInstallDir -Filter "MEOS_ADDON_K21-*.zip" -File -ErrorAction SilentlyContinue |
+Remove-Item -Force -ErrorAction SilentlyContinue
+Get-ChildItem -Path $KodiInstallDir -Filter "repository.meos-*.zip" -File -ErrorAction SilentlyContinue |
+Remove-Item -Force -ErrorAction SilentlyContinue
+
 Copy-Item -Path $SingleInstallZipPath -Destination (Join-Path $KodiInstallDir "MEOS_ADDON.zip") -Force
 Copy-Item -Path $SingleInstallZipModernPath -Destination (Join-Path $KodiInstallDir "MEOS_ADDON_K21.zip") -Force
 Copy-Item -Path $RepositoryZipConveniencePath -Destination (Join-Path $KodiInstallDir "repository.meos.zip") -Force
-
-# Versioned copies help bypass aggressive CDN/client caches on static filenames.
-Copy-Item -Path $SingleInstallZipPath -Destination (Join-Path $KodiInstallDir ("MEOS_ADDON-{0}.zip" -f $pluginVersion)) -Force
-Copy-Item -Path $SingleInstallZipModernPath -Destination (Join-Path $KodiInstallDir ("MEOS_ADDON_K21-{0}.zip" -f $pluginVersion)) -Force
-Copy-Item -Path $RepositoryZipConveniencePath -Destination (Join-Path $KodiInstallDir ("repository.meos-{0}.zip" -f $repositoryVersion)) -Force
 
 Write-Host "Build completed"
 if (-not $NoAutoBump) {
