@@ -10,6 +10,7 @@ API base: https://api.pluto.tv/v2/
 """
 
 import json
+import re
 
 import xbmc
 
@@ -74,6 +75,12 @@ def _genre_text(channel):
     return str(genre).lower()
 
 
+def _norm(text):
+    text = (text or "").lower()
+    text = re.sub(r"[^a-z0-9\s]", " ", text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
 def _channel_matches(channel, category):
     """Return True if this live channel belongs to the requested MEOS category."""
     genre_filter = _LIVE_GENRE_MAP.get(category)
@@ -132,7 +139,7 @@ def _vod_matches(item, category, query, category_name=""):
     summary = (item.get("summary") or item.get("description") or "").lower()
     haystack = "{} {} {} {} {}".format(name, genre, media_type, cat, summary)
 
-    if query and query.lower() not in haystack:
+    if query and _norm(query) not in _norm(haystack):
         return False
 
     if not category or category == "live":
@@ -220,14 +227,12 @@ class PlutoTvProvider(BaseProvider):
     requires_oauth = False
 
     def get_catalog(self, auth_state, category=None, query=None, year=None, award=None, result=None):
-        if category in ("movies", "tv", "docs", "sports") or (query and (not category or category != "live")):
+        vod = []
+        if category in ("movies", "tv", "docs", "sports") or query:
             vod = _load_vod_items(category=category, query=query)
-            vod.sort(key=lambda x: x["title"].lower())
-            if vod:
-                return [{"media_id": r["media_id"], "title": r["title"], "genre": r["genre"]} for r in vod[:300]]
 
         channels = _load_channels()
-        if not channels:
+        if not channels and not vod:
             return []
 
         results = []
@@ -237,8 +242,8 @@ class PlutoTvProvider(BaseProvider):
                 continue
 
             if query:
-                haystack = "{} {}".format(name.lower(), _genre_text(ch))
-                if query.lower() not in haystack:
+                haystack = "{} {}".format(name, _genre_text(ch))
+                if _norm(query) not in _norm(haystack):
                     continue
             if category and category != "live":
                 if not _channel_matches(ch, category):
@@ -259,7 +264,24 @@ class PlutoTvProvider(BaseProvider):
             })
 
         results.sort(key=lambda x: x["title"].lower())
-        return [{"media_id": r["media_id"], "title": r["title"], "genre": r["genre"]} for r in results]
+
+        live_rows = [{"media_id": r["media_id"], "title": r["title"], "genre": r["genre"]} for r in results]
+        vod_rows = [{"media_id": r["media_id"], "title": r["title"], "genre": r["genre"]} for r in vod]
+
+        # For user search and sports, merge VOD and live channels to maximize legal matches.
+        if query or category == "sports":
+            merged = {}
+            for row in vod_rows + live_rows:
+                merged[row["media_id"]] = row
+            final_rows = list(merged.values())
+            final_rows.sort(key=lambda x: x["title"].lower())
+            return final_rows[:400]
+
+        if category in ("movies", "tv", "docs") and vod_rows:
+            vod_rows.sort(key=lambda x: x["title"].lower())
+            return vod_rows[:300]
+
+        return live_rows
 
     def check_entitlement(self, media_id, auth_state):
         return True, ""

@@ -11,6 +11,7 @@ We do NOT use any unofficial scrapers, pirate sites, or bypassed paywalls.
 """
 
 import json
+import re
 
 import xbmc
 
@@ -128,6 +129,40 @@ def _search_archive(query, rows=_ROWS_PER_PAGE, page=1):
     return results
 
 
+def _normalize_query(text):
+    cleaned = (text or "").strip().lower()
+    cleaned = re.sub(r"[^a-z0-9\s]", " ", cleaned)
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    return cleaned
+
+
+def _query_candidates(raw_query):
+    """Generate safer search candidates from user-entered text."""
+    original = (raw_query or "").strip()
+    normalized = _normalize_query(original)
+    without_year = re.sub(r"\b(19|20)\d{2}\b", "", normalized).strip()
+
+    candidates = []
+    for value in (original, normalized, without_year):
+        if value and value not in candidates:
+            candidates.append(value)
+
+    if normalized.startswith("the "):
+        alt = normalized[4:].strip()
+        if alt and alt not in candidates:
+            candidates.append(alt)
+
+    return candidates
+
+
+def _free_text_archive_query(term):
+    escaped = term.replace('"', "")
+    return (
+        "(mediatype:movies OR mediatype:audio) AND "
+        "(title:\"{0}\" OR subject:\"{0}\" OR description:\"{0}\")"
+    ).format(escaped)
+
+
 def _build_award_query(award, result, year):
     terms = _AWARD_TERMS.get((award, result), [])
     if not terms:
@@ -198,8 +233,11 @@ class ArchiveOrgProvider(BaseProvider):
             return _search_archive(award_query)
 
         if query:
-            full_query = "(mediatype:movies OR mediatype:audio) AND ({})".format(query)
-            return _search_archive(full_query)
+            for candidate in _query_candidates(query):
+                results = _search_archive(_free_text_archive_query(candidate))
+                if results:
+                    return results
+            return []
 
         archive_query = _CATEGORY_QUERY.get(category or "movies", _CATEGORY_QUERY["movies"])
         return _search_archive(archive_query)
