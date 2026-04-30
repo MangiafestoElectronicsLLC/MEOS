@@ -78,9 +78,6 @@ $pluginVersion = $pluginXml.addon.version
 $repositoryId = $repositoryXml.addon.id
 $repositoryVersion = $repositoryXml.addon.version
 
-Set-RepositoryFeedUrls -AddonXmlPath $RepositoryAddonXmlPath -Version $repositoryVersion
-[xml]$repositoryXml = Get-Content -Path $RepositoryAddonXmlPath
-
 if ([string]::IsNullOrWhiteSpace($pluginId) -or [string]::IsNullOrWhiteSpace($pluginVersion)) {
     throw "Plugin addon.xml is missing id or version"
 }
@@ -174,17 +171,24 @@ function Set-RepositoryFeedUrls {
     )
 
     [xml]$xmlDoc = Get-Content -Path $AddonXmlPath
-    $repoExt = $xmlDoc.addon.extension | Where-Object { $_.point -eq "xbmc.addon.repository" } | Select-Object -First 1
-    if (-not $repoExt -or -not $repoExt.dir) {
-        throw "Missing repository <dir> in $AddonXmlPath"
+    $baseRaw = "https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main"
+
+    $infoNode = $xmlDoc.SelectSingleNode('/addon/extension[@point="xbmc.addon.repository"]/dir/info')
+    $checksumNode = $xmlDoc.SelectSingleNode('/addon/extension[@point="xbmc.addon.repository"]/dir/checksum')
+    $datadirNode = $xmlDoc.SelectSingleNode('/addon/extension[@point="xbmc.addon.repository"]/dir/datadir')
+
+    if (-not $infoNode -or -not $checksumNode -or -not $datadirNode) {
+        throw "Missing repository feed nodes in $AddonXmlPath"
     }
 
-    $baseRaw = "https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main"
-    $repoExt.dir.info = "{0}/addons-{1}.xml" -f $baseRaw, $Version
-    $repoExt.dir.checksum = "{0}/addons-{1}.xml.md5" -f $baseRaw, $Version
-    $repoExt.dir.datadir = "{0}/zips/" -f $baseRaw
+    $infoNode.InnerText = "{0}/addons-{1}.xml" -f $baseRaw, $Version
+    $checksumNode.InnerText = "{0}/addons-{1}.xml.md5" -f $baseRaw, $Version
+    $datadirNode.InnerText = "{0}/zips/" -f $baseRaw
     $xmlDoc.Save($AddonXmlPath)
 }
+
+Set-RepositoryFeedUrls -AddonXmlPath $RepositoryAddonXmlPath -Version $repositoryVersion
+[xml]$repositoryXml = Get-Content -Path $RepositoryAddonXmlPath
 
 if (-not (Test-Path $ZipsRoot)) {
     New-Item -ItemType Directory -Path $ZipsRoot | Out-Null
