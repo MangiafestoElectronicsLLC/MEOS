@@ -63,9 +63,19 @@ def add_playable_item(label, query, info=None, art=None):
 
 def list_root():
     for label, category in MENU_CATEGORIES:
-        add_folder_item(label, {"action": "list_category", "provider": PRIMARY_PROVIDER_ID, "category": category})
-    add_folder_item("Search", {"action": "search", "provider": PRIMARY_PROVIDER_ID})
+        add_folder_item(label, {"action": "list_sources", "category": category})
+    add_folder_item("Search All", {"action": "search_all"})
     add_folder_item("Settings", {"action": "open_settings"})
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_sources(category):
+    """Show one folder per provider that supports this category."""
+    for provider in sorted(PROVIDERS.values(), key=lambda p: p.name.lower()):
+        add_folder_item(
+            provider.name,
+            {"action": "list_category", "provider": provider.id, "category": category},
+        )
     xbmcplugin.endOfDirectory(HANDLE)
 
 
@@ -168,11 +178,7 @@ def list_category(provider_id, category):
 
 
 def search_catalog(provider_id):
-    provider = PROVIDERS.get(provider_id)
-    if not provider:
-        xbmcgui.Dialog().notification("MEOS", "Unknown provider", xbmcgui.NOTIFICATION_ERROR, 2500)
-        return
-
+def search_catalog(provider_id=None):
     keyboard = xbmc.Keyboard("", "Search MEOS")
     keyboard.doModal()
     if not keyboard.isConfirmed():
@@ -181,23 +187,24 @@ def search_catalog(provider_id):
 
     query = keyboard.getText().strip()
     if not query:
-        xbmcgui.Dialog().notification("MEOS", "Search text is empty", xbmcgui.NOTIFICATION_INFO, 2500)
         xbmcplugin.endOfDirectory(HANDLE)
         return
 
-    auth_state = get_auth_state(provider.id)
-    catalog = provider.get_catalog(auth_state, query=query)
-    if not catalog:
+    targets = [PROVIDERS[provider_id]] if provider_id and provider_id in PROVIDERS else list(PROVIDERS.values())
+    found = 0
+    for provider in targets:
+        auth_state = get_auth_state(provider.id)
+        catalog = provider.get_catalog(auth_state, query=query)
+        for item in catalog:
+            label = "[{}] {}".format(provider.name, item["title"])
+            add_playable_item(
+                label,
+                {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
+                {"title": item["title"], "genre": item.get("genre", "")},
+            )
+            found += 1
+    if not found:
         xbmcgui.Dialog().notification("MEOS", "No results found", xbmcgui.NOTIFICATION_INFO, 2500)
-        xbmcplugin.endOfDirectory(HANDLE)
-        return
-
-    for item in catalog:
-        add_playable_item(
-            item["title"],
-            {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
-            {"title": item["title"], "genre": item.get("genre", "")},
-        )
     xbmcplugin.endOfDirectory(HANDLE)
 
 
@@ -261,11 +268,19 @@ def router(params):
         return
 
     if action == "list_category":
-        list_category(params.get("provider", PRIMARY_PROVIDER_ID), params.get("category", ""))
+        list_category(params.get("provider", ""), params.get("category", ""))
+        return
+
+    if action == "list_sources":
+        list_sources(params.get("category", ""))
+        return
+
+    if action == "search_all":
+        search_catalog()
         return
 
     if action == "search":
-        search_catalog(params.get("provider", PRIMARY_PROVIDER_ID))
+        search_catalog(params.get("provider"))
         return
 
     if action == "open_settings":
