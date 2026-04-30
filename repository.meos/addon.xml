@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.meos" name="MEOS" version="1.0.9" provider-name="MEOS">
+<addon id="plugin.video.meos" name="MEOS" version="1.0.10" provider-name="MEOS">
   <extension point="xbmc.python.pluginsource" library="default.py">
     <provides>video</provides>
   </extension>

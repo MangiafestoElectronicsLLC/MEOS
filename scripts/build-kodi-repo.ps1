@@ -173,6 +173,10 @@ if (-not (Test-Path $pluginZipDir)) {
     New-Item -ItemType Directory -Path $pluginZipDir | Out-Null
 }
 
+# Keep feed clean for Kodi clients: remove previous plugin-version artifacts.
+Get-ChildItem -Path $pluginZipDir -Filter ("{0}-*.zip" -f $pluginId) -File -ErrorAction SilentlyContinue |
+    Remove-Item -Force -ErrorAction SilentlyContinue
+
 $legacyPluginZipPath = Join-Path $ZipsRoot ("{0}.zip" -f $pluginId)
 if (Test-Path $legacyPluginZipPath) {
     Remove-Item -Path $legacyPluginZipPath -Force
