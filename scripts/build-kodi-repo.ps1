@@ -259,6 +259,11 @@ Copy-Item -Path $SingleInstallZipPath -Destination (Join-Path $KodiInstallDir "M
 Copy-Item -Path $SingleInstallZipModernPath -Destination (Join-Path $KodiInstallDir "MEOS_ADDON_K21.zip") -Force
 Copy-Item -Path $RepositoryZipConveniencePath -Destination (Join-Path $KodiInstallDir "repository.meos.zip") -Force
 
+# Versioned copies help bypass aggressive CDN/client caches on static filenames.
+Copy-Item -Path $SingleInstallZipPath -Destination (Join-Path $KodiInstallDir ("MEOS_ADDON-{0}.zip" -f $pluginVersion)) -Force
+Copy-Item -Path $SingleInstallZipModernPath -Destination (Join-Path $KodiInstallDir ("MEOS_ADDON_K21-{0}.zip" -f $pluginVersion)) -Force
+Copy-Item -Path $RepositoryZipConveniencePath -Destination (Join-Path $KodiInstallDir ("repository.meos-{0}.zip" -f $repositoryVersion)) -Force
+
 Write-Host "Build completed"
 if (-not $NoAutoBump) {
     Write-Host "Plugin version: $($pluginBump.OldVersion) -> $($pluginBump.NewVersion)"
