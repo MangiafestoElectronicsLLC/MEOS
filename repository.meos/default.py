@@ -31,6 +31,17 @@ MENU_CATEGORIES = [
     ("Live Channels", "live"),
     ("Sports", "sports"),
 ]
+SPORT_TOPICS = [
+    ("Live NFL", "NFL football"),
+    ("Live NHL", "NHL hockey"),
+    ("Live Basketball", "NBA basketball"),
+    ("Live Baseball", "MLB baseball"),
+    ("Live NCAA", "NCAA college sports"),
+    ("Live Boxing", "boxing"),
+    ("Live UFC", "UFC MMA"),
+    ("Live Racing", "motorsport racing"),
+    ("Live Horse Racing", "horse racing"),
+]
 AWARD_MENU = [
     ("Oscar Winners", "oscar", "winner"),
     ("Oscar Nominees", "oscar", "nominee"),
@@ -72,6 +83,7 @@ def add_playable_item(label, query, info=None, art=None):
 def list_root():
     add_folder_item("One-Click Live TV", {"action": "list_category", "provider": "pluto_tv", "category": "live"})
     add_folder_item("One-Click Movies", {"action": "list_category", "provider": PRIMARY_PROVIDER_ID, "category": "movies"})
+    add_folder_item("Sports Hub", {"action": "sports_menu"})
     for label, category in MENU_CATEGORIES:
         add_folder_item(label, {"action": "list_sources", "category": category})
     add_folder_item("Awards", {"action": "awards_menu"})
@@ -88,6 +100,39 @@ def list_sources(category):
             provider.name,
             {"action": "list_category", "provider": provider.id, "category": category},
         )
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_sports_menu():
+    xbmcplugin.setPluginCategory(HANDLE, "Sports Hub")
+    for label, query in SPORT_TOPICS:
+        add_folder_item(label, {"action": "sport_topic", "query": query})
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_sport_topic(query):
+    xbmcplugin.setPluginCategory(HANDLE, "Sports: {}".format(query))
+    seen = set()
+    found = 0
+    for provider in sorted(PROVIDERS.values(), key=lambda p: p.name.lower()):
+        auth_state = get_auth_state(provider.id)
+        catalog = provider.get_catalog(auth_state, category="sports", query=query)
+        for item in catalog:
+            key = (provider.id, item.get("media_id", ""))
+            if key in seen:
+                continue
+            seen.add(key)
+            label = "[{}] {}".format(provider.name, item["title"])
+            add_playable_item(
+                label,
+                {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
+                {"title": item["title"], "genre": item.get("genre", "Sports")},
+            )
+            found += 1
+
+    if not found:
+        xbmcgui.Dialog().notification("MEOS", "No legal sports streams found for this filter", xbmcgui.NOTIFICATION_INFO, 3000)
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
 
@@ -357,6 +402,14 @@ def router(params):
 
     if action == "list_category":
         list_category(params.get("provider", ""), params.get("category", ""))
+        return
+
+    if action == "sports_menu":
+        list_sports_menu()
+        return
+
+    if action == "sport_topic":
+        list_sport_topic(params.get("query", "sports"))
         return
 
     if action == "awards_menu":

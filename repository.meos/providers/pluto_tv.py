@@ -23,7 +23,11 @@ except ImportError:
 from .base import BaseProvider
 
 
-_CHANNELS_URL = "https://api.pluto.tv/v2/channels"
+_CHANNELS_URLS = [
+    "https://api.pluto.tv/v2/channels",
+    "https://api.pluto.tv/v2/channels?deviceType=web",
+    "https://api.pluto.tv/v2/channels?deviceType=web&deviceMake=Chrome&deviceModel=web",
+]
 _VOD_URL = (
     "https://api.pluto.tv/v3/vod/categories"
     "?includeItems=true&deviceType=web"
@@ -55,17 +59,45 @@ def _fetch_json(url):
         return None
 
 
+def _genre_text(channel):
+    genre = channel.get("genre") or channel.get("category") or ""
+    if isinstance(genre, dict):
+        return (genre.get("name") or genre.get("slug") or "").lower()
+    if isinstance(genre, list):
+        names = []
+        for g in genre:
+            if isinstance(g, dict):
+                names.append(g.get("name") or g.get("slug") or "")
+            else:
+                names.append(str(g))
+        return " ".join(names).lower()
+    return str(genre).lower()
+
+
 def _channel_matches(channel, category):
     """Return True if this live channel belongs to the requested MEOS category."""
     genre_filter = _LIVE_GENRE_MAP.get(category)
     if genre_filter is None:
         return True  # "live" = everything
-    raw_genre = (
-        channel.get("genre") or channel.get("category") or ""
-    ).lower()
+    raw_genre = _genre_text(channel)
     if isinstance(genre_filter, list):
         return any(kw in raw_genre for kw in genre_filter)
     return genre_filter in raw_genre
+
+
+def _channel_name(channel):
+    return (channel.get("name") or channel.get("title") or channel.get("slug") or "").strip()
+
+
+def _load_channels():
+    for url in _CHANNELS_URLS:
+        data = _fetch_json(url)
+        if not data:
+            continue
+        channels = data if isinstance(data, list) else data.get("data") or []
+        if channels:
+            return channels
+    return []
 
 
 def _best_stream(channel):
@@ -99,23 +131,22 @@ class PlutoTvProvider(BaseProvider):
     name = "Pluto TV"
     requires_oauth = False
 
-    def get_catalog(self, auth_state, category=None, query=None):
-        data = _fetch_json(_CHANNELS_URL)
-        if not data:
+    def get_catalog(self, auth_state, category=None, query=None, year=None, award=None, result=None):
+        channels = _load_channels()
+        if not channels:
             return []
-
-        channels = data if isinstance(data, list) else data.get("data") or []
 
         results = []
         for ch in channels:
-            name = (ch.get("name") or ch.get("title") or "").strip()
+            name = _channel_name(ch)
             if not name:
                 continue
 
             if query:
-                if query.lower() not in name.lower():
+                haystack = "{} {}".format(name.lower(), _genre_text(ch))
+                if query.lower() not in haystack:
                     continue
-            elif category and category != "live":
+            if category and category != "live":
                 if not _channel_matches(ch, category):
                     continue
 
@@ -123,13 +154,13 @@ class PlutoTvProvider(BaseProvider):
             if not stream_url:
                 continue
 
-            media_id = "pluto::" + (ch.get("id") or ch.get("slug") or name)
-            genre = (ch.get("genre") or ch.get("category") or "Live TV").strip()
+            media_id = "pluto::" + str(ch.get("id") or ch.get("slug") or name)
+            genre = _genre_text(ch) or "live tv"
 
             results.append({
                 "media_id": media_id,
                 "title": name,
-                "genre": genre,
+                "genre": genre.title(),
                 "_stream_url": stream_url,
             })
 
@@ -144,16 +175,15 @@ class PlutoTvProvider(BaseProvider):
             return None
 
         channel_id = media_id[len("pluto::"):]
-        data = _fetch_json(_CHANNELS_URL)
-        if not data:
+        channels = _load_channels()
+        if not channels:
             return None
 
-        channels = data if isinstance(data, list) else data.get("data") or []
         ch = next(
             (
                 c for c in channels
-                if (c.get("id") or c.get("slug") or "") == channel_id
-                or c.get("name") == channel_id
+                if str(c.get("id") or c.get("slug") or "") == channel_id
+                or _channel_name(c) == channel_id
             ),
             None,
         )
@@ -167,7 +197,7 @@ class PlutoTvProvider(BaseProvider):
 
         return {
             "stream_url": stream_url,
-            "title": ch.get("name") or ch.get("title") or channel_id,
+            "title": _channel_name(ch) or channel_id,
             "mime_type": "application/vnd.apple.mpegurl",
             "license_url": "",
         }
