@@ -53,6 +53,10 @@ YEAR_MIN = 1927
 YEAR_MAX = 2026
 MAX_INTEGRATED_SCAN_DEPTH = 2
 MAX_INTEGRATED_ITEMS_PER_ADDON = 120
+MAX_VALIDATED_CACHE_ITEMS = 800
+MAX_PREVALIDATE_CHECKS_PER_VIEW = 35
+VALIDATED_TARGETS_SETTING = "external_validated_targets"
+VALIDATED_PROVIDER_SETTING = "provider_validated_items"
 CATEGORY_HINTS = {
     "movies": ["movie", "movies", "film", "cinema", "one click movie", "1 click movie"],
     "tv": ["tv", "shows", "tv shows", "series", "episodes", "one click tv", "1 click tv"],
@@ -61,6 +65,56 @@ CATEGORY_HINTS = {
     "sports": ["sport", "sports", "nfl", "nba", "mlb", "ufc", "mma", "boxing", "wwe"],
     "award": ["award", "awards", "oscar", "emmy", "winner", "nominee"],
 }
+ADDON_CATEGORY_RULES = [
+    {
+        "name": "scrubs",
+        "id_contains": ["scrubsv2", "scrubs", "plugin.video.scrubs"],
+        "label_contains": ["scrubs"],
+        "categories": {
+            "movies": ["movies", "my movies", "new movies", "movie world", "boxsets"],
+            "tv": ["tv shows", "my tv shows", "new episodes", "series", "episodes"],
+            "live": ["live tv", "live channels", "channels", "iptv"],
+            "sports": ["sports", "live sports"],
+            "docs": ["documentaries", "docs"],
+        },
+    },
+    {
+        "name": "red gratis",
+        "id_contains": ["redgratis", "red.gratis", "plugin.video.red"],
+        "label_contains": ["red gratis", "redgratis"],
+        "categories": {
+            "movies": ["peliculas", "pelis", "movies", "cine"],
+            "tv": ["series", "tv", "tv shows"],
+            "live": ["tv en vivo", "en vivo", "live tv", "canales", "channels"],
+            "sports": ["deportes", "sports"],
+            "docs": ["documentales", "documentaries"],
+        },
+    },
+    {
+        "name": "loop",
+        "id_contains": ["theloop", "plugin.video.loop"],
+        "label_contains": ["loop"],
+        "categories": {
+            "movies": ["movies", "movie"],
+            "tv": ["tv shows", "shows", "series"],
+            "live": ["live tv", "channels", "live channels", "iptv"],
+            "sports": ["sports", "live sports", "sport"],
+            "docs": ["documentaries"],
+        },
+    },
+    {
+        "name": "ghost",
+        "id_contains": ["ghost", "plugin.video.ghost"],
+        "label_contains": ["ghost"],
+        "categories": {
+            "movies": ["movies", "movie"],
+            "tv": ["tv shows", "shows", "series"],
+            "live": ["live tv", "channels", "live channels"],
+            "sports": ["sports", "sport"],
+            "docs": ["documentaries", "docs"],
+        },
+    },
+]
 
 PROVIDERS = {provider.id: provider for provider in get_providers()}
 
@@ -141,6 +195,108 @@ def _set_integrated_addon_ids(addon_ids):
     ADDON.setSetting("external_integrated_addons", json.dumps(payload))
 
 
+def _get_json_list_setting(setting_id):
+    raw = (ADDON.getSetting(setting_id) or "").strip()
+    if not raw:
+        return []
+    try:
+        data = json.loads(raw)
+    except Exception:
+        return []
+    if not isinstance(data, list):
+        return []
+    return data
+
+
+def _set_json_list_setting(setting_id, values):
+    cleaned = []
+    seen = set()
+    for value in values:
+        if not value:
+            continue
+        value = str(value).strip()
+        if not value or value in seen:
+            continue
+        seen.add(value)
+        cleaned.append(value)
+        if len(cleaned) >= MAX_VALIDATED_CACHE_ITEMS:
+            break
+    ADDON.setSetting(setting_id, json.dumps(cleaned))
+
+
+def _get_validated_target_set():
+    return set(_get_json_list_setting(VALIDATED_TARGETS_SETTING))
+
+
+def _is_target_validated(target):
+    return bool(target) and target in _get_validated_target_set()
+
+
+def _mark_target_validated(target):
+    if not target:
+        return
+    values = _get_json_list_setting(VALIDATED_TARGETS_SETTING)
+    values.insert(0, target)
+    _set_json_list_setting(VALIDATED_TARGETS_SETTING, values)
+
+
+def _can_prevalidate_target(target):
+    if not target:
+        return False
+
+    if target.startswith("plugin://"):
+        result = _json_rpc(
+            "Files.GetDirectory",
+            {
+                "directory": target,
+                "media": "files",
+                "properties": ["file", "filetype"],
+            },
+        )
+        files = (result or {}).get("files") or []
+        return bool(files)
+
+    if target.startswith("http://") or target.startswith("https://"):
+        return True
+
+    if target.startswith("special://"):
+        return True
+
+    return False
+
+
+def _ensure_target_validated(target, budget):
+    if _is_target_validated(target):
+        return True
+    if budget.get("checks", 0) >= MAX_PREVALIDATE_CHECKS_PER_VIEW:
+        return False
+
+    budget["checks"] = budget.get("checks", 0) + 1
+    if not _can_prevalidate_target(target):
+        return False
+
+    _mark_target_validated(target)
+    return True
+
+
+def _provider_validation_key(provider_id, media_id):
+    return "{0}::{1}".format(provider_id or "", media_id or "")
+
+
+def _is_provider_validated(provider_id, media_id):
+    key = _provider_validation_key(provider_id, media_id)
+    return bool(provider_id and media_id and key in set(_get_json_list_setting(VALIDATED_PROVIDER_SETTING)))
+
+
+def _mark_provider_validated(provider_id, media_id):
+    key = _provider_validation_key(provider_id, media_id)
+    if not provider_id or not media_id:
+        return
+    values = _get_json_list_setting(VALIDATED_PROVIDER_SETTING)
+    values.insert(0, key)
+    _set_json_list_setting(VALIDATED_PROVIDER_SETTING, values)
+
+
 def _get_installed_video_addons(include_meos=False, include_disabled=True):
     result = _json_rpc(
         "Addons.GetAddons",
@@ -203,6 +359,126 @@ def _score_category_match(label, category):
     return score
 
 
+def _score_keywords(label, keywords):
+    normalized = _normalize_label(label).strip()
+    if not normalized:
+        return 0
+
+    wrapped = " {0} ".format(normalized)
+    score = 0
+    for keyword in keywords:
+        token = _normalize_label(keyword).strip()
+        if not token:
+            continue
+        wrapped_token = " {0} ".format(token)
+        if normalized == token:
+            score += 80
+            continue
+        if wrapped_token in wrapped:
+            score += 40
+            continue
+        if token in normalized:
+            score += 15
+    return score
+
+
+def _find_addon_rule(addon_id, addon_name):
+    addon_id_norm = (addon_id or "").lower()
+    addon_name_norm = (addon_name or "").lower()
+
+    for rule in ADDON_CATEGORY_RULES:
+        id_contains = [token.lower() for token in rule.get("id_contains", [])]
+        label_contains = [token.lower() for token in rule.get("label_contains", [])]
+        if any(token and token in addon_id_norm for token in id_contains):
+            return rule
+        if any(token and token in addon_name_norm for token in label_contains):
+            return rule
+    return None
+
+
+def _addon_category_keywords(addon_id, addon_name, category):
+    rule = _find_addon_rule(addon_id, addon_name)
+    keywords = []
+    if rule:
+        keywords.extend(rule.get("categories", {}).get(category, []))
+    keywords.extend(CATEGORY_HINTS.get(category, []))
+
+    cleaned = []
+    seen = set()
+    for keyword in keywords:
+        key = _normalize_label(keyword).strip()
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        cleaned.append(keyword)
+    return cleaned
+
+
+def _resolve_integrated_targets(addon_id, category, addon_name=""):
+    root_target = "plugin://{0}/".format(addon_id)
+    entries = _browse_directory_entries(root_target)
+    if not entries:
+        return [{"target": root_target, "is_folder": True, "matched_label": ""}]
+
+    keywords = _addon_category_keywords(addon_id, addon_name, category)
+    candidates = []
+    for entry in entries:
+        file_path = entry.get("file") or ""
+        if not file_path:
+            continue
+        label = entry.get("label") or entry.get("title") or file_path
+        score = _score_keywords(label, keywords)
+        if score <= 0:
+            continue
+        candidates.append((score, entry))
+
+    if candidates:
+        candidates.sort(key=lambda row: row[0], reverse=True)
+        resolved = []
+        seen_targets = set()
+        for score, entry in candidates:
+            if score < 30 and resolved:
+                continue
+            target = entry.get("file") or ""
+            if not target or target in seen_targets:
+                continue
+            seen_targets.add(target)
+            resolved.append(
+                {
+                    "target": target,
+                    "is_folder": entry.get("filetype") == "directory",
+                    "matched_label": entry.get("label") or entry.get("title") or "",
+                }
+            )
+            if len(resolved) >= 4:
+                break
+        if resolved:
+            return resolved
+
+    best = None
+    best_score = 0
+    for entry in entries:
+        file_path = entry.get("file") or ""
+        if not file_path:
+            continue
+        label = entry.get("label") or entry.get("title") or file_path
+        score = _score_category_match(label, category)
+        if score > best_score:
+            best_score = score
+            best = entry
+
+    if not best:
+        return [{"target": root_target, "is_folder": True, "matched_label": ""}]
+
+    return [
+        {
+            "target": best.get("file") or root_target,
+            "is_folder": best.get("filetype") == "directory",
+            "matched_label": best.get("label") or best.get("title") or "",
+        }
+    ]
+
+
 def _browse_directory_entries(target):
     result = _json_rpc(
         "Files.GetDirectory",
@@ -215,33 +491,8 @@ def _browse_directory_entries(target):
     return (result or {}).get("files") or []
 
 
-def _resolve_integrated_target(addon_id, category):
-    root_target = "plugin://{0}/".format(addon_id)
-    entries = _browse_directory_entries(root_target)
-    if not entries:
-        return {"target": root_target, "is_folder": True, "matched_label": ""}
-
-    best = None
-    best_score = 0
-    for entry in entries:
-        file_path = entry.get("file") or ""
-        if not file_path:
-            continue
-
-        label = entry.get("label") or entry.get("title") or file_path
-        score = _score_category_match(label, category)
-        if score > best_score:
-            best_score = score
-            best = entry
-
-    if not best:
-        return {"target": root_target, "is_folder": True, "matched_label": ""}
-
-    return {
-        "target": best.get("file") or root_target,
-        "is_folder": best.get("filetype") == "directory",
-        "matched_label": best.get("label") or best.get("title") or "",
-    }
+def _resolve_integrated_target(addon_id, category, addon_name=""):
+    return _resolve_integrated_targets(addon_id, category, addon_name=addon_name)[0]
 
 
 def _title_key(text):
@@ -291,49 +542,53 @@ def add_integrated_category_items(category, seen_title_keys=None):
 
     installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=False)}
     total_added = 0
+    validation_budget = {"checks": 0}
 
     for addon_id in selected:
         row = installed.get(addon_id)
         if not row:
             continue
 
-        resolved = _resolve_integrated_target(addon_id, category)
-        start_target = resolved.get("target") or "plugin://{0}/".format(addon_id)
+        start_points = _resolve_integrated_targets(addon_id, category, addon_name=row.get("name", ""))
+        for resolved in start_points:
+            start_target = resolved.get("target") or "plugin://{0}/".format(addon_id)
 
-        if resolved.get("is_folder", True):
-            playable_entries = _iter_integrated_playables(
-                start_target,
-                max_depth=MAX_INTEGRATED_SCAN_DEPTH,
-                max_items=MAX_INTEGRATED_ITEMS_PER_ADDON,
-            )
-        else:
-            playable_entries = [{"file": start_target, "label": resolved.get("matched_label") or row["name"]}]
+            if resolved.get("is_folder", True):
+                playable_entries = _iter_integrated_playables(
+                    start_target,
+                    max_depth=MAX_INTEGRATED_SCAN_DEPTH,
+                    max_items=MAX_INTEGRATED_ITEMS_PER_ADDON,
+                )
+            else:
+                playable_entries = [{"file": start_target, "label": resolved.get("matched_label") or row["name"]}]
 
-        for entry in playable_entries:
-            target = entry.get("file") or ""
-            if not target:
-                continue
+            for entry in playable_entries:
+                target = entry.get("file") or ""
+                if not target:
+                    continue
 
-            title = entry.get("label") or entry.get("title") or target
-            dedupe_key = _title_key(title)
-            if dedupe_key and dedupe_key in seen_title_keys:
-                continue
-            if dedupe_key:
-                seen_title_keys.add(dedupe_key)
+                title = entry.get("label") or entry.get("title") or target
+                dedupe_key = _title_key(title)
+                if dedupe_key and dedupe_key in seen_title_keys:
+                    continue
+                if dedupe_key:
+                    seen_title_keys.add(dedupe_key)
 
-            label = "[Integrated {0}] {1}".format(row["name"], title)
-            art = {
-                "thumb": entry.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["thumb"],
-                "icon": entry.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["icon"],
-                "fanart": entry.get("fanart") or row.get("fanart") or DEFAULT_ART["fanart"],
-            }
-            add_playable_item(
-                label,
-                {"action": "external_play", "target": target},
-                {"title": title, "genre": category.title()},
-                art=art,
-            )
-            total_added += 1
+                is_validated = _ensure_target_validated(target, validation_budget)
+                validated_prefix = "[Validated] " if is_validated else ""
+                label = "{0}[Integrated {1}] {2}".format(validated_prefix, row["name"], title)
+                art = {
+                    "thumb": entry.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["thumb"],
+                    "icon": entry.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["icon"],
+                    "fanart": entry.get("fanart") or row.get("fanart") or DEFAULT_ART["fanart"],
+                }
+                add_playable_item(
+                    label,
+                    {"action": "external_play", "target": target},
+                    {"title": title, "genre": category.title()},
+                    art=art,
+                )
+                total_added += 1
 
     return total_added
 
@@ -556,7 +811,8 @@ def list_category(provider_id, category):
                     continue
                 if title_key:
                     seen_titles.add(title_key)
-                label = "[{}] {}".format(provider.name, item["title"])
+                validated_prefix = "[Validated] " if _is_provider_validated(provider.id, item.get("media_id", "")) else ""
+                label = "{0}[{1}] {2}".format(validated_prefix, provider.name, item["title"])
                 add_playable_item(
                     label,
                     {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
@@ -731,7 +987,7 @@ def add_integrated_addon_shortcuts(category):
         if not row:
             continue
 
-        resolved = _resolve_integrated_target(addon_id, category)
+        resolved = _resolve_integrated_target(addon_id, category, addon_name=row.get("name", ""))
         target = resolved["target"]
         matched_label = resolved.get("matched_label") or ""
 
@@ -781,12 +1037,16 @@ def list_external_browse(target, title="Add-on"):
         xbmcplugin.endOfDirectory(HANDLE)
         return
 
+    validation_budget = {"checks": 0}
+
     for entry in files:
         file_path = entry.get("file") or ""
         if not file_path:
             continue
 
         label = entry.get("label") or entry.get("title") or file_path
+        if _ensure_target_validated(file_path, validation_budget):
+            label = "[Validated] {0}".format(label)
         art = {
             "thumb": entry.get("thumbnail") or DEFAULT_ART["thumb"],
             "icon": entry.get("thumbnail") or DEFAULT_ART["icon"],
@@ -808,12 +1068,14 @@ def play_external_item(target):
         return
 
     if target.startswith("plugin://"):
+        _mark_target_validated(target)
         xbmc.executebuiltin('PlayMedia("{0}")'.format(target.replace('"', '%22')))
         xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
         return
 
     item = xbmcgui.ListItem(path=target)
     item.setArt(DEFAULT_ART)
+    _mark_target_validated(target)
     xbmcplugin.setResolvedUrl(HANDLE, True, item)
 
 
@@ -900,6 +1162,7 @@ def play_provider_item(provider_id, media_id):
             "{0}|{1}|R{{SSM}}|".format(playback["license_url"], playback.get("license_headers", "")),
         )
 
+    _mark_provider_validated(provider.id, media_id)
     xbmcplugin.setResolvedUrl(HANDLE, True, item)
 
 
