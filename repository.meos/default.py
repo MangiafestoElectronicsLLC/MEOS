@@ -51,6 +51,16 @@ AWARD_MENU = [
 ]
 YEAR_MIN = 1927
 YEAR_MAX = 2026
+MAX_INTEGRATED_SCAN_DEPTH = 2
+MAX_INTEGRATED_ITEMS_PER_ADDON = 120
+CATEGORY_HINTS = {
+    "movies": ["movie", "movies", "film", "cinema", "one click movie", "1 click movie"],
+    "tv": ["tv", "shows", "tv shows", "series", "episodes", "one click tv", "1 click tv"],
+    "docs": ["doc", "docs", "documentary", "documentaries"],
+    "live": ["live", "channels", "iptv", "live tv", "one click live", "1 click live"],
+    "sports": ["sport", "sports", "nfl", "nba", "mlb", "ufc", "mma", "boxing", "wwe"],
+    "award": ["award", "awards", "oscar", "emmy", "winner", "nominee"],
+}
 
 PROVIDERS = {provider.id: provider for provider in get_providers()}
 
@@ -167,6 +177,165 @@ def _get_installed_video_addons(include_meos=False, include_disabled=True):
 
     rows.sort(key=lambda item: item["name"].lower())
     return rows
+
+
+def _normalize_label(text):
+    text = (text or "").lower()
+    return "".join(ch if ch.isalnum() else " " for ch in text)
+
+
+def _score_category_match(label, category):
+    normalized = " {0} ".format(_normalize_label(label))
+    keywords = CATEGORY_HINTS.get(category, [])
+    score = 0
+
+    for keyword in keywords:
+        normalized_keyword = _normalize_label(keyword).strip()
+        if not normalized_keyword:
+            continue
+        token = " {0} ".format(normalized_keyword)
+        if token in normalized:
+            score += 10
+            continue
+        if normalized_keyword in normalized:
+            score += 4
+
+    return score
+
+
+def _browse_directory_entries(target):
+    result = _json_rpc(
+        "Files.GetDirectory",
+        {
+            "directory": target,
+            "media": "files",
+            "properties": ["title", "file", "filetype", "thumbnail", "fanart", "plot"],
+        },
+    )
+    return (result or {}).get("files") or []
+
+
+def _resolve_integrated_target(addon_id, category):
+    root_target = "plugin://{0}/".format(addon_id)
+    entries = _browse_directory_entries(root_target)
+    if not entries:
+        return {"target": root_target, "is_folder": True, "matched_label": ""}
+
+    best = None
+    best_score = 0
+    for entry in entries:
+        file_path = entry.get("file") or ""
+        if not file_path:
+            continue
+
+        label = entry.get("label") or entry.get("title") or file_path
+        score = _score_category_match(label, category)
+        if score > best_score:
+            best_score = score
+            best = entry
+
+    if not best:
+        return {"target": root_target, "is_folder": True, "matched_label": ""}
+
+    return {
+        "target": best.get("file") or root_target,
+        "is_folder": best.get("filetype") == "directory",
+        "matched_label": best.get("label") or best.get("title") or "",
+    }
+
+
+def _title_key(text):
+    normalized = _normalize_label(text)
+    parts = [part for part in normalized.split() if part]
+    return " ".join(parts)
+
+
+def _iter_integrated_playables(target, max_depth, max_items):
+    stack = [(target, 0)]
+    visited = set()
+    yielded = 0
+
+    while stack and yielded < max_items:
+        current_target, depth = stack.pop()
+        if not current_target or current_target in visited:
+            continue
+        visited.add(current_target)
+
+        entries = _browse_directory_entries(current_target)
+        if not entries:
+            continue
+
+        for entry in entries:
+            file_path = entry.get("file") or ""
+            if not file_path:
+                continue
+
+            if entry.get("filetype") == "directory":
+                if depth < max_depth:
+                    stack.append((file_path, depth + 1))
+                continue
+
+            yielded += 1
+            yield entry
+            if yielded >= max_items:
+                break
+
+
+def add_integrated_category_items(category, seen_title_keys=None):
+    selected = _get_integrated_addon_ids()
+    if not selected:
+        return 0
+
+    if seen_title_keys is None:
+        seen_title_keys = set()
+
+    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=False)}
+    total_added = 0
+
+    for addon_id in selected:
+        row = installed.get(addon_id)
+        if not row:
+            continue
+
+        resolved = _resolve_integrated_target(addon_id, category)
+        start_target = resolved.get("target") or "plugin://{0}/".format(addon_id)
+
+        if resolved.get("is_folder", True):
+            playable_entries = _iter_integrated_playables(
+                start_target,
+                max_depth=MAX_INTEGRATED_SCAN_DEPTH,
+                max_items=MAX_INTEGRATED_ITEMS_PER_ADDON,
+            )
+        else:
+            playable_entries = [{"file": start_target, "label": resolved.get("matched_label") or row["name"]}]
+
+        for entry in playable_entries:
+            target = entry.get("file") or ""
+            if not target:
+                continue
+
+            title = entry.get("label") or entry.get("title") or target
+            dedupe_key = _title_key(title)
+            if dedupe_key and dedupe_key in seen_title_keys:
+                continue
+            if dedupe_key:
+                seen_title_keys.add(dedupe_key)
+
+            label = "[Integrated {0}] {1}".format(row["name"], title)
+            art = {
+                "thumb": entry.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["thumb"],
+                "icon": entry.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["icon"],
+                "fanart": entry.get("fanart") or row.get("fanart") or DEFAULT_ART["fanart"],
+            }
+            add_playable_item(
+                label,
+                {"action": "external_play", "target": target},
+                {"title": title, "genre": category.title()},
+                art=art,
+            )
+            total_added += 1
+
+    return total_added
 
 
 def add_folder_item(label, query, art=None):
@@ -370,8 +539,9 @@ def list_provider_catalog(provider_id):
 def list_category(provider_id, category):
     if provider_id == "all":
         add_integrated_addon_shortcuts(category)
+        seen_titles = set()
+        found = add_integrated_category_items(category, seen_title_keys=seen_titles)
 
-        found = 0
         seen = set()
         for provider in sorted(PROVIDERS.values(), key=lambda p: p.name.lower()):
             auth_state = get_auth_state(provider.id)
@@ -381,6 +551,11 @@ def list_category(provider_id, category):
                 if key in seen:
                     continue
                 seen.add(key)
+                title_key = _title_key(item.get("title", ""))
+                if title_key and title_key in seen_titles:
+                    continue
+                if title_key:
+                    seen_titles.add(title_key)
                 label = "[{}] {}".format(provider.name, item["title"])
                 add_playable_item(
                     label,
@@ -556,20 +731,34 @@ def add_integrated_addon_shortcuts(category):
         if not row:
             continue
 
+        resolved = _resolve_integrated_target(addon_id, category)
+        target = resolved["target"]
+        matched_label = resolved.get("matched_label") or ""
+
         label = "[Integrated {0}] {1}".format(category_label, row["name"])
         if not row.get("enabled", True):
             label = "[DISABLED] {0}".format(label)
+        elif matched_label:
+            label = "{0} - {1}".format(label, matched_label)
 
         art = {
             "thumb": row.get("thumbnail") or DEFAULT_ART["thumb"],
             "icon": row.get("thumbnail") or DEFAULT_ART["icon"],
             "fanart": row.get("fanart") or DEFAULT_ART["fanart"],
         }
-        add_folder_item(
-            label,
-            {"action": "external_browse", "target": "plugin://{0}/".format(addon_id), "title": row["name"]},
-            art=art,
-        )
+        if resolved.get("is_folder", True):
+            add_folder_item(
+                label,
+                {"action": "external_browse", "target": target, "title": row["name"]},
+                art=art,
+            )
+        else:
+            add_playable_item(
+                label,
+                {"action": "external_play", "target": target},
+                {"title": label},
+                art=art,
+            )
 
 
 def list_external_browse(target, title="Add-on"):
@@ -585,15 +774,7 @@ def list_external_browse(target, title="Add-on"):
         {"action": "external_native", "target": target},
     )
 
-    result = _json_rpc(
-        "Files.GetDirectory",
-        {
-            "directory": target,
-            "media": "files",
-            "properties": ["title", "file", "filetype", "thumbnail", "fanart", "plot"],
-        },
-    )
-    files = (result or {}).get("files") or []
+    files = _browse_directory_entries(target)
 
     if not files:
         xbmcgui.Dialog().notification("MEOS", "No items found for this add-on", xbmcgui.NOTIFICATION_INFO, 3000)
