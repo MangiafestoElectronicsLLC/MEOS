@@ -93,6 +93,82 @@ def _json_rpc(method, params=None):
     return data.get("result")
 
 
+def _get_integrated_addon_ids():
+    raw = (ADDON.getSetting("external_integrated_addons") or "").strip()
+    if not raw:
+        return []
+    try:
+        data = json.loads(raw)
+    except Exception:
+        return []
+    if not isinstance(data, list):
+        return []
+
+    cleaned = []
+    seen = set()
+    for addon_id in data:
+        if not addon_id:
+            continue
+        addon_id = str(addon_id).strip()
+        if not addon_id or addon_id in seen:
+            continue
+        seen.add(addon_id)
+        cleaned.append(addon_id)
+    return cleaned
+
+
+def _set_integrated_addon_ids(addon_ids):
+    payload = []
+    seen = set()
+    for addon_id in addon_ids:
+        if not addon_id:
+            continue
+        addon_id = str(addon_id).strip()
+        if not addon_id or addon_id in seen:
+            continue
+        seen.add(addon_id)
+        payload.append(addon_id)
+    ADDON.setSetting("external_integrated_addons", json.dumps(payload))
+
+
+def _get_installed_video_addons(include_meos=False, include_disabled=True):
+    result = _json_rpc(
+        "Addons.GetAddons",
+        {
+            "type": "xbmc.python.pluginsource",
+            "properties": ["name", "enabled", "thumbnail", "fanart", "version"],
+        },
+    )
+    addons = (result or {}).get("addons") or []
+    meos_id = ADDON.getAddonInfo("id")
+
+    rows = []
+    for addon in addons:
+        addon_id = addon.get("addonid") or ""
+        if not addon_id:
+            continue
+        if addon_id == meos_id and not include_meos:
+            continue
+
+        enabled = addon.get("enabled", True)
+        if (not enabled) and (not include_disabled):
+            continue
+
+        name = addon.get("name") or addon_id
+        rows.append(
+            {
+                "name": name,
+                "addon_id": addon_id,
+                "enabled": enabled,
+                "thumbnail": addon.get("thumbnail") or "",
+                "fanart": addon.get("fanart") or "",
+            }
+        )
+
+    rows.sort(key=lambda item: item["name"].lower())
+    return rows
+
+
 def add_folder_item(label, query, art=None):
     item = xbmcgui.ListItem(label=label)
     item.setArt(art or DEFAULT_ART)
@@ -117,6 +193,7 @@ def list_root():
     add_folder_item("One-Click Live TV", {"action": "list_category", "provider": "all", "category": "live"})
     add_folder_item("One-Click Movies", {"action": "list_category", "provider": "all", "category": "movies"})
     add_folder_item("Sports Hub", {"action": "sports_menu"})
+    add_folder_item("Integrate Other Add-ons", {"action": "integration_menu"})
     for label, category in MENU_CATEGORIES:
         add_folder_item(label, {"action": "list_category", "provider": "all", "category": category})
     add_folder_item("Awards", {"action": "awards_menu"})
@@ -292,6 +369,8 @@ def list_provider_catalog(provider_id):
 
 def list_category(provider_id, category):
     if provider_id == "all":
+        add_integrated_addon_shortcuts(category)
+
         found = 0
         seen = set()
         for provider in sorted(PROVIDERS.values(), key=lambda p: p.name.lower()):
@@ -373,41 +452,16 @@ def list_external_addons():
     xbmcplugin.setPluginCategory(HANDLE, "Installed Video Add-ons")
     include_meos = _setting_bool("external_include_meos", False)
     include_disabled = _setting_bool("external_include_disabled", False)
-
-    result = _json_rpc(
-        "Addons.GetAddons",
-        {
-            "type": "xbmc.python.pluginsource",
-            "properties": ["name", "enabled", "thumbnail", "fanart", "version"],
-        },
-    )
-    addons = (result or {}).get("addons") or []
-
-    rows = []
-    meos_id = ADDON.getAddonInfo("id")
-    for addon in addons:
-        addon_id = addon.get("addonid") or ""
-        if not addon_id:
-            continue
-        if addon_id == meos_id and not include_meos:
-            continue
-
-        enabled = addon.get("enabled", True)
-        if (not enabled) and (not include_disabled):
-            continue
-
-        name = addon.get("name") or addon_id
-        label = name if enabled else "[DISABLED] {0}".format(name)
-        rows.append((name.lower(), label, addon_id, addon))
-
-    rows.sort(key=lambda item: item[0])
+    rows = _get_installed_video_addons(include_meos=include_meos, include_disabled=include_disabled)
 
     if not rows:
         xbmcgui.Dialog().notification("MEOS", "No installed video add-ons found", xbmcgui.NOTIFICATION_INFO, 3000)
         xbmcplugin.endOfDirectory(HANDLE)
         return
 
-    for _, label, addon_id, addon in rows:
+    for addon in rows:
+        label = addon["name"] if addon.get("enabled", True) else "[DISABLED] {0}".format(addon["name"])
+        addon_id = addon["addon_id"]
         target = "plugin://{0}/".format(addon_id)
         art = {
             "thumb": addon.get("thumbnail") or DEFAULT_ART["thumb"],
@@ -418,6 +472,104 @@ def list_external_addons():
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_integration_menu():
+    xbmcplugin.setPluginCategory(HANDLE, "Integrate Other Add-ons")
+    selected = _get_integrated_addon_ids()
+
+    add_folder_item("Select Installed Add-ons", {"action": "integration_picker"})
+    add_folder_item("Clear Integrated Add-ons", {"action": "integration_clear"})
+
+    if not selected:
+        add_folder_item("No integrated add-ons selected", {"action": "integration_picker"})
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
+    for addon_id in selected:
+        row = installed.get(addon_id)
+        label = row["name"] if row else addon_id
+        if row and not row.get("enabled", True):
+            label = "[DISABLED] {0}".format(label)
+        add_folder_item(
+            "Integrated: {0}".format(label),
+            {"action": "external_browse", "target": "plugin://{0}/".format(addon_id), "title": label},
+        )
+
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def pick_integrated_addons():
+    rows = _get_installed_video_addons(include_meos=False, include_disabled=False)
+    if not rows:
+        xbmcgui.Dialog().notification("MEOS", "No enabled video add-ons available", xbmcgui.NOTIFICATION_INFO, 3000)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    selected_existing = set(_get_integrated_addon_ids())
+    labels = [item["name"] for item in rows]
+    preselect = [index for index, item in enumerate(rows) if item["addon_id"] in selected_existing]
+
+    selected_indexes = xbmcgui.Dialog().multiselect(
+        "Select Add-ons to Integrate",
+        labels,
+        preselect=preselect,
+    )
+    if selected_indexes is None:
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    chosen_ids = [rows[index]["addon_id"] for index in selected_indexes if 0 <= index < len(rows)]
+    _set_integrated_addon_ids(chosen_ids)
+    xbmcgui.Dialog().notification("MEOS", "Integrated add-ons updated", xbmcgui.NOTIFICATION_INFO, 2500)
+    list_integration_menu()
+
+
+def clear_integrated_addons():
+    confirmed = xbmcgui.Dialog().yesno(
+        "MEOS",
+        "Clear all integrated add-ons?",
+        yeslabel="Clear",
+        nolabel="Cancel",
+    )
+    if not confirmed:
+        list_integration_menu()
+        return
+
+    _set_integrated_addon_ids([])
+    xbmcgui.Dialog().notification("MEOS", "Integrated add-ons cleared", xbmcgui.NOTIFICATION_INFO, 2500)
+    list_integration_menu()
+
+
+def add_integrated_addon_shortcuts(category):
+    selected = _get_integrated_addon_ids()
+    if not selected:
+        return
+
+    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
+    category_label = (category or "Library").title()
+
+    for addon_id in selected:
+        row = installed.get(addon_id)
+        if not row:
+            continue
+
+        label = "[Integrated {0}] {1}".format(category_label, row["name"])
+        if not row.get("enabled", True):
+            label = "[DISABLED] {0}".format(label)
+
+        art = {
+            "thumb": row.get("thumbnail") or DEFAULT_ART["thumb"],
+            "icon": row.get("thumbnail") or DEFAULT_ART["icon"],
+            "fanart": row.get("fanart") or DEFAULT_ART["fanart"],
+        }
+        add_folder_item(
+            label,
+            {"action": "external_browse", "target": "plugin://{0}/".format(addon_id), "title": row["name"]},
+            art=art,
+        )
 
 
 def list_external_browse(target, title="Add-on"):
@@ -619,6 +771,18 @@ def router(params):
 
     if action == "external_addons":
         list_external_addons()
+        return
+
+    if action == "integration_menu":
+        list_integration_menu()
+        return
+
+    if action == "integration_picker":
+        pick_integrated_addons()
+        return
+
+    if action == "integration_clear":
+        clear_integrated_addons()
         return
 
     if action == "external_browse":
