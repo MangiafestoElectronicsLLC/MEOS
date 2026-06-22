@@ -6,18 +6,24 @@ MEOS is a Kodi repository plus a companion video add-on with a clean install pat
 
 Use the direct ZIP links instead of the GitHub page URL.
 
-1. Repository install for Kodi
-- Add this source in Kodi File Manager:
+1. Recommended repository install (all devices)
+- Download repository ZIP directly:
   https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main/repository.meos.zip
-- Install `repository.meos.zip` from that source.
-- Open Install from repository, choose MEOS Repository, then install MEOS.
+- In Kodi: Add-ons -> Install from zip file -> choose the downloaded `repository.meos.zip`.
+- Then open Install from repository -> MEOS Repository -> install MEOS.
 
-2. Firestick / Kodi 21 direct install
+2. Why Kodi File Manager shows "Unable to connect"
+- `raw.githubusercontent.com` serves files, but does not provide browsable directory listings.
+- Kodi File Manager expects a directory index when you add a web source.
+- If you paste a raw GitHub URL as a source, Kodi commonly shows "Couldn't retrieve directory information".
+- This does not mean your repository ZIP is broken. The ZIP URLs are valid; the source browsing method is the issue.
+
+3. Firestick / Kodi 21 direct install
 - Download `MEOS_ADDON_K21.zip` from the repository.
 - Copy it to the device.
 - In Kodi, choose Install from zip file and select `MEOS_ADDON_K21.zip`.
 
-3. Older Kodi builds
+4. Older Kodi builds
 - Use `MEOS_ADDON.zip` or install the repository first and let Kodi resolve the correct package.
 
 ## What’s Included
@@ -29,5 +35,8 @@ Use the direct ZIP links instead of the GitHub page URL.
 ## Notes
 
 - Do not use `https://github.com/MangiafestoElectronicsLLC/MEOS.git` as a Kodi source.
-- If raw browsing is blocked on the device, download the ZIP on a PC and transfer it manually.
+- If remote browsing is blocked on the device, download ZIP files on a PC/phone and transfer them manually.
 - The repository feed points to the raw GitHub XML and ZIP files under `zips/`.
+- Repository feed files used by Kodi after repository install:
+  - https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main/addons-1.0.17.xml
+  - https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main/zips/plugin.video.meos/plugin.video.meos-1.0.17.zip
