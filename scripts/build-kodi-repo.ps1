@@ -234,18 +234,18 @@ $profileDefinitions = @(
     }
 )
 
-foreach ($profile in $profileDefinitions) {
-    $pluginStagingRoot = Join-Path $env:TEMP ("meos-plugin-{0}-stage-{1}" -f $profile.Name, [guid]::NewGuid().ToString("N"))
+foreach ($buildProfile in $profileDefinitions) {
+    $pluginStagingRoot = Join-Path $env:TEMP ("meos-plugin-{0}-stage-{1}" -f $buildProfile.Name, [guid]::NewGuid().ToString("N"))
     $pluginStagingDir = Join-Path $pluginStagingRoot $pluginId
     New-Item -ItemType Directory -Path $pluginStagingDir -Force | Out-Null
 
     Copy-Item -Path (Join-Path $PluginSourceDir "*") -Destination $pluginStagingDir -Recurse -Force
 
     $stagedAddonXmlPath = Join-Path $pluginStagingDir "addon.xml"
-    Set-PluginPythonDependencyVersion -AddonXmlPath $stagedAddonXmlPath -PythonDependencyVersion $profile.PythonDependencyVersion
+    Set-PluginPythonDependencyVersion -AddonXmlPath $stagedAddonXmlPath -PythonDependencyVersion $buildProfile.PythonDependencyVersion
 
-    New-ZipFromFolder -SourceFolder $pluginStagingRoot -DestinationZip $profile.ProfileZipPath
-    Copy-Item -Path $profile.ProfileZipPath -Destination $profile.InstallZipPath -Force
+    New-ZipFromFolder -SourceFolder $pluginStagingRoot -DestinationZip $buildProfile.ProfileZipPath
+    Copy-Item -Path $buildProfile.ProfileZipPath -Destination $buildProfile.InstallZipPath -Force
 
     Remove-Item -Path $pluginStagingRoot -Recurse -Force
 }
