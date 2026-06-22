@@ -5,6 +5,7 @@
     <setting id="partner_auth_url" type="text" label="Partner auth website" default="https://www.mangiafestoelectronics.com/" />
     <setting id="external_include_disabled" type="bool" label="Installed Add-ons Hub: include disabled add-ons" default="false" />
     <setting id="external_include_meos" type="bool" label="Installed Add-ons Hub: include MEOS add-on" default="false" />
+    <setting id="validated_only" type="bool" label="Category views: show validated items only" default="false" />
     <setting id="external_integrated_addons" type="text" label="Integrated add-ons (internal)" default="" visible="false" />
   </category>
 </settings>

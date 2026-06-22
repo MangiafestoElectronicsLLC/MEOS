@@ -297,6 +297,10 @@ def _mark_provider_validated(provider_id, media_id):
     _set_json_list_setting(VALIDATED_PROVIDER_SETTING, values)
 
 
+def _validated_only_enabled():
+    return _setting_bool("validated_only", False)
+
+
 def _get_installed_video_addons(include_meos=False, include_disabled=True):
     result = _json_rpc(
         "Addons.GetAddons",
@@ -418,7 +422,7 @@ def _resolve_integrated_targets(addon_id, category, addon_name=""):
     root_target = "plugin://{0}/".format(addon_id)
     entries = _browse_directory_entries(root_target)
     if not entries:
-        return [{"target": root_target, "is_folder": True, "matched_label": ""}]
+        return [{"target": root_target, "is_folder": True, "matched_label": "", "thumbnail": "", "fanart": ""}]
 
     keywords = _addon_category_keywords(addon_id, addon_name, category)
     candidates = []
@@ -448,6 +452,8 @@ def _resolve_integrated_targets(addon_id, category, addon_name=""):
                     "target": target,
                     "is_folder": entry.get("filetype") == "directory",
                     "matched_label": entry.get("label") or entry.get("title") or "",
+                    "thumbnail": entry.get("thumbnail") or "",
+                    "fanart": entry.get("fanart") or "",
                 }
             )
             if len(resolved) >= 4:
@@ -468,13 +474,15 @@ def _resolve_integrated_targets(addon_id, category, addon_name=""):
             best = entry
 
     if not best:
-        return [{"target": root_target, "is_folder": True, "matched_label": ""}]
+        return [{"target": root_target, "is_folder": True, "matched_label": "", "thumbnail": "", "fanart": ""}]
 
     return [
         {
             "target": best.get("file") or root_target,
             "is_folder": best.get("filetype") == "directory",
             "matched_label": best.get("label") or best.get("title") or "",
+            "thumbnail": best.get("thumbnail") or "",
+            "fanart": best.get("fanart") or "",
         }
     ]
 
@@ -571,6 +579,10 @@ def add_integrated_category_items(category, seen_title_keys=None):
                 dedupe_key = _title_key(title)
                 if dedupe_key and dedupe_key in seen_title_keys:
                     continue
+
+                if _validated_only_enabled() and not _is_target_validated(target):
+                    continue
+
                 if dedupe_key:
                     seen_title_keys.add(dedupe_key)
 
@@ -792,6 +804,7 @@ def list_provider_catalog(provider_id):
 
 
 def list_category(provider_id, category):
+    validated_only = _validated_only_enabled()
     if provider_id == "all":
         add_integrated_addon_shortcuts(category)
         seen_titles = set()
@@ -805,13 +818,16 @@ def list_category(provider_id, category):
                 key = (provider.id, item.get("media_id", ""))
                 if key in seen:
                     continue
-                seen.add(key)
                 title_key = _title_key(item.get("title", ""))
                 if title_key and title_key in seen_titles:
                     continue
+                is_validated = _is_provider_validated(provider.id, item.get("media_id", ""))
+                if validated_only and not is_validated:
+                    continue
+                seen.add(key)
                 if title_key:
                     seen_titles.add(title_key)
-                validated_prefix = "[Validated] " if _is_provider_validated(provider.id, item.get("media_id", "")) else ""
+                validated_prefix = "[Validated] " if is_validated else ""
                 label = "{0}[{1}] {2}".format(validated_prefix, provider.name, item["title"])
                 add_playable_item(
                     label,
@@ -839,8 +855,11 @@ def list_category(provider_id, category):
         return
 
     for item in catalog:
+        is_validated = _is_provider_validated(provider.id, item.get("media_id", ""))
+        if validated_only and not is_validated:
+            continue
         add_playable_item(
-            item["title"],
+            ("[Validated] " if is_validated else "") + item["title"],
             {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
             {"title": item["title"], "genre": item.get("genre", "")},
         )
@@ -998,9 +1017,9 @@ def add_integrated_addon_shortcuts(category):
             label = "{0} - {1}".format(label, matched_label)
 
         art = {
-            "thumb": row.get("thumbnail") or DEFAULT_ART["thumb"],
-            "icon": row.get("thumbnail") or DEFAULT_ART["icon"],
-            "fanart": row.get("fanart") or DEFAULT_ART["fanart"],
+            "thumb": resolved.get("thumbnail") or row.get("thumbnail") or row.get("fanart") or DEFAULT_ART["thumb"],
+            "icon": resolved.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["icon"],
+            "fanart": resolved.get("fanart") or row.get("fanart") or DEFAULT_ART["fanart"],
         }
         if resolved.get("is_folder", True):
             add_folder_item(
