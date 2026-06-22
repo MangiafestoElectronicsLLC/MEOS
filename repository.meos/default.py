@@ -59,6 +59,9 @@ VALIDATED_TARGETS_SETTING = "external_validated_targets"
 VALIDATED_PROVIDER_SETTING = "provider_validated_items"
 MANUAL_FAVORITES_SETTING = "manual_favorites"
 MAX_MANUAL_FAVORITES = 600
+VALIDATED_MARKER_UNICODE = "[COLOR limegreen][B]✔[/B][/COLOR] "
+VALIDATED_MARKER_FALLBACK = "[COLOR limegreen][B]OK[/B][/COLOR] "
+VALIDATED_MARKER_LEGACY = "[COLOR limegreen][B]v[/B][/COLOR] "
 CATEGORY_HINTS = {
     "movies": ["movie", "movies", "film", "cinema", "one click movie", "1 click movie"],
     "tv": ["tv", "shows", "tv shows", "series", "episodes", "one click tv", "1 click tv"],
@@ -467,6 +470,109 @@ def _validated_only_enabled():
     return _setting_bool("validated_only", False)
 
 
+def _kodi_major_version():
+    build = (xbmc.getInfoLabel("System.BuildVersion") or "").strip()
+    if not build:
+        return 0
+    token = build.split(" ", 1)[0]
+    try:
+        return int(token.split(".", 1)[0])
+    except Exception:
+        return 0
+
+
+def _validated_marker_override_setting():
+    value = (ADDON.getSetting("validated_marker_override") or "").strip().lower()
+    if not value:
+        return "auto"
+
+    enum_index_map = {
+        "0": "auto",
+        "1": "unicode",
+        "2": "ok",
+        "3": "legacy",
+    }
+    if value in enum_index_map:
+        return enum_index_map[value]
+
+    mapping = {
+        "auto": "auto",
+        "unicode": "unicode",
+        "unicode check": "unicode",
+        "check": "unicode",
+        "checkmark": "unicode",
+        "ok": "ok",
+        "ok fallback": "ok",
+        "fallback": "ok",
+        "legacy": "legacy",
+        "legacy v": "legacy",
+        "v": "legacy",
+    }
+    return mapping.get(value, "auto")
+
+
+def _validated_marker_for_runtime():
+    override = _validated_marker_override_setting()
+    if override == "unicode":
+        return VALIDATED_MARKER_UNICODE
+    if override == "ok":
+        return VALIDATED_MARKER_FALLBACK
+    if override == "legacy":
+        return VALIDATED_MARKER_LEGACY
+
+    # Kodi 18.x skins can miss glyph support for the check symbol.
+    major = _kodi_major_version()
+    if major and major <= 18:
+        return VALIDATED_MARKER_FALLBACK
+    return VALIDATED_MARKER_UNICODE
+
+
+def _integration_select_mode_setting():
+    value = (ADDON.getSetting("integration_select_mode") or "").strip().lower()
+    if not value:
+        return "enabled"
+
+    enum_index_map = {
+        "0": "enabled",
+        "1": "all",
+    }
+    if value in enum_index_map:
+        return enum_index_map[value]
+
+    mapping = {
+        "enabled": "enabled",
+        "enabled only": "enabled",
+        "all": "all",
+        "all available": "all",
+        "available": "all",
+    }
+    return mapping.get(value, "enabled")
+
+
+def _integration_include_disabled_from_setting():
+    return _integration_select_mode_setting() == "all"
+
+
+def _integration_mode_label():
+    return "All available" if _integration_include_disabled_from_setting() else "Enabled only"
+
+
+def _format_validated_label(label, validated):
+    if not validated:
+        return label
+    label = label or ""
+    marker = _validated_marker_for_runtime()
+    if label.startswith(marker):
+        return label
+    if label.startswith(VALIDATED_MARKER_UNICODE):
+        return label
+    if label.startswith(VALIDATED_MARKER_FALLBACK):
+        return label
+    if label.startswith(VALIDATED_MARKER_LEGACY):
+        return label
+    return "{0}{1}".format(marker, label)
+
+
 def _get_installed_video_addons(include_meos=False, include_disabled=True):
     result = _json_rpc(
         "Addons.GetAddons",
@@ -673,15 +779,68 @@ def _resolve_integrated_targets(addon_id, category, addon_name=""):
 
 
 def _browse_directory_entries(target):
-    result = _json_rpc(
-        "Files.GetDirectory",
-        {
-            "directory": target,
-            "media": "files",
-            "properties": ["title", "file", "filetype", "thumbnail", "fanart", "plot"],
-        },
-    )
-    return (result or {}).get("files") or []
+    target = (target or "").strip()
+    if not target:
+        return []
+
+    targets_to_try = []
+    seen_targets = set()
+
+    def _push_target(value):
+        value = (value or "").strip()
+        if not value or value in seen_targets:
+            return
+        seen_targets.add(value)
+        targets_to_try.append(value)
+
+    _push_target(target)
+
+    parsed = urlparse(target)
+    if parsed.scheme == "plugin" and parsed.netloc:
+        path = parsed.path or "/"
+        if not path.startswith("/"):
+            path = "/" + path
+
+        if not path.endswith("/"):
+            _push_target(urlunparse((parsed.scheme, parsed.netloc, path + "/", parsed.params, parsed.query, parsed.fragment)))
+
+        _push_target(urlunparse((parsed.scheme, parsed.netloc, "/", "", "", "")))
+
+    request_profiles = [
+        {"media": "files"},
+        {"media": "video"},
+        {},
+    ]
+
+    properties = ["label", "title", "file", "filetype", "thumbnail", "fanart", "plot"]
+
+    for directory in targets_to_try:
+        for profile in request_profiles:
+            params = {
+                "directory": directory,
+                "properties": properties,
+            }
+            params.update(profile)
+            result = _json_rpc("Files.GetDirectory", params)
+            files = (result or {}).get("files") or []
+            if not files:
+                continue
+
+            cleaned = []
+            seen_files = set()
+            for entry in files:
+                file_path = (entry.get("file") or "").strip()
+                if not file_path or file_path in seen_files:
+                    continue
+                if file_path in ("..", "."):
+                    continue
+                seen_files.add(file_path)
+                cleaned.append(entry)
+
+            if cleaned:
+                return cleaned
+
+    return []
 
 
 def _resolve_integrated_target(addon_id, category, addon_name=""):
@@ -772,8 +931,7 @@ def add_integrated_category_items(category, seen_title_keys=None):
                 if dedupe_key:
                     seen_title_keys.add(dedupe_key)
 
-                validated_prefix = "[Validated] " if is_validated else ""
-                label = "{0}[Integrated {1}] {2}".format(validated_prefix, row["name"], title)
+                label = _format_validated_label("[Integrated {0}] {1}".format(row["name"], title), is_validated)
                 art = {
                     "thumb": entry.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["thumb"],
                     "icon": entry.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["icon"],
@@ -1053,8 +1211,7 @@ def list_category(provider_id, category):
                 seen.add(key)
                 if title_key:
                     seen_titles.add(title_key)
-                validated_prefix = "[Validated] " if is_validated else ""
-                label = "{0}[{1}] {2}".format(validated_prefix, provider.name, item["title"])
+                label = _format_validated_label("[{0}] {1}".format(provider.name, item["title"]), is_validated)
                 add_validated_playable_item(
                     label,
                     {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
@@ -1086,7 +1243,7 @@ def list_category(provider_id, category):
         if validated_only and not is_validated:
             continue
         add_validated_playable_item(
-            ("[Validated] " if is_validated else "") + item["title"],
+            _format_validated_label(item["title"], is_validated),
             {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
             validated=is_validated,
             info={"title": item["title"], "genre": item.get("genre", "")},
@@ -1157,7 +1314,7 @@ def list_integration_menu():
     selected = _get_integrated_addon_ids()
 
     add_folder_item("Select Installed Add-ons", {"action": "integration_picker"})
-    add_folder_item("Integrate All Enabled Add-ons", {"action": "integration_select_all"})
+    add_folder_item("Integrate All ({0})".format(_integration_mode_label()), {"action": "integration_select_all"})
     add_folder_item("Auto-Build Favorites from Top Matches", {"action": "favorites_autobuild"})
     add_folder_item("Integration Inspector", {"action": "integration_inspector"})
     add_folder_item("Clear Integrated Add-ons", {"action": "integration_clear"})
@@ -1183,9 +1340,9 @@ def list_integration_menu():
 
 
 def list_integration_picker():
-    rows = _get_installed_video_addons(include_meos=False, include_disabled=False)
+    rows = _get_installed_video_addons(include_meos=False, include_disabled=True)
     if not rows:
-        xbmcgui.Dialog().notification("MEOS", "No enabled video add-ons available", xbmcgui.NOTIFICATION_INFO, 3000)
+        xbmcgui.Dialog().notification("MEOS", "No video add-ons available", xbmcgui.NOTIFICATION_INFO, 3000)
         xbmcplugin.endOfDirectory(HANDLE)
         return
 
@@ -1194,7 +1351,7 @@ def list_integration_picker():
     selected_set = set(selected_existing)
 
     add_folder_item("Done", {"action": "integration_menu"})
-    add_folder_item("Select All", {"action": "integration_select_all"})
+    add_folder_item("Select All ({0})".format(_integration_mode_label()), {"action": "integration_select_all"})
     add_folder_item("Clear Integrated Add-ons", {"action": "integration_clear"})
 
     for item in rows:
@@ -1205,8 +1362,11 @@ def list_integration_picker():
             "icon": item.get("thumbnail") or DEFAULT_ART["icon"],
             "fanart": item.get("fanart") or DEFAULT_ART["fanart"],
         }
+        addon_label = item["name"]
+        if not item.get("enabled", True):
+            addon_label = "[DISABLED] {0}".format(addon_label)
         add_folder_item(
-            "{0} {1}".format(checked, item["name"]),
+            "{0} {1}".format(checked, addon_label),
             {"action": "integration_toggle", "addon_id": addon_id},
             art=art,
         )
@@ -1243,6 +1403,7 @@ def select_all_integrated_addons(include_disabled=False):
         return
 
     addon_ids = [row.get("addon_id") for row in rows if row.get("addon_id")]
+    mode_label = "all available" if include_disabled else "enabled"
     _set_integrated_addon_ids(addon_ids)
     auto_build_enabled = _setting_bool("integrate_all_auto_build_favorites", False)
     if auto_build_enabled:
@@ -1270,14 +1431,14 @@ def select_all_integrated_addons(include_disabled=False):
         added_count = max(0, favorites_after - favorites_before)
         xbmcgui.Dialog().notification(
             "MEOS",
-            "Integrated {0} add-ons, auto-built {1} favorites".format(len(addon_ids), added_count),
+            "Integrated {0} {1} add-ons, auto-built {2} favorites".format(len(addon_ids), mode_label, added_count),
             xbmcgui.NOTIFICATION_INFO,
             3000,
         )
     else:
         xbmcgui.Dialog().notification(
             "MEOS",
-            "Integrated {0} add-ons".format(len(addon_ids)),
+            "Integrated {0} {1} add-ons".format(len(addon_ids), mode_label),
             xbmcgui.NOTIFICATION_INFO,
             2500,
         )
@@ -1473,6 +1634,7 @@ def list_manual_favorites():
     favorites = _get_manual_favorites()
 
     add_folder_item("Add Favorite by Path/URL", {"action": "favorite_add_prompt"})
+    add_folder_item("Add from Integrated Add-ons", {"action": "favorite_add_integrated_menu"})
     add_folder_item("Auto-Build from Integrated Add-ons", {"action": "favorites_autobuild"})
     add_folder_item("Integration Inspector", {"action": "integration_inspector"})
     if favorites:
@@ -1507,6 +1669,108 @@ def list_manual_favorites():
             )
 
         add_action_item("Remove: {0}".format(label), {"action": "favorite_remove", "target": target})
+
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_favorite_add_from_integrated_menu():
+    xbmcplugin.setPluginCategory(HANDLE, "Add Favorite from Integrated Add-ons")
+    selected = _get_integrated_addon_ids()
+    if not selected:
+        add_folder_item("No integrated add-ons selected", {"action": "integration_picker"})
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
+    for addon_id in selected:
+        row = installed.get(addon_id)
+        addon_name = row["name"] if row else addon_id
+        if row and not row.get("enabled", True):
+            addon_name = "[DISABLED] {0}".format(addon_name)
+        add_folder_item(
+            "{0}".format(addon_name),
+            {"action": "favorite_add_integrated_addon", "addon_id": addon_id},
+        )
+
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_favorite_add_from_integrated_addon(addon_id):
+    addon_id = (addon_id or "").strip()
+    if not addon_id:
+        xbmcgui.Dialog().notification("MEOS", "Missing add-on id", xbmcgui.NOTIFICATION_ERROR, 2500)
+        list_favorite_add_from_integrated_menu()
+        return
+
+    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
+    row = installed.get(addon_id)
+    addon_name = row["name"] if row else addon_id
+    root_target = "plugin://{0}/".format(addon_id)
+
+    xbmcplugin.setPluginCategory(HANDLE, "Add from: {0}".format(addon_name))
+    add_action_item(
+        "Add Root to Favorites",
+        {
+            "action": "favorite_add",
+            "target": root_target,
+            "label": "[{0}] Root".format(addon_name),
+            "title": addon_name,
+            "is_folder": "true",
+            "thumb": (row or {}).get("thumbnail", ""),
+            "fanart": (row or {}).get("fanart", ""),
+            "return_action": "favorite_add_integrated_addon",
+            "return_addon_id": addon_id,
+        },
+    )
+
+    for category_label, category in MENU_CATEGORIES:
+        targets = _resolve_integrated_targets(addon_id, category, addon_name=addon_name)
+        if not targets:
+            add_action_item("{0}: no match".format(category_label), {"action": "favorite_add_integrated_menu"})
+            continue
+
+        for match in targets:
+            target = match.get("target") or root_target
+            matched_label = match.get("matched_label") or "Top Match"
+            is_folder = bool(match.get("is_folder", True))
+            label = "[{0}] {1}".format(category_label, matched_label)
+            art = {
+                "thumb": match.get("thumbnail") or (row or {}).get("thumbnail") or DEFAULT_ART["thumb"],
+                "icon": match.get("thumbnail") or (row or {}).get("thumbnail") or DEFAULT_ART["icon"],
+                "fanart": match.get("fanart") or (row or {}).get("fanart") or DEFAULT_ART["fanart"],
+            }
+
+            add_action_item(
+                "Add to Favorites: {0}".format(label),
+                {
+                    "action": "favorite_add",
+                    "target": target,
+                    "label": "[{0}] {1} - {2}".format(category_label, addon_name, matched_label),
+                    "title": addon_name,
+                    "is_folder": "true" if is_folder else "false",
+                    "thumb": art.get("thumb", ""),
+                    "fanart": art.get("fanart", ""),
+                    "return_action": "favorite_add_integrated_addon",
+                    "return_addon_id": addon_id,
+                },
+            )
+
+            if is_folder:
+                add_folder_item(
+                    "Browse: {0}".format(label),
+                    {"action": "external_browse", "target": target, "title": addon_name},
+                    art=art,
+                )
+            else:
+                add_validated_playable_item(
+                    "Play: {0}".format(_format_validated_label(label, _is_target_validated(target))),
+                    {"action": "external_play", "target": target},
+                    validated=_is_target_validated(target),
+                    info={"title": label, "genre": category_label},
+                    art=art,
+                )
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
@@ -1584,6 +1848,9 @@ def add_manual_favorite_from_action(
         return
     if return_action == "integration_audit_report":
         list_integration_audit_report(return_addon_id)
+        return
+    if return_action == "favorite_add_integrated_addon":
+        list_favorite_add_from_integrated_addon(return_addon_id)
         return
     list_manual_favorites()
 
@@ -1749,8 +2016,7 @@ def list_external_browse(target, title="Add-on"):
 
         label = entry.get("label") or entry.get("title") or file_path
         is_validated = _is_target_validated(file_path)
-        if is_validated:
-            label = "[Validated] {0}".format(label)
+        label = _format_validated_label(label, is_validated)
         art = {
             "thumb": entry.get("thumbnail") or DEFAULT_ART["thumb"],
             "icon": entry.get("thumbnail") or DEFAULT_ART["icon"],
@@ -1982,7 +2248,7 @@ def router(params):
         return
 
     if action == "integration_select_all":
-        select_all_integrated_addons(include_disabled=False)
+        select_all_integrated_addons(include_disabled=_integration_include_disabled_from_setting())
         return
 
     if action == "integration_clear":
@@ -1995,6 +2261,14 @@ def router(params):
 
     if action == "favorite_add_prompt":
         add_manual_favorite_prompt()
+        return
+
+    if action == "favorite_add_integrated_menu":
+        list_favorite_add_from_integrated_menu()
+        return
+
+    if action == "favorite_add_integrated_addon":
+        list_favorite_add_from_integrated_addon(params.get("addon_id", ""))
         return
 
     if action == "favorite_add":
