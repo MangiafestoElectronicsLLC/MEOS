@@ -1,5 +1,6 @@
 import sys
 import random
+import json
 
 import xbmc
 import xbmcaddon
@@ -66,10 +67,42 @@ def set_auth_state(provider_id, state):
     ADDON.setSetting("auth.{0}".format(provider_id), state)
 
 
+def _setting_bool(setting_id, default=False):
+    value = (ADDON.getSetting(setting_id) or "").strip().lower()
+    if not value:
+        return default
+    return value in ("true", "1", "yes", "on")
+
+
+def _json_rpc(method, params=None):
+    payload = {"jsonrpc": "2.0", "id": 1, "method": method}
+    if params is not None:
+        payload["params"] = params
+
+    try:
+        response = xbmc.executeJSONRPC(json.dumps(payload))
+        data = json.loads(response)
+    except Exception as exc:
+        xbmc.log("MEOS JSON-RPC failure ({0}): {1}".format(method, exc), xbmc.LOGWARNING)
+        return None
+
+    if data.get("error"):
+        xbmc.log("MEOS JSON-RPC error ({0}): {1}".format(method, data.get("error")), xbmc.LOGWARNING)
+        return None
+
+    return data.get("result")
+
+
 def add_folder_item(label, query, art=None):
     item = xbmcgui.ListItem(label=label)
     item.setArt(art or DEFAULT_ART)
     xbmcplugin.addDirectoryItem(HANDLE, build_url(query), item, isFolder=True)
+
+
+def add_action_item(label, query, art=None):
+    item = xbmcgui.ListItem(label=label)
+    item.setArt(art or DEFAULT_ART)
+    xbmcplugin.addDirectoryItem(HANDLE, build_url(query), item, isFolder=False)
 
 
 def add_playable_item(label, query, info=None, art=None):
@@ -87,6 +120,7 @@ def list_root():
     for label, category in MENU_CATEGORIES:
         add_folder_item(label, {"action": "list_category", "provider": "all", "category": category})
     add_folder_item("Awards", {"action": "awards_menu"})
+    add_folder_item("Installed Add-ons Hub", {"action": "external_addons"})
     add_folder_item("Search All", {"action": "search_all"})
     add_folder_item("Settings", {"action": "open_settings"})
     xbmcplugin.endOfDirectory(HANDLE)
@@ -335,6 +369,131 @@ def list_award_year(provider_id, award, result, year):
     xbmcplugin.endOfDirectory(HANDLE)
 
 
+def list_external_addons():
+    xbmcplugin.setPluginCategory(HANDLE, "Installed Video Add-ons")
+    include_meos = _setting_bool("external_include_meos", False)
+    include_disabled = _setting_bool("external_include_disabled", False)
+
+    result = _json_rpc(
+        "Addons.GetAddons",
+        {
+            "type": "xbmc.python.pluginsource",
+            "properties": ["name", "enabled", "thumbnail", "fanart", "version"],
+        },
+    )
+    addons = (result or {}).get("addons") or []
+
+    rows = []
+    meos_id = ADDON.getAddonInfo("id")
+    for addon in addons:
+        addon_id = addon.get("addonid") or ""
+        if not addon_id:
+            continue
+        if addon_id == meos_id and not include_meos:
+            continue
+
+        enabled = addon.get("enabled", True)
+        if (not enabled) and (not include_disabled):
+            continue
+
+        name = addon.get("name") or addon_id
+        label = name if enabled else "[DISABLED] {0}".format(name)
+        rows.append((name.lower(), label, addon_id, addon))
+
+    rows.sort(key=lambda item: item[0])
+
+    if not rows:
+        xbmcgui.Dialog().notification("MEOS", "No installed video add-ons found", xbmcgui.NOTIFICATION_INFO, 3000)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    for _, label, addon_id, addon in rows:
+        target = "plugin://{0}/".format(addon_id)
+        art = {
+            "thumb": addon.get("thumbnail") or DEFAULT_ART["thumb"],
+            "icon": addon.get("thumbnail") or DEFAULT_ART["icon"],
+            "fanart": addon.get("fanart") or DEFAULT_ART["fanart"],
+        }
+        add_folder_item(label, {"action": "external_browse", "target": target, "title": label}, art=art)
+
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_external_browse(target, title="Add-on"):
+    if not target:
+        xbmcgui.Dialog().notification("MEOS", "Missing add-on target", xbmcgui.NOTIFICATION_ERROR, 3000)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    xbmcplugin.setPluginCategory(HANDLE, "Integrated: {0}".format(title or "Add-on"))
+
+    add_action_item(
+        "Open Native Add-on Page",
+        {"action": "external_native", "target": target},
+    )
+
+    result = _json_rpc(
+        "Files.GetDirectory",
+        {
+            "directory": target,
+            "media": "files",
+            "properties": ["title", "file", "filetype", "thumbnail", "fanart", "plot"],
+        },
+    )
+    files = (result or {}).get("files") or []
+
+    if not files:
+        xbmcgui.Dialog().notification("MEOS", "No items found for this add-on", xbmcgui.NOTIFICATION_INFO, 3000)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    for entry in files:
+        file_path = entry.get("file") or ""
+        if not file_path:
+            continue
+
+        label = entry.get("label") or entry.get("title") or file_path
+        art = {
+            "thumb": entry.get("thumbnail") or DEFAULT_ART["thumb"],
+            "icon": entry.get("thumbnail") or DEFAULT_ART["icon"],
+            "fanart": entry.get("fanart") or DEFAULT_ART["fanart"],
+        }
+
+        if entry.get("filetype") == "directory":
+            add_folder_item(label, {"action": "external_browse", "target": file_path, "title": title}, art=art)
+        else:
+            add_playable_item(label, {"action": "external_play", "target": file_path}, {"title": label}, art=art)
+
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def play_external_item(target):
+    if not target:
+        xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
+        return
+
+    if target.startswith("plugin://"):
+        xbmc.executebuiltin('PlayMedia("{0}")'.format(target.replace('"', '%22')))
+        xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
+        return
+
+    item = xbmcgui.ListItem(path=target)
+    item.setArt(DEFAULT_ART)
+    xbmcplugin.setResolvedUrl(HANDLE, True, item)
+
+
+def open_external_native(target):
+    if not target:
+        xbmcgui.Dialog().notification("MEOS", "Missing add-on target", xbmcgui.NOTIFICATION_ERROR, 3000)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    xbmc.executebuiltin('ActivateWindow(Videos,"{0}",return)'.format(target.replace('"', '%22')))
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
 def search_catalog(provider_id=None):
     keyboard = xbmc.Keyboard("", "Search MEOS")
     keyboard.doModal()
@@ -456,6 +615,22 @@ def router(params):
 
     if action == "list_sources":
         list_sources(params.get("category", ""))
+        return
+
+    if action == "external_addons":
+        list_external_addons()
+        return
+
+    if action == "external_browse":
+        list_external_browse(params.get("target", ""), params.get("title", "Add-on"))
+        return
+
+    if action == "external_play":
+        play_external_item(params.get("target", ""))
+        return
+
+    if action == "external_native":
+        open_external_native(params.get("target", ""))
         return
 
     if action == "search_all":

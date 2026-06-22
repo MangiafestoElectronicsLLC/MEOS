@@ -3,5 +3,7 @@
   <category label="MEOS">
     <setting id="sample_stream_url" type="text" label="Sample stream URL override" default="" />
     <setting id="partner_auth_url" type="text" label="Partner auth website" default="https://www.mangiafestoelectronics.com/" />
+    <setting id="external_include_disabled" type="bool" label="Installed Add-ons Hub: include disabled add-ons" default="false" />
+    <setting id="external_include_meos" type="bool" label="Installed Add-ons Hub: include MEOS add-on" default="false" />
   </category>
 </settings>

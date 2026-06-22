@@ -1,4 +1,32 @@
 # MEOS
+
+## Kodi Install From GitHub (Correct Method)
+
+Important: do not use this URL as a Kodi file source path:
+https://github.com/MangiafestoElectronicsLLC/MEOS.git
+
+Use one of these methods instead.
+
+1. Install repository zip directly from URL
+- In Kodi file manager, add source:
+  https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main/
+- Then install from zip file:
+  repository.meos.zip
+
+2. If raw source browsing is blocked on your Kodi build
+- Download repository.meos.zip from GitHub on a PC.
+- Copy it to your device.
+- In Kodi, use Install from zip file and pick repository.meos.zip.
+
+3. After repository install
+- Open Install from repository.
+- Choose MEOS Repository.
+- Install MEOS plugin video add-on.
+
+Notes
+- The repository addon now points to GitHub raw feed files and zip directory.
+- Installed Add-ons Hub is available inside the MEOS plugin menu for integrated browsing.
+
 Streaming
 For Use of any Streaming Device Mainly products I curate including MEOS, and MEOS Stick
 Can Access my Company website @ https://www.mangiafestoelectronics.com/
