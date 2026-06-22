@@ -15,6 +15,7 @@ Use the direct ZIP links instead of the GitHub page URL.
 2. Why Kodi File Manager shows "Unable to connect"
 - `raw.githubusercontent.com` serves files, but does not provide browsable directory listings.
 - Kodi File Manager expects a directory index when you add a web source.
+- A direct `.zip` URL is a file, not a directory source, so Kodi still warns that it cannot retrieve directory information.
 - If you paste a raw GitHub URL as a source, Kodi commonly shows "Couldn't retrieve directory information".
 - This does not mean your repository ZIP is broken. The ZIP URLs are valid; the source browsing method is the issue.
 
