@@ -51,67 +51,91 @@ AWARD_MENU = [
 ]
 YEAR_MIN = 1927
 YEAR_MAX = 2026
-MAX_INTEGRATED_SCAN_DEPTH = 2
+MAX_INTEGRATED_SCAN_DEPTH = 3
 MAX_INTEGRATED_ITEMS_PER_ADDON = 120
+MAX_INTEGRATED_TARGET_MATCHES = 8
 MAX_VALIDATED_CACHE_ITEMS = 800
-MAX_PREVALIDATE_CHECKS_PER_VIEW = 35
 VALIDATED_TARGETS_SETTING = "external_validated_targets"
 VALIDATED_PROVIDER_SETTING = "provider_validated_items"
 CATEGORY_HINTS = {
     "movies": ["movie", "movies", "film", "cinema", "one click movie", "1 click movie"],
     "tv": ["tv", "shows", "tv shows", "series", "episodes", "one click tv", "1 click tv"],
     "docs": ["doc", "docs", "documentary", "documentaries"],
-    "live": ["live", "channels", "iptv", "live tv", "one click live", "1 click live"],
+    "live": ["live", "channels", "channel", "iptv", "live tv", "cable", "cable tv", "local channels", "broadcast", "one click live", "1 click live"],
     "sports": ["sport", "sports", "nfl", "nba", "mlb", "ufc", "mma", "boxing", "wwe"],
     "award": ["award", "awards", "oscar", "emmy", "winner", "nominee"],
 }
 ADDON_CATEGORY_RULES = [
     {
         "name": "scrubs",
-        "id_contains": ["scrubsv2", "scrubs", "plugin.video.scrubs"],
-        "label_contains": ["scrubs"],
+        "id_contains": ["scrubsv2", "scrubs", "plugin.video.scrubs", "plugin.video.scrubsv2"],
+        "label_contains": ["scrubs", "scrubs v2"],
         "categories": {
-            "movies": ["movies", "my movies", "new movies", "movie world", "boxsets"],
-            "tv": ["tv shows", "my tv shows", "new episodes", "series", "episodes"],
-            "live": ["live tv", "live channels", "channels", "iptv"],
-            "sports": ["sports", "live sports"],
-            "docs": ["documentaries", "docs"],
+            "movies": ["movies", "my movies", "new movies", "movie world", "boxsets", "1-click movies", "one click movies", "trending movies"],
+            "tv": ["tv shows", "my tv shows", "new episodes", "series", "episodes", "1-click tv shows", "one click tv shows", "trending tv shows"],
+            "live": ["live tv", "live channels", "channels", "iptv", "cable tv"],
+            "sports": ["sports", "live sports", "sport"],
+            "docs": ["documentaries", "docs", "documentary"],
         },
     },
     {
         "name": "red gratis",
-        "id_contains": ["redgratis", "red.gratis", "plugin.video.red"],
-        "label_contains": ["red gratis", "redgratis"],
+        "id_contains": ["redgratis", "red.gratis", "plugin.video.red", "plugin.video.redgratis", "plugin.video.red.gratis"],
+        "label_contains": ["red gratis", "redgratis", "red"],
         "categories": {
-            "movies": ["peliculas", "pelis", "movies", "cine"],
-            "tv": ["series", "tv", "tv shows"],
-            "live": ["tv en vivo", "en vivo", "live tv", "canales", "channels"],
-            "sports": ["deportes", "sports"],
-            "docs": ["documentales", "documentaries"],
+            "movies": ["peliculas", "pelis", "movies", "cine", "estrenos", "boxsets"],
+            "tv": ["series", "tv", "tv shows", "novelas", "episodios"],
+            "live": ["tv en vivo", "en vivo", "live tv", "canales", "channels", "cable", "latino"],
+            "sports": ["deportes", "sports", "eventos"],
+            "docs": ["documentales", "documentaries", "docs"],
         },
     },
     {
         "name": "loop",
-        "id_contains": ["theloop", "plugin.video.loop"],
-        "label_contains": ["loop"],
+        "id_contains": ["theloop", "plugin.video.loop", "plugin.video.theloop", "plugin.video.the.loop"],
+        "label_contains": ["loop", "the loop"],
         "categories": {
-            "movies": ["movies", "movie"],
-            "tv": ["tv shows", "shows", "series"],
-            "live": ["live tv", "channels", "live channels", "iptv"],
-            "sports": ["sports", "live sports", "sport"],
-            "docs": ["documentaries"],
+            "movies": ["movies", "movie", "movie zone"],
+            "tv": ["tv shows", "shows", "series", "tv"],
+            "live": ["live tv", "channels", "live channels", "iptv", "cable"],
+            "sports": ["sports", "live sports", "sport", "24/7 sports", "sports area"],
+            "docs": ["documentaries", "docs"],
         },
     },
     {
         "name": "ghost",
-        "id_contains": ["ghost", "plugin.video.ghost"],
-        "label_contains": ["ghost"],
+        "id_contains": ["ghost", "plugin.video.ghost", "plugin.video.theghost", "plugin.video.the.ghost"],
+        "label_contains": ["ghost", "the ghost"],
         "categories": {
-            "movies": ["movies", "movie"],
-            "tv": ["tv shows", "shows", "series"],
-            "live": ["live tv", "channels", "live channels"],
-            "sports": ["sports", "sport"],
+            "movies": ["movies", "movie", "1-click movies", "one click movies", "boxsets"],
+            "tv": ["tv shows", "shows", "series", "1-click tv shows", "one click tv shows"],
+            "live": ["live tv", "channels", "live channels", "iptv", "cable"],
+            "sports": ["sports", "sport", "live sports"],
+            "docs": ["documentaries", "docs", "documentary"],
+        },
+    },
+    {
+        "name": "rising tides",
+        "id_contains": ["risingtides", "rising.tides", "plugin.video.risingtides", "plugin.video.rising.tides"],
+        "label_contains": ["rising tides", "risingtides"],
+        "categories": {
+            "movies": ["movies", "movie", "replays"],
+            "tv": ["tv shows", "shows", "replays", "series"],
+            "live": ["live tv", "channels", "live channels", "iptv", "cable", "ppv events"],
+            "sports": ["sports", "live sports", "football", "basketball", "baseball", "hockey", "replays", "ppv events"],
             "docs": ["documentaries", "docs"],
+        },
+    },
+    {
+        "name": "the crew",
+        "id_contains": ["thecrew", "crew", "plugin.video.thecrew", "plugin.video.the.crew"],
+        "label_contains": ["the crew", "crew"],
+        "categories": {
+            "movies": ["movies", "movie", "1-click movies", "one click movies", "boxsets", "new movies"],
+            "tv": ["tv shows", "shows", "series", "1-click tv shows", "one click tv shows", "new episodes"],
+            "live": ["live tv", "channels", "live channels", "iptv", "cable", "tv"],
+            "sports": ["sports", "sport", "live sports", "nfl", "nba", "mlb", "nhl", "ufc", "boxing"],
+            "docs": ["documentaries", "docs", "kids"],
         },
     },
 ]
@@ -238,45 +262,6 @@ def _mark_target_validated(target):
     values = _get_json_list_setting(VALIDATED_TARGETS_SETTING)
     values.insert(0, target)
     _set_json_list_setting(VALIDATED_TARGETS_SETTING, values)
-
-
-def _can_prevalidate_target(target):
-    if not target:
-        return False
-
-    if target.startswith("plugin://"):
-        result = _json_rpc(
-            "Files.GetDirectory",
-            {
-                "directory": target,
-                "media": "files",
-                "properties": ["file", "filetype"],
-            },
-        )
-        files = (result or {}).get("files") or []
-        return bool(files)
-
-    if target.startswith("http://") or target.startswith("https://"):
-        return True
-
-    if target.startswith("special://"):
-        return True
-
-    return False
-
-
-def _ensure_target_validated(target, budget):
-    if _is_target_validated(target):
-        return True
-    if budget.get("checks", 0) >= MAX_PREVALIDATE_CHECKS_PER_VIEW:
-        return False
-
-    budget["checks"] = budget.get("checks", 0) + 1
-    if not _can_prevalidate_target(target):
-        return False
-
-    _mark_target_validated(target)
-    return True
 
 
 def _provider_validation_key(provider_id, media_id):
@@ -420,27 +405,42 @@ def _addon_category_keywords(addon_id, addon_name, category):
 
 def _resolve_integrated_targets(addon_id, category, addon_name=""):
     root_target = "plugin://{0}/".format(addon_id)
-    entries = _browse_directory_entries(root_target)
-    if not entries:
-        return [{"target": root_target, "is_folder": True, "matched_label": "", "thumbnail": "", "fanart": ""}]
-
     keywords = _addon_category_keywords(addon_id, addon_name, category)
+    queue = [(root_target, 0)]
+    visited_targets = set()
     candidates = []
-    for entry in entries:
-        file_path = entry.get("file") or ""
-        if not file_path:
+    fallback_entries = []
+
+    while queue:
+        current_target, depth = queue.pop(0)
+        if not current_target or current_target in visited_targets:
             continue
-        label = entry.get("label") or entry.get("title") or file_path
-        score = _score_keywords(label, keywords)
-        if score <= 0:
+        visited_targets.add(current_target)
+
+        entries = _browse_directory_entries(current_target)
+        if not entries:
             continue
-        candidates.append((score, entry))
+        if current_target == root_target:
+            fallback_entries = entries
+
+        for entry in entries:
+            file_path = entry.get("file") or ""
+            if not file_path:
+                continue
+            label = entry.get("label") or entry.get("title") or file_path
+            score = _score_keywords(label, keywords)
+            if score > 0:
+                score += max(0, (MAX_INTEGRATED_SCAN_DEPTH - depth) * 5)
+                candidates.append((score, depth, entry))
+
+            if entry.get("filetype") == "directory" and depth < MAX_INTEGRATED_SCAN_DEPTH:
+                queue.append((file_path, depth + 1))
 
     if candidates:
-        candidates.sort(key=lambda row: row[0], reverse=True)
+        candidates.sort(key=lambda row: (row[0], -row[1]), reverse=True)
         resolved = []
         seen_targets = set()
-        for score, entry in candidates:
+        for score, depth, entry in candidates:
             if score < 30 and resolved:
                 continue
             target = entry.get("file") or ""
@@ -456,10 +456,14 @@ def _resolve_integrated_targets(addon_id, category, addon_name=""):
                     "fanart": entry.get("fanart") or "",
                 }
             )
-            if len(resolved) >= 4:
+            if len(resolved) >= MAX_INTEGRATED_TARGET_MATCHES:
                 break
         if resolved:
             return resolved
+
+    entries = fallback_entries
+    if not entries:
+        return [{"target": root_target, "is_folder": True, "matched_label": "", "thumbnail": "", "fanart": ""}]
 
     best = None
     best_score = 0
@@ -550,7 +554,6 @@ def add_integrated_category_items(category, seen_title_keys=None):
 
     installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=False)}
     total_added = 0
-    validation_budget = {"checks": 0}
 
     for addon_id in selected:
         row = installed.get(addon_id)
@@ -580,13 +583,13 @@ def add_integrated_category_items(category, seen_title_keys=None):
                 if dedupe_key and dedupe_key in seen_title_keys:
                     continue
 
-                if _validated_only_enabled() and not _is_target_validated(target):
+                is_validated = _is_target_validated(target)
+                if _validated_only_enabled() and not is_validated:
                     continue
 
                 if dedupe_key:
                     seen_title_keys.add(dedupe_key)
 
-                is_validated = _ensure_target_validated(target, validation_budget)
                 validated_prefix = "[Validated] " if is_validated else ""
                 label = "{0}[Integrated {1}] {2}".format(validated_prefix, row["name"], title)
                 art = {
@@ -594,10 +597,11 @@ def add_integrated_category_items(category, seen_title_keys=None):
                     "icon": entry.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["icon"],
                     "fanart": entry.get("fanart") or row.get("fanart") or DEFAULT_ART["fanart"],
                 }
-                add_playable_item(
+                add_validated_playable_item(
                     label,
                     {"action": "external_play", "target": target},
-                    {"title": title, "genre": category.title()},
+                    validated=is_validated,
+                    info={"title": title, "genre": category.title()},
                     art=art,
                 )
                 total_added += 1
@@ -623,6 +627,13 @@ def add_playable_item(label, query, info=None, art=None):
     item.setInfo("video", info or {"title": label})
     item.setProperty("IsPlayable", "true")
     xbmcplugin.addDirectoryItem(HANDLE, build_url(query), item, isFolder=False)
+
+
+def add_validated_playable_item(label, query, validated=False, info=None, art=None):
+    video_info = dict(info or {"title": label})
+    if validated:
+        video_info["playcount"] = 1
+    add_playable_item(label, query, info=video_info, art=art)
 
 
 def list_root():
@@ -829,10 +840,11 @@ def list_category(provider_id, category):
                     seen_titles.add(title_key)
                 validated_prefix = "[Validated] " if is_validated else ""
                 label = "{0}[{1}] {2}".format(validated_prefix, provider.name, item["title"])
-                add_playable_item(
+                add_validated_playable_item(
                     label,
                     {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
-                    {"title": item["title"], "genre": item.get("genre", "")},
+                    validated=is_validated,
+                    info={"title": item["title"], "genre": item.get("genre", "")},
                 )
                 found += 1
 
@@ -858,10 +870,11 @@ def list_category(provider_id, category):
         is_validated = _is_provider_validated(provider.id, item.get("media_id", ""))
         if validated_only and not is_validated:
             continue
-        add_playable_item(
+        add_validated_playable_item(
             ("[Validated] " if is_validated else "") + item["title"],
             {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
-            {"title": item["title"], "genre": item.get("genre", "")},
+            validated=is_validated,
+            info={"title": item["title"], "genre": item.get("genre", "")},
         )
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
@@ -951,30 +964,56 @@ def list_integration_menu():
     xbmcplugin.endOfDirectory(HANDLE)
 
 
-def pick_integrated_addons():
+def list_integration_picker():
     rows = _get_installed_video_addons(include_meos=False, include_disabled=False)
     if not rows:
         xbmcgui.Dialog().notification("MEOS", "No enabled video add-ons available", xbmcgui.NOTIFICATION_INFO, 3000)
         xbmcplugin.endOfDirectory(HANDLE)
         return
 
-    selected_existing = set(_get_integrated_addon_ids())
-    labels = [item["name"] for item in rows]
-    preselect = [index for index, item in enumerate(rows) if item["addon_id"] in selected_existing]
+    xbmcplugin.setPluginCategory(HANDLE, "Select Add-ons to Integrate")
+    selected_existing = _get_integrated_addon_ids()
+    selected_set = set(selected_existing)
 
-    selected_indexes = xbmcgui.Dialog().multiselect(
-        "Select Add-ons to Integrate",
-        labels,
-        preselect=preselect,
-    )
-    if selected_indexes is None:
-        xbmcplugin.endOfDirectory(HANDLE)
+    add_folder_item("Done", {"action": "integration_menu"})
+    add_folder_item("Clear Integrated Add-ons", {"action": "integration_clear"})
+
+    for item in rows:
+        addon_id = item["addon_id"]
+        checked = "[x]" if addon_id in selected_set else "[ ]"
+        art = {
+            "thumb": item.get("thumbnail") or DEFAULT_ART["thumb"],
+            "icon": item.get("thumbnail") or DEFAULT_ART["icon"],
+            "fanart": item.get("fanart") or DEFAULT_ART["fanart"],
+        }
+        add_folder_item(
+            "{0} {1}".format(checked, item["name"]),
+            {"action": "integration_toggle", "addon_id": addon_id},
+            art=art,
+        )
+
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def toggle_integrated_addon(addon_id):
+    addon_id = (addon_id or "").strip()
+    if not addon_id:
+        xbmcgui.Dialog().notification("MEOS", "Missing add-on id", xbmcgui.NOTIFICATION_ERROR, 2500)
+        list_integration_picker()
         return
 
-    chosen_ids = [rows[index]["addon_id"] for index in selected_indexes if 0 <= index < len(rows)]
-    _set_integrated_addon_ids(chosen_ids)
-    xbmcgui.Dialog().notification("MEOS", "Integrated add-ons updated", xbmcgui.NOTIFICATION_INFO, 2500)
-    list_integration_menu()
+    selected = _get_integrated_addon_ids()
+    if addon_id in selected:
+        selected = [value for value in selected if value != addon_id]
+        notice = "Removed integrated add-on"
+    else:
+        selected.append(addon_id)
+        notice = "Added integrated add-on"
+
+    _set_integrated_addon_ids(selected)
+    xbmcgui.Dialog().notification("MEOS", notice, xbmcgui.NOTIFICATION_INFO, 2000)
+    list_integration_picker()
 
 
 def clear_integrated_addons():
@@ -1028,10 +1067,11 @@ def add_integrated_addon_shortcuts(category):
                 art=art,
             )
         else:
-            add_playable_item(
+            add_validated_playable_item(
                 label,
                 {"action": "external_play", "target": target},
-                {"title": label},
+                validated=_is_target_validated(target),
+                info={"title": label},
                 art=art,
             )
 
@@ -1056,15 +1096,14 @@ def list_external_browse(target, title="Add-on"):
         xbmcplugin.endOfDirectory(HANDLE)
         return
 
-    validation_budget = {"checks": 0}
-
     for entry in files:
         file_path = entry.get("file") or ""
         if not file_path:
             continue
 
         label = entry.get("label") or entry.get("title") or file_path
-        if _ensure_target_validated(file_path, validation_budget):
+        is_validated = _is_target_validated(file_path)
+        if is_validated:
             label = "[Validated] {0}".format(label)
         art = {
             "thumb": entry.get("thumbnail") or DEFAULT_ART["thumb"],
@@ -1075,7 +1114,13 @@ def list_external_browse(target, title="Add-on"):
         if entry.get("filetype") == "directory":
             add_folder_item(label, {"action": "external_browse", "target": file_path, "title": title}, art=art)
         else:
-            add_playable_item(label, {"action": "external_play", "target": file_path}, {"title": label}, art=art)
+            add_validated_playable_item(
+                label,
+                {"action": "external_play", "target": file_path},
+                validated=is_validated,
+                info={"title": label},
+                art=art,
+            )
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
@@ -1241,7 +1286,11 @@ def router(params):
         return
 
     if action == "integration_picker":
-        pick_integrated_addons()
+        list_integration_picker()
+        return
+
+    if action == "integration_toggle":
+        toggle_integrated_addon(params.get("addon_id", ""))
         return
 
     if action == "integration_clear":
