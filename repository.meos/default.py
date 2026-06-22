@@ -97,8 +97,8 @@ ADDON_CATEGORY_RULES = [
         "categories": {
             "movies": ["movies", "movie", "movie zone"],
             "tv": ["tv shows", "shows", "series", "tv"],
-            "live": ["live tv", "channels", "live channels", "iptv", "cable"],
-            "sports": ["sports", "live sports", "sport", "24/7 sports", "sports area"],
+            "live": ["live tv", "channels", "live channels", "iptv", "cable", "abc mega list", "mega list", "abc", "cable channels"],
+            "sports": ["sports", "live sports", "sport", "24/7 sports", "24/7", "sports area", "sports zone", "zone sports"],
             "docs": ["documentaries", "docs"],
         },
     },
@@ -621,8 +621,10 @@ def add_action_item(label, query, art=None):
     xbmcplugin.addDirectoryItem(HANDLE, build_url(query), item, isFolder=False)
 
 
-def add_playable_item(label, query, info=None, art=None):
+def add_playable_item(label, query, info=None, art=None, label2=""):
     item = xbmcgui.ListItem(label=label)
+    if label2:
+        item.setLabel2(label2)
     item.setArt(art or DEFAULT_ART)
     item.setInfo("video", info or {"title": label})
     item.setProperty("IsPlayable", "true")
@@ -631,9 +633,20 @@ def add_playable_item(label, query, info=None, art=None):
 
 def add_validated_playable_item(label, query, validated=False, info=None, art=None):
     video_info = dict(info or {"title": label})
+    video_info.setdefault("mediatype", "video")
+    if validated:
+        video_info.setdefault("plotoutline", "Validated working stream")
+    else:
+        video_info.setdefault("plotoutline", "Not validated yet")
     if validated:
         video_info["playcount"] = 1
-    add_playable_item(label, query, info=video_info, art=art)
+    add_playable_item(
+        label,
+        query,
+        info=video_info,
+        art=art,
+        label2="VALIDATED" if validated else "UNVERIFIED",
+    )
 
 
 def list_root():
