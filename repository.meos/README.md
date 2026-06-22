@@ -1,78 +1,33 @@
 # MEOS
 
-## Kodi Install From GitHub (Correct Method)
+MEOS is a Kodi repository plus a companion video add-on with a clean install path for Firestick and other Kodi devices.
 
-Important: do not use this URL as a Kodi file source path:
-https://github.com/MangiafestoElectronicsLLC/MEOS.git
+## Install
 
-Use one of these methods instead.
+Use the direct ZIP links instead of the GitHub page URL.
 
-1. Install repository zip directly from URL
-- In Kodi file manager, add source:
-  https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main/
-- Then install from zip file:
-  repository.meos.zip
+1. Repository install for Kodi
+- Add this source in Kodi File Manager:
+  https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main/repository.meos.zip
+- Install `repository.meos.zip` from that source.
+- Open Install from repository, choose MEOS Repository, then install MEOS.
 
-2. If raw source browsing is blocked on your Kodi build
-- Download repository.meos.zip from GitHub on a PC.
-- Copy it to your device.
-- In Kodi, use Install from zip file and pick repository.meos.zip.
+2. Firestick / Kodi 21 direct install
+- Download `MEOS_ADDON_K21.zip` from the repository.
+- Copy it to the device.
+- In Kodi, choose Install from zip file and select `MEOS_ADDON_K21.zip`.
 
-3. After repository install
-- Open Install from repository.
-- Choose MEOS Repository.
-- Install MEOS plugin video add-on.
+3. Older Kodi builds
+- Use `MEOS_ADDON.zip` or install the repository first and let Kodi resolve the correct package.
 
-Notes
-- The repository addon now points to GitHub raw feed files and zip directory.
-- Installed Add-ons Hub is available inside the MEOS plugin menu for integrated browsing.
+## What’s Included
 
-Streaming
-For Use of any Streaming Device Mainly products I curate including MEOS, and MEOS Stick
-Can Access my Company website @ https://www.mangiafestoelectronics.com/
-Contact Me @ 585-227-4686 or Email Me @ 
-ZacharyMangiafesto@MangiafestoElectronics.onmicrosoft.com
+- `repository.meos`: Kodi repository package
+- `plugin.video.meos`: legal sample streams and provider scaffolding
+- `Installed Add-ons Hub`: browse installed add-ons from inside MEOS
 
+## Notes
 
-# MEOS Firestick 4K Enhancement
-
-Enhance your Amazon Firestick 4K with Manifesto Electronics' custom Kodi configuration and software. This software unlocks advanced streaming, gaming, and modular add-ons—already deployed and sold to satisfied customers.
-
-## 🔧 Features
-- Kodi-based media center with custom skins and plugins
-- Retro gaming support via integrated emulators
-- Modular add-ons for streaming, gaming, and accessibility
-
-## 🛠️ Setup
-1. Configure Wifi Settings
-2. Go to Kodi App and check Preconfigured Favorites List 
-
-## 🔀 Feature Toggles
-- `ENABLE_ACCESSIBILITY_UI`: Activates large text and voice prompts
-
-## 🗺️ Roadmap
-- Q4 2025: Add voice control and ALS-friendly UI
-- Q1 2026: Improve setup wizard for non-technical users
-
-# MEOS Retro Console – Atari to PSP
-
-A plug-and-play retro gaming console built on Raspberry Pi 3+ using RetroPie, EmulationStation, and Kodi. Supports Atari, NES, SNES, PSP, and many more.
-
-## 🔧 Features
-- EmulationStation frontend with custom themes and improved software
-- Kodi integration for media playback
-- Modular ROM packs and controller profiles
-
-## 🛠️ Setup
-1. Boot Pi and follow on-screen setup
-2. Exit Kodi APP to Gaming Consoles to setup Wifi
-3. Within Gaming console named setup allows Wifi settings
-4. Reboot, Test Movie, Show, ETC 
-
-## 🔀 Feature Toggles
-- `ENABLE_KODI`: Launch Kodi on boot
-- `ENABLE_GAMING`: Launch Gaming Consoles on boot
-
-## 🗺️ Roadmap
-- Q1 2026: Add online multiplayer support
-- Q2 2026: Publish controller remapping tool
+- Do not use `https://github.com/MangiafestoElectronicsLLC/MEOS.git` as a Kodi source.
+- If raw browsing is blocked on the device, download the ZIP on a PC and transfer it manually.
+- The repository feed points to the raw GitHub XML and ZIP files under `zips/`.
