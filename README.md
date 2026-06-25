@@ -32,6 +32,8 @@ Use the direct ZIP links instead of the GitHub page URL.
 - `repository.meos`: Kodi repository package
 - `plugin.video.meos`: legal sample streams and provider scaffolding
 - `Installed Add-ons Hub`: browse installed add-ons from inside MEOS
+- `Manual Add-on Scan`: add installed add-ons into MEOS integration and auto-build favorites from matched categories
+- `Scan Report`: preview exact discovered items before integrating an add-on
 
 ## Notes
 
