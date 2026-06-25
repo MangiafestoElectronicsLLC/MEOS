@@ -1600,27 +1600,29 @@ def scan_integrated_addon_now(addon_id):
         if not matches:
             continue
 
-        top = matches[0]
-        target = (top.get("target") or "").strip()
-        if not target or target.lower() in existing_targets:
-            continue
+        for match in matches:
+            target = (match.get("target") or "").strip()
+            if not target:
+                continue
+            if target.lower() in existing_targets:
+                continue
 
-        label_suffix = top.get("matched_label") or "Top Match"
-        is_folder = bool(top.get("is_folder", True))
-        if _add_manual_favorite(
-            target,
-            label="[{0}] {1} - {2}".format(category_label, addon_name, label_suffix),
-            title=addon_name,
-            is_folder=is_folder,
-            thumb=top.get("thumbnail") or (row or {}).get("thumbnail") or "",
-            fanart=top.get("fanart") or (row or {}).get("fanart") or "",
-        ):
-            existing_targets.add(target.lower())
-            added += 1
+            label_suffix = match.get("matched_label") or "Match"
+            is_folder = bool(match.get("is_folder", True))
+            if _add_manual_favorite(
+                target,
+                label="[{0}] {1} - {2}".format(category_label, addon_name, label_suffix),
+                title=addon_name,
+                is_folder=is_folder,
+                thumb=match.get("thumbnail") or (row or {}).get("thumbnail") or "",
+                fanart=match.get("fanart") or (row or {}).get("fanart") or "",
+            ):
+                existing_targets.add(target.lower())
+                added += 1
 
     xbmcgui.Dialog().notification(
         "MEOS",
-        "Scanned {0} and added {1} favorites".format(addon_name, added),
+        "Rebuilt integrated menu for {0} with {1} favorites".format(addon_name, added),
         xbmcgui.NOTIFICATION_INFO,
         3000,
     )
