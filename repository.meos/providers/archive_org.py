@@ -60,6 +60,55 @@ _LIVE_CATALOG = [
         "stream_url": "https://static.france24.com/live/F24_EN_LO_HLS/live_web.m3u8",
         "mime_type": "application/vnd.apple.mpegurl",
     },
+    {
+        "media_id": "live_aljazeera_en",
+        "title": "Al Jazeera English (Live)",
+        "genre": "News / Live",
+        "stream_url": "https://live-hls-web-aje.getaj.net/AJE/index.m3u8",
+        "mime_type": "application/vnd.apple.mpegurl",
+    },
+    {
+        "media_id": "live_bloomberg_tv",
+        "title": "Bloomberg Television (Live)",
+        "genre": "Business / Live",
+        "stream_url": "https://cdn-ew.bloomberg.com/BTV/desktop/live/us/stream_v2_vp9.m3u8",
+        "mime_type": "application/vnd.apple.mpegurl",
+    },
+    {
+        "media_id": "live_abcnews",
+        "title": "ABC News Live (US)",
+        "genre": "News / Live",
+        "stream_url": "https://abcnews.go.com/live/video/special-live-11",
+        "mime_type": "application/vnd.apple.mpegurl",
+    },
+    {
+        "media_id": "live_euronews_en",
+        "title": "Euronews English (Live)",
+        "genre": "News / Live",
+        "stream_url": "https://euronews.loris.tv/euronews_en_720p.m3u8",
+        "mime_type": "application/vnd.apple.mpegurl",
+    },
+    {
+        "media_id": "live_cgtn_en",
+        "title": "CGTN English (Live)",
+        "genre": "News / Live",
+        "stream_url": "https://news.cgtn.com/resource/live/english/cgtn-news.m3u8",
+        "mime_type": "application/vnd.apple.mpegurl",
+    },
+    {
+        "media_id": "live_sky_news",
+        "title": "Sky News (Live)",
+        "genre": "News / Live",
+        "stream_url": "https://skynews1-live.sky.com/HLS/skynews/video.m3u8",
+        "mime_type": "application/vnd.apple.mpegurl",
+    },
+    {
+        "media_id": "live_nasa_tv2",
+        "title": "NASA TV Media (Live — Public Domain)",
+        "genre": "Science / Live",
+        "stream_url": "https://ntv2.akamaized.net/hls/live/2014075/NASA-NTV2-HLS/master.m3u8",
+        "mime_type": "application/vnd.apple.mpegurl",
+    },
 ]
 
 _ROWS_PER_PAGE = 80
