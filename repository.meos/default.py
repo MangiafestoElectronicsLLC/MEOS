@@ -65,6 +65,7 @@ VALIDATED_MARKER_UNICODE = "[COLOR limegreen][B]✔[/B][/COLOR] "
 VALIDATED_MARKER_FALLBACK = "[COLOR limegreen][B]OK[/B][/COLOR] "
 VALIDATED_MARKER_LEGACY = "[COLOR limegreen][B]v[/B][/COLOR] "
 FAILED_MARKER = "[COLOR red][B]✖[/B][/COLOR] "
+ALL_VALIDATION_MARKERS = (VALIDATED_MARKER_UNICODE, VALIDATED_MARKER_FALLBACK, VALIDATED_MARKER_LEGACY, FAILED_MARKER)
 VALIDATION_STATUS_UNVERIFIED = "unverified"
 VALIDATION_STATUS_PASS = "pass"
 VALIDATION_STATUS_FAIL = "fail"
@@ -464,7 +465,8 @@ def _mark_target_validated(target):
     failed_values = _get_json_list_setting(FAILED_TARGETS_SETTING)
     for key in reversed(keys):
         values.insert(0, key)
-    failed_values = [value for value in failed_values if value not in keys]
+    keys_set = set(keys)
+    failed_values = [value for value in failed_values if value not in keys_set]
     _set_json_list_setting(VALIDATED_TARGETS_SETTING, values)
     _set_json_list_setting(FAILED_TARGETS_SETTING, failed_values)
 
@@ -477,7 +479,8 @@ def _mark_target_failed(target):
     validated_values = _get_json_list_setting(VALIDATED_TARGETS_SETTING)
     for key in reversed(keys):
         values.insert(0, key)
-    validated_values = [value for value in validated_values if value not in keys]
+    keys_set = set(keys)
+    validated_values = [value for value in validated_values if value not in keys_set]
     _set_json_list_setting(FAILED_TARGETS_SETTING, values)
     _set_json_list_setting(VALIDATED_TARGETS_SETTING, validated_values)
 
@@ -622,8 +625,7 @@ def _format_validated_label(label, validated):
 
 def _format_validation_label(label, status):
     label = label or ""
-    markers = [VALIDATED_MARKER_UNICODE, VALIDATED_MARKER_FALLBACK, VALIDATED_MARKER_LEGACY, FAILED_MARKER]
-    for marker in markers:
+    for marker in ALL_VALIDATION_MARKERS:
         if label.startswith(marker):
             label = label[len(marker):]
             break
@@ -635,7 +637,7 @@ def _format_validation_label(label, status):
     return label
 
 
-def _validation_label2(status):
+def _validation_status_label(status):
     if status == VALIDATION_STATUS_PASS:
         return "VALIDATED"
     if status == VALIDATION_STATUS_FAIL:
@@ -652,6 +654,7 @@ def _validation_plotoutline(status):
 
 
 def _normalize_validation_status(validated=False, status=None):
+    """Normalize backward-compatible boolean and new status-style validation inputs."""
     if status in (VALIDATION_STATUS_PASS, VALIDATION_STATUS_FAIL, VALIDATION_STATUS_UNVERIFIED):
         return status
     if validated:
@@ -1088,7 +1091,7 @@ def add_validated_playable_item(label, query, validated=False, info=None, art=No
         query,
         info=video_info,
         art=art,
-        label2=_validation_label2(validation_status),
+        label2=_validation_status_label(validation_status),
     )
 
 
