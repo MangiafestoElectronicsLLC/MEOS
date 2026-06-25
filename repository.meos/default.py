@@ -1709,14 +1709,17 @@ def scan_integrated_addon_now(addon_id):
         xbmcgui.NOTIFICATION_INFO,
         3000,
     )
-    list_integrated_addons_cache(addon_id)
+    list_integrated_addons_cache()
 
 
-def list_integrated_addons_cache(addon_id=""):
+def list_integrated_addons_cache(addon_id="", category=""):
     addon_id = (addon_id or "").strip().lower()
+    category = (category or "").strip().lower()
     cache = _get_integrated_menu_cache()
     if addon_id:
         cache = [row for row in cache if (row.get("addon_id") or "").strip().lower() == addon_id]
+    if category:
+        cache = [row for row in cache if (row.get("category") or "").strip().lower() == category]
 
     xbmcplugin.setPluginCategory(HANDLE, "Integrated Add-ons")
     add_folder_item("Refresh Cached Integrated Add-ons", {"action": "integration_cached_refresh"})
@@ -1727,11 +1730,35 @@ def list_integrated_addons_cache(addon_id=""):
         xbmcplugin.endOfDirectory(HANDLE)
         return
 
+    if not addon_id and not category:
+        counts = {}
+        for row in cache:
+            key = (row.get("category") or "").strip().lower() or "other"
+            counts[key] = counts.get(key, 0) + 1
+
+        for category_label, category_key in MENU_CATEGORIES:
+            count = counts.get(category_key, 0)
+            if not count:
+                continue
+            add_folder_item(
+                "[{0}] Cached ({1})".format(category_label, count),
+                {"action": "integration_cached_menu", "category": category_key},
+            )
+        other_count = counts.get("other", 0)
+        if other_count:
+            add_folder_item(
+                "[Other] Cached ({0})".format(other_count),
+                {"action": "integration_cached_menu", "category": "other"},
+            )
+        xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
     cache.sort(
         key=lambda row: (
             (row.get("addon_name") or "").lower(),
-            (row.get("category_label") or "").lower(),
             (row.get("label") or "").lower(),
+            (row.get("target") or "").lower(),
         )
     )
 
@@ -2457,7 +2484,7 @@ def router(params):
         return
 
     if action == "integration_cached_menu":
-        list_integrated_addons_cache(params.get("addon_id", ""))
+        list_integrated_addons_cache(params.get("addon_id", ""), params.get("category", ""))
         return
 
     if action == "integration_cached_refresh":
