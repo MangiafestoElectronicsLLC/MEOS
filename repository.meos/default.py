@@ -920,7 +920,8 @@ def add_integrated_category_items(category, seen_title_keys=None):
                     continue
 
                 title = entry.get("label") or entry.get("title") or target
-                dedupe_key = _title_key(title)
+                title_key = _title_key(title)
+                dedupe_key = "{0}:{1}".format(addon_id, title_key) if title_key else ""
                 if dedupe_key and dedupe_key in seen_title_keys:
                     continue
 
