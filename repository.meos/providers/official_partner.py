@@ -50,6 +50,22 @@ CATALOG = [
         "stream_url": "https://test-streams.mux.dev/dai-discontinuity-deltatre/manifest.m3u8",
         "mime_type": "application/vnd.apple.mpegurl",
     },
+    {
+        "media_id": "cable_test_channel",
+        "title": "MEOS Cable Test Channel",
+        "category": "cable",
+        "genre": "Cable TV",
+        "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+        "mime_type": "application/vnd.apple.mpegurl",
+    },
+    {
+        "media_id": "ppv_test_event",
+        "title": "MEOS PPV Test Event",
+        "category": "ppv",
+        "genre": "PPV",
+        "stream_url": "https://test-streams.mux.dev/test_001/stream.m3u8",
+        "mime_type": "application/vnd.apple.mpegurl",
+    },
 ]
 
 

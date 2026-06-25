@@ -33,6 +33,8 @@ _DL_URL = "https://archive.org/download/{}/{}"
 _CATEGORY_QUERY = {
     "movies": "(collection:feature_films OR subject:feature film OR subject:cinema) AND mediatype:movies",
     "tv": "(subject:television OR subject:sitcom OR subject:cartoon OR subject:series) AND mediatype:movies",
+    "cable": "(subject:television OR subject:cable OR subject:network television OR subject:channels) AND mediatype:movies",
+    "ppv": "(subject:boxing OR subject:wrestling OR subject:mma OR subject:live event OR subject:sports event) AND mediatype:movies",
     "docs": "(subject:documentary OR description:documentary) AND mediatype:movies",
     "sports": "(subject:sports OR subject:baseball OR subject:football OR subject:boxing OR subject:wrestling) AND mediatype:movies",
 }

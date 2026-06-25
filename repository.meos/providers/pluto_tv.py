@@ -39,6 +39,8 @@ _LIVE_GENRE_MAP = {
     "live": None,          # all channels
     "movies": "movie",
     "tv": ["tv", "comedy", "drama", "reality", "sci-fi", "thriller"],
+    "cable": ["cable", "news", "entertainment", "family", "reality", "classic", "television"],
+    "ppv": ["sports", "fight", "boxing", "mma", "wrestling", "event"],
     "sports": "sports",
     "docs": ["documentary", "news", "education", "science", "nature"],
 }
@@ -148,6 +150,10 @@ def _vod_matches(item, category, query, category_name=""):
         return media_type == "movie" or "movie" in cat
     if category == "tv":
         return media_type in ("series", "episode", "show") or "series" in cat or "tv" in cat
+    if category == "cable":
+        return any(k in haystack for k in ["cable", "network", "tv", "news", "entertainment", "family"])
+    if category == "ppv":
+        return any(k in haystack for k in ["ppv", "fight", "boxing", "mma", "wrestling", "event", "sports"])
     if category == "docs":
         return "document" in haystack or "history" in haystack or "science" in haystack
     if category == "sports":
@@ -228,7 +234,7 @@ class PlutoTvProvider(BaseProvider):
 
     def get_catalog(self, auth_state, category=None, query=None, year=None, award=None, result=None):
         vod = []
-        if category in ("movies", "tv", "docs", "sports") or query:
+        if category in ("movies", "tv", "docs", "sports", "cable", "ppv") or query:
             vod = _load_vod_items(category=category, query=query)
 
         channels = _load_channels()

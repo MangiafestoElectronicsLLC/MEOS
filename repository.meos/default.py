@@ -28,6 +28,8 @@ PRIMARY_PROVIDER_ID = "archive_org"
 MENU_CATEGORIES = [
     ("Movies", "movies"),
     ("TV Shows", "tv"),
+    ("Cable TV", "cable"),
+    ("PPV Events", "ppv"),
     ("Documentaries", "docs"),
     ("Live Channels", "live"),
     ("Sports", "sports"),
@@ -57,20 +59,27 @@ MAX_INTEGRATED_TARGET_MATCHES = 8
 MAX_VALIDATED_CACHE_ITEMS = 800
 VALIDATED_TARGETS_SETTING = "external_validated_targets"
 VALIDATED_PROVIDER_SETTING = "provider_validated_items"
+STREAM_VOTES_SETTING = "external_stream_votes"
 MANUAL_FAVORITES_SETTING = "manual_favorites"
 MAX_MANUAL_FAVORITES = 600
 MAX_INTEGRATED_MENU_CACHE_ITEMS = 1200
 VALIDATED_MARKER_UNICODE = "[COLOR limegreen][B]✔[/B][/COLOR] "
+VALIDATED_MARKER_REJECTED = "[COLOR red][B]✘[/B][/COLOR] "
 VALIDATED_MARKER_FALLBACK = "[COLOR limegreen][B]OK[/B][/COLOR] "
 VALIDATED_MARKER_LEGACY = "[COLOR limegreen][B]v[/B][/COLOR] "
+VOTE_MARKER_UP = "[COLOR limegreen][B]👍[/B][/COLOR] "
+VOTE_MARKER_DOWN = "[COLOR red][B]👎[/B][/COLOR] "
+MIN_STREAM_VALIDATION_SECONDS = 10
 VIDEO_ADDON_TYPES = ("xbmc.python.pluginsource", "xbmc.addon.video")
 INTEGRATED_MENU_CACHE_SETTING = "integrated_menu_cache"
 CATEGORY_HINTS = {
     "movies": ["movie", "movies", "film", "cinema", "one click movie", "1 click movie"],
     "tv": ["tv", "shows", "tv shows", "series", "episodes", "one click tv", "1 click tv"],
     "docs": ["doc", "docs", "documentary", "documentaries"],
-    "live": ["live", "channels", "channel", "iptv", "live tv", "cable", "cable tv", "local channels", "broadcast", "one click live", "1 click live"],
-    "sports": ["sport", "sports", "nfl", "nba", "mlb", "ufc", "mma", "boxing", "wwe"],
+    "cable": ["cable", "cable tv", "channels", "channel", "iptv", "broadcast", "local channels", "network tv", "live tv"],
+    "ppv": ["ppv", "pay per view", "event", "events", "fight night", "boxing", "ufc", "mma", "wrestling"],
+    "live": ["live", "channels", "channel", "iptv", "live tv", "local channels", "broadcast", "one click live", "1 click live"],
+    "sports": ["sport", "sports", "nfl", "nba", "mlb", "ufc", "mma", "boxing", "wwe", "ppv", "pay per view"],
     "award": ["award", "awards", "oscar", "emmy", "winner", "nominee"],
 }
 ADDON_CATEGORY_RULES = [
@@ -78,11 +87,20 @@ ADDON_CATEGORY_RULES = [
         "name": "scrubs",
         "id_contains": ["scrubsv2", "scrubs", "plugin.video.scrubs", "plugin.video.scrubsv2"],
         "label_contains": ["scrubs", "scrubs v2"],
+        "paths": {
+            "movies": [["Movies"], ["Movie"], ["Scrubs", "Movies"]],
+            "tv": [["TV Shows"], ["TV"], ["Scrubs", "TV Shows"]],
+            "cable": [["Live TV"], ["Channels"]],
+            "live": [["Live TV"], ["Channels"]],
+            "sports": [["Sports"], ["Sports Zone"], ["Sports Zones"]],
+        },
         "categories": {
-            "movies": ["movies", "my movies", "new movies", "movie world", "boxsets", "1-click movies", "one click movies", "trending movies"],
-            "tv": ["tv shows", "my tv shows", "new episodes", "series", "episodes", "1-click tv shows", "one click tv shows", "trending tv shows"],
-            "live": ["live tv", "live channels", "channels", "iptv", "cable tv"],
-            "sports": ["sports", "live sports", "sport"],
+            "movies": ["movies", "movie", "my movies", "new movies", "movie world", "boxsets", "1-click movies", "one click movies", "trending movies", "film", "films"],
+            "tv": ["tv shows", "tv", "my tv shows", "new episodes", "series", "episodes", "1-click tv shows", "one click tv shows", "trending tv shows"],
+            "cable": ["cable tv", "live tv", "live channels", "channels", "iptv", "network tv", "24/7", "mega list"],
+            "ppv": ["ppv", "pay per view", "events", "fight night", "wrestling"],
+            "live": ["live tv", "live channels", "channels", "iptv", "cable tv", "24/7", "mega list", "cable channels"],
+            "sports": ["sports", "live sports", "sport", "sports zone", "sports zones"],
             "docs": ["documentaries", "docs", "documentary"],
         },
     },
@@ -93,6 +111,8 @@ ADDON_CATEGORY_RULES = [
         "categories": {
             "movies": ["peliculas", "pelis", "movies", "cine", "estrenos", "boxsets"],
             "tv": ["series", "tv", "tv shows", "novelas", "episodios"],
+            "cable": ["cable", "cable tv", "canales", "channels", "tv en vivo", "en vivo"],
+            "ppv": ["ppv", "pay per view", "eventos", "event"],
             "live": ["tv en vivo", "en vivo", "live tv", "canales", "channels", "cable", "latino"],
             "sports": ["deportes", "sports", "eventos"],
             "docs": ["documentales", "documentaries", "docs"],
@@ -102,21 +122,60 @@ ADDON_CATEGORY_RULES = [
         "name": "loop",
         "id_contains": ["theloop", "plugin.video.loop", "plugin.video.theloop", "plugin.video.the.loop"],
         "label_contains": ["loop", "the loop"],
+        "paths": {
+            "live": [["24/7"], ["24/7", "Mega List"], ["24/7", "Mega List", "Cable Channels"]],
+            "cable": [["24/7", "Mega List", "Cable Channels"], ["24/7", "Mega List"]],
+            "sports": [["24/7", "Mega List", "Sports Zone"], ["24/7", "Mega List", "Sports Zones"], ["24/7", "Sports Zone"]],
+            "movies": [["Movies"], ["Movie"]],
+            "tv": [["TV Shows"], ["TV"], ["Episodes"]],
+        },
         "categories": {
-            "movies": ["movies", "movie", "movie zone"],
-            "tv": ["tv shows", "shows", "series", "tv"],
-            "live": ["live tv", "channels", "live channels", "iptv", "cable", "abc mega list", "mega list", "abc", "cable channels"],
-            "sports": ["sports", "live sports", "sport", "24/7 sports", "24/7", "sports area", "sports zone", "zone sports"],
+            "movies": ["movies", "movie", "movie zone", "boxsets", "one click movies", "1-click movies"],
+            "tv": ["tv shows", "shows", "series", "tv", "episodes"],
+            "cable": ["cable tv", "channels", "live channels", "iptv", "network tv", "24/7", "mega list", "cable channels"],
+            "ppv": ["ppv", "pay per view", "events", "fight night"],
+            "live": ["live tv", "channels", "live channels", "iptv", "cable", "abc mega list", "mega list", "abc", "cable channels", "24/7"],
+            "sports": ["sports", "live sports", "sport", "24/7 sports", "24/7", "sports area", "sports zone", "sports zones", "zone sports"],
             "docs": ["documentaries", "docs"],
+        },
+    },
+    {
+        "name": "tbmd",
+        "id_contains": ["tbmd", "plugin.video.tbmd"],
+        "label_contains": ["tbmd"],
+        "paths": {
+            "movies": [["Movies"], ["TBMD", "Movies"]],
+            "tv": [["TV Shows"], ["TV"], ["TBMD", "TV Shows"]],
+            "cable": [["24/7"], ["Channels"], ["Mega List"]],
+            "live": [["24/7"], ["Mega List"], ["Live TV"]],
+            "sports": [["Sports"], ["Sports Zone"], ["Sports Zones"]],
+        },
+        "categories": {
+            "movies": ["movies", "movie", "films", "film", "within", "movie section"],
+            "tv": ["tv shows", "tv", "shows", "series", "episodes", "within", "tv section"],
+            "cable": ["cable", "channels", "live channels", "24/7", "mega list"],
+            "ppv": ["ppv", "events", "fight night", "pay per view"],
+            "live": ["live tv", "channels", "live channels", "24/7", "mega list"],
+            "sports": ["sports", "sport", "live sports", "sports zone"],
+            "docs": ["documentaries", "docs", "documentary"],
         },
     },
     {
         "name": "ghost",
         "id_contains": ["ghost", "plugin.video.ghost", "plugin.video.theghost", "plugin.video.the.ghost"],
         "label_contains": ["ghost", "the ghost"],
+        "paths": {
+            "movies": [["Movies"], ["Free", "Movies"], ["Free", "New Movies"], ["New Movies"]],
+            "tv": [["TV Shows"], ["Shows"], ["Series"]],
+            "cable": [["Live TV"], ["Channels"]],
+            "live": [["Live TV"], ["Channels"]],
+            "sports": [["Sports"], ["Sports Zone"], ["Sports Zones"]],
+        },
         "categories": {
             "movies": ["movies", "movie", "1-click movies", "one click movies", "boxsets"],
             "tv": ["tv shows", "shows", "series", "1-click tv shows", "one click tv shows"],
+            "cable": ["cable tv", "channels", "iptv", "live tv"],
+            "ppv": ["ppv", "pay per view", "events", "boxing", "ufc"],
             "live": ["live tv", "channels", "live channels", "iptv", "cable"],
             "sports": ["sports", "sport", "live sports"],
             "docs": ["documentaries", "docs", "documentary"],
@@ -129,6 +188,8 @@ ADDON_CATEGORY_RULES = [
         "categories": {
             "movies": ["movies", "movie", "replays"],
             "tv": ["tv shows", "shows", "replays", "series"],
+            "cable": ["cable tv", "channels", "live tv", "iptv"],
+            "ppv": ["ppv events", "ppv", "pay per view", "fights", "replays"],
             "live": ["live tv", "channels", "live channels", "iptv", "cable", "ppv events"],
             "sports": ["sports", "live sports", "football", "basketball", "baseball", "hockey", "replays", "ppv events"],
             "docs": ["documentaries", "docs"],
@@ -141,6 +202,8 @@ ADDON_CATEGORY_RULES = [
         "categories": {
             "movies": ["movies", "movie", "1-click movies", "one click movies", "boxsets", "new movies"],
             "tv": ["tv shows", "shows", "series", "1-click tv shows", "one click tv shows", "new episodes"],
+            "cable": ["cable tv", "channels", "iptv", "network tv", "live tv"],
+            "ppv": ["ppv", "pay per view", "fights", "events", "ufc", "boxing"],
             "live": ["live tv", "channels", "live channels", "iptv", "cable", "tv"],
             "sports": ["sports", "sport", "live sports", "nfl", "nba", "mlb", "nhl", "ufc", "boxing"],
             "docs": ["documentaries", "docs", "kids"],
@@ -309,6 +372,36 @@ def _refresh_integrated_menu_cache(addon_id, addon_name, addon_row=None):
     remaining.extend(new_rows)
     _set_integrated_menu_cache(remaining)
     return len(new_rows)
+
+
+def _sync_integrated_menu_cache(addon_ids=None):
+    if addon_ids is None:
+        addon_ids = _get_integrated_addon_ids()
+
+    selected = []
+    seen = set()
+    for addon_id in addon_ids:
+        addon_id = (addon_id or "").strip()
+        if not addon_id or addon_id in seen:
+            continue
+        seen.add(addon_id)
+        selected.append(addon_id)
+
+    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
+    refreshed_rows = []
+    refreshed = 0
+
+    for addon_id in selected:
+        row = installed.get(addon_id)
+        if not row:
+            continue
+        addon_name = row.get("name") or addon_id
+        new_rows = _integrated_menu_cache_rows_for_addon(addon_id, addon_name, addon_row=row)
+        refreshed_rows.extend(new_rows)
+        refreshed += len(new_rows)
+
+    _set_integrated_menu_cache(refreshed_rows)
+    return refreshed
 
 
 def _get_json_list_setting(setting_id):
@@ -614,6 +707,94 @@ def _validated_marker_for_runtime():
     return VALIDATED_MARKER_UNICODE
 
 
+def _stream_vote_key(target="", provider_id="", media_id=""):
+    provider_id = (provider_id or "").strip()
+    media_id = (media_id or "").strip()
+    if provider_id and media_id:
+        return "provider://{0}/{1}".format(provider_id, media_id)
+    target = (target or "").strip()
+    if not target:
+        return ""
+    return _canonical_target(target) or target
+
+
+def _get_stream_vote_rows():
+    return _get_json_object_list_setting(STREAM_VOTES_SETTING)
+
+
+def _set_stream_vote_rows(rows):
+    _set_json_object_list_setting(STREAM_VOTES_SETTING, rows, max_items=MAX_VALIDATED_CACHE_ITEMS)
+
+
+def _get_stream_vote(target="", provider_id="", media_id=""):
+    key = _stream_vote_key(target=target, provider_id=provider_id, media_id=media_id)
+    if not key:
+        return ""
+    for row in _get_stream_vote_rows():
+        if (row.get("target") or "").strip() == key:
+            vote = (row.get("vote") or "").strip().lower()
+            if vote in ("up", "down"):
+                return vote
+            return ""
+    return ""
+
+
+def _set_stream_vote(target="", provider_id="", media_id="", vote=""):
+    key = _stream_vote_key(target=target, provider_id=provider_id, media_id=media_id)
+    vote = (vote or "").strip().lower()
+    if not key:
+        return False
+
+    rows = [row for row in _get_stream_vote_rows() if (row.get("target") or "").strip() != key]
+    if vote in ("up", "down"):
+        rows.insert(0, {"target": key, "vote": vote})
+    _set_stream_vote_rows(rows)
+    return True
+
+
+def _stream_status_marker(validated=False, vote=""):
+    vote = (vote or "").strip().lower()
+    if validated:
+        return VALIDATED_MARKER_UNICODE
+    if vote == "down":
+        return VALIDATED_MARKER_REJECTED
+    return ""
+
+
+def _stream_status_label(validated=False, vote=""):
+    parts = ["Validated" if validated else "Unverified"]
+    vote = (vote or "").strip().lower()
+    if vote == "up":
+        parts.append("Thumbs Up")
+    elif vote == "down":
+        parts.append("Thumbs Down")
+    return " · ".join(parts)
+
+
+def _infer_category_from_text(text, default="live"):
+    haystack = (text or "").strip()
+    if not haystack:
+        return default
+
+    best_category = default
+    best_score = 0
+    for category_label, category in MENU_CATEGORIES:
+        score = _score_keywords(haystack, CATEGORY_HINTS.get(category, []))
+        if score > best_score:
+            best_score = score
+            best_category = category
+
+    return best_category if best_score else default
+
+
+def _category_tag_for_text(text, default="live"):
+    category = _infer_category_from_text(text, default=default)
+    for category_label, category_key in MENU_CATEGORIES:
+        if category_key == category:
+            return category_label
+    return default.title()
+
+
 def _integration_select_mode_setting():
     value = (ADDON.getSetting("integration_select_mode") or "").strip().lower()
     if not value:
@@ -782,8 +963,105 @@ def _addon_category_keywords(addon_id, addon_name, category):
     return cleaned
 
 
+def _addon_category_paths(addon_id, addon_name, category):
+    rule = _find_addon_rule(addon_id, addon_name)
+    if not rule:
+        return []
+
+    paths = rule.get("paths", {}).get(category, [])
+    cleaned = []
+    seen = set()
+    for path in paths:
+        if not path:
+            continue
+        if isinstance(path, (str, unicode if "unicode" in globals() else str)):
+            sequence = [path]
+        else:
+            sequence = []
+            for step in path:
+                if not step:
+                    continue
+                if isinstance(step, (str, unicode if "unicode" in globals() else str)):
+                    sequence.append(step)
+                else:
+                    sequence.append(str(step))
+        normalized = tuple(_normalize_label(step).strip() for step in sequence if _normalize_label(step).strip())
+        if not normalized or normalized in seen:
+            continue
+        seen.add(normalized)
+        cleaned.append(sequence)
+    return cleaned
+
+
+def _match_path_step(entries, step_labels):
+    if not entries:
+        return None
+    if isinstance(step_labels, (str,)):
+        step_labels = [step_labels]
+
+    best_entry = None
+    best_score = 0
+    for entry in entries:
+        if entry.get("filetype") != "directory":
+            continue
+        label = entry.get("label") or entry.get("title") or ""
+        score = _score_keywords(label, step_labels)
+        if score > best_score:
+            best_score = score
+            best_entry = entry
+
+    return best_entry
+
+
+def _resolve_integrated_path_sequence(addon_id, sequence):
+    root_target = "plugin://{0}/".format(addon_id)
+    current_target = root_target
+    current_entry = None
+
+    for step in sequence:
+        entries = _browse_directory_entries(current_target)
+        if not entries:
+            return None
+        labels = step if isinstance(step, (list, tuple)) else [step]
+        current_entry = _match_path_step(entries, labels)
+        if not current_entry:
+            return None
+        current_target = current_entry.get("file") or ""
+        if not current_target:
+            return None
+
+    return current_entry
+
+
 def _resolve_integrated_targets(addon_id, category, addon_name=""):
     root_target = "plugin://{0}/".format(addon_id)
+    exact_paths = _addon_category_paths(addon_id, addon_name, category)
+    exact_results = []
+    seen_targets = set()
+    for sequence in exact_paths:
+        resolved = _resolve_integrated_path_sequence(addon_id, sequence)
+        if not resolved:
+            continue
+        target = resolved.get("file") or ""
+        if not target or target in seen_targets:
+            continue
+        seen_targets.add(target)
+        exact_results.append(
+            {
+                "target": target,
+                "is_folder": resolved.get("filetype") == "directory",
+                "matched_label": resolved.get("label") or resolved.get("title") or "",
+                "thumbnail": resolved.get("thumbnail") or "",
+                "fanart": resolved.get("fanart") or "",
+                "score": 1000,
+            }
+        )
+        if len(exact_results) >= MAX_INTEGRATED_TARGET_MATCHES:
+            return exact_results
+
+    if exact_results:
+        return exact_results
+
     keywords = _addon_category_keywords(addon_id, addon_name, category)
     queue = [(root_target, 0)]
     visited_targets = set()
@@ -833,6 +1111,7 @@ def _resolve_integrated_targets(addon_id, category, addon_name=""):
                     "matched_label": entry.get("label") or entry.get("title") or "",
                     "thumbnail": entry.get("thumbnail") or "",
                     "fanart": entry.get("fanart") or "",
+                    "score": score,
                 }
             )
             if len(resolved) >= MAX_INTEGRATED_TARGET_MATCHES:
@@ -976,6 +1255,59 @@ def _iter_integrated_playables(target, max_depth, max_items):
                 break
 
 
+def _target_has_validated_descendant(target, max_depth=3, max_items=80):
+    if _is_target_validated(target):
+        return True
+
+    for entry in _iter_integrated_playables(target, max_depth=max_depth, max_items=max_items):
+        file_path = entry.get("file") or ""
+        if file_path and _is_target_validated(file_path):
+            return True
+    return False
+
+
+def _search_integrated_playables(target, query, max_depth=6, max_items=120):
+    normalized_query = _normalize_label(query).strip()
+    if not target or not normalized_query:
+        return []
+
+    results = []
+    stack = [(target, 0)]
+    visited = set()
+    seen_targets = set()
+
+    while stack and len(results) < max_items:
+        current_target, depth = stack.pop()
+        if not current_target or current_target in visited:
+            continue
+        visited.add(current_target)
+
+        entries = _browse_directory_entries(current_target)
+        if not entries:
+            continue
+
+        for entry in entries:
+            file_path = entry.get("file") or ""
+            if not file_path:
+                continue
+
+            label = entry.get("label") or entry.get("title") or file_path
+            haystack = " {0} {1} ".format(_normalize_label(label), _normalize_label(file_path))
+
+            if entry.get("filetype") == "directory":
+                if depth < max_depth:
+                    stack.append((file_path, depth + 1))
+                continue
+
+            if normalized_query in haystack and file_path not in seen_targets:
+                results.append(entry)
+                seen_targets.add(file_path)
+                if len(results) >= max_items:
+                    break
+
+    return results
+
+
 def add_integrated_category_items(category, seen_title_keys=None):
     selected = _get_integrated_addon_ids()
     if not selected:
@@ -1040,6 +1372,13 @@ def add_integrated_category_items(category, seen_title_keys=None):
                     info={"title": title, "genre": category.title()},
                     art=art,
                 )
+                add_vote_actions(
+                    title,
+                    {"target": target},
+                    "external_browse",
+                    {"return_target": start_target, "return_title": row["name"]},
+                    art=art,
+                )
                 total_added += 1
                 addon_added += 1
 
@@ -1062,6 +1401,90 @@ def add_integrated_category_items(category, seen_title_keys=None):
             total_added += 1
 
     return total_added
+
+
+def _add_integrated_category_content(category, seen_title_keys=None):
+    if seen_title_keys is None:
+        seen_title_keys = set()
+    return add_integrated_category_items(category, seen_title_keys=seen_title_keys)
+
+
+def _add_cached_integrated_category_content(category, seen_title_keys=None):
+    if seen_title_keys is None:
+        seen_title_keys = set()
+
+    selected = set(_get_integrated_addon_ids())
+    if not selected:
+        return 0
+
+    cache = _get_integrated_menu_cache()
+    cache.sort(
+        key=lambda row: (
+            (row.get("addon_name") or "").lower(),
+            (row.get("label") or "").lower(),
+            (row.get("target") or "").lower(),
+        )
+    )
+
+    added = 0
+    for row in cache:
+        addon_id = (row.get("addon_id") or "").strip()
+        if addon_id not in selected:
+            continue
+
+        row_category = (row.get("category") or "").strip().lower()
+        if row_category != (category or "").strip().lower():
+            continue
+
+        target = row.get("target") or ""
+        if not target:
+            continue
+
+        title = row.get("title") or row.get("label") or target
+        title_key = _title_key(title)
+        if title_key:
+            dedupe_key = "{0}:{1}".format(addon_id, title_key)
+        else:
+            dedupe_key = "{0}:{1}".format(addon_id, target.lower())
+        if dedupe_key in seen_title_keys:
+            continue
+
+        is_validated = bool(row.get("validated")) or _is_target_validated(target)
+        if _validated_only_enabled() and not is_validated:
+            continue
+
+        if dedupe_key:
+            seen_title_keys.add(dedupe_key)
+
+        addon_name = row.get("addon_name") or addon_id
+        label = _format_validated_label("[Integrated {0}] {1}".format(addon_name, title), is_validated)
+        art = {
+            "thumb": row.get("thumb") or DEFAULT_ART["thumb"],
+            "icon": row.get("thumb") or DEFAULT_ART["icon"],
+            "fanart": row.get("fanart") or DEFAULT_ART["fanart"],
+        }
+
+        if row.get("is_folder", True):
+            add_folder_item(label, {"action": "external_browse", "target": target, "title": addon_name}, art=art)
+        else:
+            add_validated_playable_item(
+                label,
+                {"action": "external_play", "target": target},
+                validated=is_validated,
+                info={"title": title, "genre": category.title()},
+                art=art,
+            )
+
+        add_vote_actions(
+            title,
+            {"target": target},
+            "list_category",
+            {"return_provider": "all", "return_category": category},
+            art=art,
+        )
+        added += 1
+
+    return added
 
 
 def add_folder_item(label, query, art=None):
@@ -1087,12 +1510,19 @@ def add_playable_item(label, query, info=None, art=None, label2=""):
 
 
 def add_validated_playable_item(label, query, validated=False, info=None, art=None):
+    query = query or {}
+    vote = _get_stream_vote(
+        target=query.get("target", ""),
+        provider_id=query.get("provider", ""),
+        media_id=query.get("media_id", ""),
+    )
+    marker = _stream_status_marker(validated=validated, vote=vote)
+    if marker:
+        label = "{0}{1}".format(marker, label)
+
     video_info = dict(info or {"title": label})
     video_info.setdefault("mediatype", "video")
-    if validated:
-        video_info.setdefault("plotoutline", "Validated working stream")
-    else:
-        video_info.setdefault("plotoutline", "Not validated yet")
+    video_info.setdefault("plotoutline", _stream_status_label(validated=validated, vote=vote))
     if validated:
         video_info["playcount"] = 1
     add_playable_item(
@@ -1100,13 +1530,65 @@ def add_validated_playable_item(label, query, validated=False, info=None, art=No
         query,
         info=video_info,
         art=art,
-        label2="VALIDATED" if validated else "UNVERIFIED",
+        label2=_stream_status_label(validated=validated, vote=vote).upper(),
     )
+
+
+def add_vote_actions(label, query, return_action, return_args=None, art=None):
+    return_args = return_args or {}
+    base = {
+        "action": "vote_stream",
+        "return_action": return_action,
+        "label": label,
+        "target": query.get("target", ""),
+        "provider": query.get("provider", ""),
+        "media_id": query.get("media_id", ""),
+        "return_target": return_args.get("return_target", ""),
+        "return_title": return_args.get("return_title", ""),
+        "return_provider": return_args.get("return_provider", ""),
+        "return_media_id": return_args.get("return_media_id", ""),
+        "return_category": return_args.get("return_category", ""),
+        "return_query": return_args.get("return_query", ""),
+    }
+
+    add_action_item("Thumbs Up: {0}".format(label), dict(base, vote="up"), art=art)
+    add_action_item("Thumbs Down: {0}".format(label), dict(base, vote="down"), art=art)
+
+
+def _validate_stream_after_play(target="", provider_id="", media_id="", title=""):
+    key = _stream_vote_key(target=target, provider_id=provider_id, media_id=media_id)
+    if not key:
+        return
+
+    if provider_id and media_id:
+        if _is_provider_validated(provider_id, media_id) or _get_stream_vote(provider_id=provider_id, media_id=media_id) == "down":
+            return
+    else:
+        if _is_target_validated(target) or _get_stream_vote(target=target) == "down":
+            return
+
+    player = xbmc.Player()
+    for _ in range(MIN_STREAM_VALIDATION_SECONDS):
+        xbmc.sleep(1000)
+        if not player.isPlaying():
+            return
+
+    if provider_id and media_id:
+        _mark_provider_validated(provider_id, media_id)
+        display = title or media_id
+    else:
+        _mark_target_validated(target)
+        display = title or target
+
+    xbmcgui.Dialog().notification("MEOS", "{0} validated".format(display), xbmcgui.NOTIFICATION_INFO, 1800)
 
 
 def list_root():
     add_folder_item("One-Click Live TV", {"action": "list_category", "provider": "all", "category": "live"})
     add_folder_item("One-Click Movies", {"action": "list_category", "provider": "all", "category": "movies"})
+    add_folder_item("One-Click TV Shows", {"action": "list_category", "provider": "all", "category": "tv"})
+    add_folder_item("Cable TV", {"action": "list_category", "provider": "all", "category": "cable"})
+    add_folder_item("PPV Events", {"action": "list_category", "provider": "all", "category": "ppv"})
     add_folder_item("Sports Hub", {"action": "sports_menu"})
     add_folder_item("Manual Favorites", {"action": "favorites_menu"})
     add_folder_item("Integrate Other Add-ons", {"action": "integration_menu"})
@@ -1116,6 +1598,144 @@ def list_root():
     add_folder_item("Installed Add-ons Hub", {"action": "external_addons"})
     add_folder_item("Search All", {"action": "search_all"})
     add_folder_item("Settings", {"action": "open_settings"})
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_external_search_prompt(target, title="Add-on"):
+    if not target:
+        xbmcgui.Dialog().notification("MEOS", "Missing add-on target", xbmcgui.NOTIFICATION_ERROR, 3000)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    keyboard = xbmc.Keyboard("", "Search in {0}".format(title or "Add-on"))
+    keyboard.doModal()
+    if not keyboard.isConfirmed():
+        list_external_browse(target, title)
+        return
+
+    query = keyboard.getText().strip()
+    if not query:
+        list_external_browse(target, title)
+        return
+
+    list_external_search_results(target, title, query)
+
+
+def list_external_search_results(target, title="Add-on", query=""):
+    target = (target or "").strip()
+    query = (query or "").strip()
+    if not target or not query:
+        xbmcgui.Dialog().notification("MEOS", "Missing search target or query", xbmcgui.NOTIFICATION_ERROR, 3000)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    xbmcplugin.setPluginCategory(HANDLE, "Search: {0}".format(title or "Add-on"))
+    add_folder_item("Search Again", {"action": "external_search_prompt", "target": target, "title": title})
+    add_action_item(
+        "Add Current Folder to Favorites",
+        {
+            "action": "favorite_add",
+            "target": target,
+            "label": "[{0}] {1}".format(_category_tag_for_text("{0} {1}".format(title, target)), title or "Add-on"),
+            "title": title or "Add-on",
+            "is_folder": "true",
+            "return_action": "external_search_results",
+            "return_target": target,
+            "return_title": title,
+            "return_query": query,
+        },
+    )
+    add_action_item("Open Native Add-on Page", {"action": "external_native", "target": target})
+
+    matches = _search_integrated_playables(target, query)
+    if not matches:
+        xbmcgui.Dialog().notification("MEOS", "No matching items found", xbmcgui.NOTIFICATION_INFO, 2500)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    for entry in matches:
+        file_path = entry.get("file") or ""
+        if not file_path:
+            continue
+
+        raw_label = entry.get("label") or entry.get("title") or file_path
+        category_label = _category_tag_for_text("{0} {1} {2}".format(title or "", raw_label, file_path))
+        label = "[{0}] {1}".format(category_label, raw_label)
+        is_validated = _is_target_validated(file_path)
+        label = _format_validated_label(label, is_validated)
+        art = {
+            "thumb": entry.get("thumbnail") or DEFAULT_ART["thumb"],
+            "icon": entry.get("thumbnail") or DEFAULT_ART["icon"],
+            "fanart": entry.get("fanart") or DEFAULT_ART["fanart"],
+        }
+
+        if entry.get("filetype") == "directory":
+            add_action_item(
+                "Add to Favorites: {0}".format(label),
+                {
+                    "action": "favorite_add",
+                    "target": file_path,
+                    "label": label,
+                    "title": title,
+                    "is_folder": "true",
+                    "thumb": entry.get("thumbnail") or "",
+                    "fanart": entry.get("fanart") or "",
+                    "return_action": "external_search_results",
+                    "return_target": target,
+                    "return_title": title,
+                    "return_query": query,
+                },
+            )
+            add_folder_item(label, {"action": "external_browse", "target": file_path, "title": title}, art=art)
+            add_vote_actions(
+                raw_label,
+                {"target": file_path},
+                "external_search_results",
+                {"return_target": target, "return_title": title, "return_query": query},
+                art=art,
+            )
+        else:
+            add_action_item(
+                "Add to Favorites: {0}".format(label),
+                {
+                    "action": "favorite_add",
+                    "target": file_path,
+                    "label": label,
+                    "title": title,
+                    "is_folder": "false",
+                    "thumb": entry.get("thumbnail") or "",
+                    "fanart": entry.get("fanart") or "",
+                    "return_action": "external_search_results",
+                    "return_target": target,
+                    "return_title": title,
+                    "return_query": query,
+                },
+            )
+            add_validated_playable_item(
+                label,
+                {"action": "external_play", "target": file_path},
+                validated=is_validated,
+                info={"title": raw_label},
+                art=art,
+            )
+            add_vote_actions(
+                raw_label,
+                {"target": file_path},
+                "external_search_results",
+                {"return_target": target, "return_title": title, "return_query": query},
+                art=art,
+            )
+            continue
+
+        add_vote_actions(
+            raw_label,
+            {"target": file_path},
+            "external_search_results",
+            {"return_target": target, "return_title": title, "return_query": query},
+            art=art,
+        )
+
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
 
 
@@ -1155,6 +1775,12 @@ def list_sport_topic(query):
                 label,
                 {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
                 {"title": item["title"], "genre": item.get("genre", "Sports")},
+            )
+            add_vote_actions(
+                item["title"],
+                {"provider": provider.id, "media_id": item["media_id"]},
+                "sport_topic",
+                {"return_query": query},
             )
             found += 1
 
@@ -1280,15 +1906,22 @@ def list_provider_catalog(provider_id):
             {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
             {"title": item["title"], "genre": item.get("genre", "")},
         )
+        add_vote_actions(
+            item["title"],
+            {"provider": provider.id, "media_id": item["media_id"]},
+            "provider_catalog",
+            {"return_provider": provider.id},
+        )
     xbmcplugin.endOfDirectory(HANDLE)
 
 
 def list_category(provider_id, category):
     validated_only = _validated_only_enabled()
     if provider_id == "all":
-        add_integrated_addon_shortcuts(category)
         seen_titles = set()
-        found = add_integrated_category_items(category, seen_title_keys=seen_titles)
+        found = 0
+
+        _sync_integrated_menu_cache()
 
         seen = set()
         for provider in sorted(PROVIDERS.values(), key=lambda p: p.name.lower()):
@@ -1314,7 +1947,21 @@ def list_category(provider_id, category):
                     validated=is_validated,
                     info={"title": item["title"], "genre": item.get("genre", "")},
                 )
+                add_vote_actions(
+                    label,
+                    {"provider": provider.id, "media_id": item["media_id"]},
+                    "list_category",
+                    {
+                        "return_provider": provider_id,
+                        "return_category": category,
+                    },
+                )
                 found += 1
+
+        found += _add_integrated_category_content(category, seen_title_keys=seen_titles)
+        found += _add_cached_integrated_category_content(category, seen_title_keys=seen_titles)
+
+        add_folder_item("Relevant Integrated Add-ons", {"action": "integration_menu"})
 
         if not found:
             xbmcgui.Dialog().notification("MEOS", "No items in this category", xbmcgui.NOTIFICATION_INFO, 2500)
@@ -1343,6 +1990,15 @@ def list_category(provider_id, category):
             {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
             validated=is_validated,
             info={"title": item["title"], "genre": item.get("genre", "")},
+        )
+        add_vote_actions(
+            item["title"],
+            {"provider": provider.id, "media_id": item["media_id"]},
+            "list_category",
+            {
+                "return_provider": provider_id,
+                "return_category": category,
+            },
         )
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
@@ -1488,6 +2144,7 @@ def toggle_integrated_addon(addon_id):
         notice = "Added integrated add-on"
 
     _set_integrated_addon_ids(selected)
+    _sync_integrated_menu_cache(selected)
     xbmcgui.Dialog().notification("MEOS", notice, xbmcgui.NOTIFICATION_INFO, 2000)
     list_integration_picker()
 
@@ -1502,6 +2159,7 @@ def select_all_integrated_addons(include_disabled=False):
     addon_ids = [row.get("addon_id") for row in rows if row.get("addon_id")]
     mode_label = "all available" if include_disabled else "enabled"
     _set_integrated_addon_ids(addon_ids)
+    _sync_integrated_menu_cache(addon_ids)
     auto_build_enabled = _setting_bool("integrate_all_auto_build_favorites", False)
     if auto_build_enabled:
         favorites_before = len(_get_manual_favorites())
@@ -1554,6 +2212,7 @@ def clear_integrated_addons():
         return
 
     _set_integrated_addon_ids([])
+    _set_integrated_menu_cache([])
     xbmcgui.Dialog().notification("MEOS", "Integrated add-ons cleared", xbmcgui.NOTIFICATION_INFO, 2500)
     list_integration_menu()
 
@@ -1579,6 +2238,10 @@ def list_integration_inspector():
             "Inspect: {0}".format(addon_name),
             {"action": "integration_audit_addon", "addon_id": addon_id},
         )
+        add_folder_item(
+            "Manual Browse & Search: {0}".format(addon_name),
+            {"action": "external_browse", "target": "plugin://{0}/".format(addon_id), "title": addon_name},
+        )
         add_action_item(
             "Scan This Add-on Now: {0}".format(addon_name),
             {"action": "integration_scan_addon", "addon_id": addon_id},
@@ -1602,6 +2265,8 @@ def list_integration_addon_audit(addon_id):
 
     xbmcplugin.setPluginCategory(HANDLE, "Inspect: {0}".format(addon_name))
     add_folder_item("Open Add-on Root", {"action": "external_browse", "target": root_target, "title": addon_name})
+    add_folder_item("Manual Browse & Search", {"action": "external_browse", "target": root_target, "title": addon_name})
+    add_folder_item("Search Within Add-on", {"action": "external_search_prompt", "target": root_target, "title": addon_name})
     add_action_item(
         "Scan This Add-on Now",
         {"action": "integration_scan_addon", "addon_id": addon_id},
@@ -1789,6 +2454,13 @@ def list_integrated_addons_cache(addon_id="", category=""):
                 info={"title": label, "genre": category_label},
                 art=art,
             )
+            add_vote_actions(
+                row.get("label") or label,
+                {"target": target},
+                "integration_cached_menu",
+                {"return_category": category},
+                art=art,
+            )
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
@@ -1801,13 +2473,7 @@ def refresh_integrated_addons_cache():
         list_integrated_addons_cache()
         return
 
-    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
-    refreshed = 0
-    for addon_id in selected:
-        row = installed.get(addon_id)
-        if not row:
-            continue
-        refreshed += _refresh_integrated_menu_cache(addon_id, row["name"], addon_row=row)
+    refreshed = _sync_integrated_menu_cache(selected)
 
     xbmcgui.Dialog().notification(
         "MEOS",
@@ -2082,6 +2748,7 @@ def add_manual_favorite_from_action(
     return_target="",
     return_title="",
     return_addon_id="",
+    return_query="",
 ):
     added = _add_manual_favorite(
         target,
@@ -2107,6 +2774,9 @@ def add_manual_favorite_from_action(
         return
     if return_action == "favorite_add_integrated_addon":
         list_favorite_add_from_integrated_addon(return_addon_id)
+        return
+    if return_action == "external_search_results":
+        list_external_search_results(return_target, return_title, return_query)
         return
     list_manual_favorites()
 
@@ -2249,13 +2919,20 @@ def list_external_browse(target, title="Add-on"):
         {
             "action": "favorite_add",
             "target": target,
-            "label": "[{0}] Current Folder".format(title or "Add-on"),
+            "label": "[{0}] Current Folder".format(_category_tag_for_text("{0} {1}".format(title or "Add-on", target))),
             "title": title or "Add-on",
             "is_folder": "true",
             "return_action": "external_browse",
             "return_target": target,
             "return_title": title,
         },
+    )
+    add_folder_item("Search This Add-on", {"action": "external_search_prompt", "target": target, "title": title})
+    add_vote_actions(
+        title or "Add-on",
+        {"target": target},
+        "external_browse",
+        {"return_target": target, "return_title": title},
     )
 
     files = _browse_directory_entries(target)
@@ -2296,6 +2973,13 @@ def list_external_browse(target, title="Add-on"):
                 },
             )
             add_folder_item(label, {"action": "external_browse", "target": file_path, "title": title}, art=art)
+            add_vote_actions(
+                label,
+                {"target": file_path},
+                "external_browse",
+                {"return_target": target, "return_title": title},
+                art=art,
+            )
         else:
             add_action_item(
                 "Add to Favorites: {0}".format(label),
@@ -2319,6 +3003,13 @@ def list_external_browse(target, title="Add-on"):
                 info={"title": label},
                 art=art,
             )
+            add_vote_actions(
+                label,
+                {"target": file_path},
+                "external_browse",
+                {"return_target": target, "return_title": title},
+                art=art,
+            )
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
@@ -2330,15 +3021,15 @@ def play_external_item(target):
         return
 
     if target.startswith("plugin://"):
-        _mark_target_validated(target)
         xbmc.executebuiltin('PlayMedia("{0}")'.format(target.replace('"', '%22')))
         xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
+        _validate_stream_after_play(target=target)
         return
 
     item = xbmcgui.ListItem(path=target)
     item.setArt(DEFAULT_ART)
-    _mark_target_validated(target)
     xbmcplugin.setResolvedUrl(HANDLE, True, item)
+    _validate_stream_after_play(target=target)
 
 
 def open_external_native(target):
@@ -2349,6 +3040,46 @@ def open_external_native(target):
 
     xbmc.executebuiltin('ActivateWindow(Videos,"{0}",return)'.format(target.replace('"', '%22')))
     xbmcplugin.endOfDirectory(HANDLE)
+
+
+def vote_stream_action(
+    vote,
+    target="",
+    provider="",
+    media_id="",
+    label="",
+    return_action="favorites_menu",
+    return_target="",
+    return_title="",
+    return_provider="",
+    return_media_id="",
+    return_category="",
+    return_query="",
+):
+    if _set_stream_vote(target=target, provider_id=provider, media_id=media_id, vote=vote):
+        xbmcgui.Dialog().notification("MEOS", "Vote saved", xbmcgui.NOTIFICATION_INFO, 1800)
+    else:
+        xbmcgui.Dialog().notification("MEOS", "Vote target missing", xbmcgui.NOTIFICATION_WARNING, 2200)
+
+    if return_action == "external_browse":
+        list_external_browse(return_target, return_title)
+        return
+    if return_action == "external_search_results":
+        list_external_search_results(return_target, return_title, return_query)
+        return
+    if return_action == "provider_catalog":
+        list_provider_catalog(return_provider or provider)
+        return
+    if return_action == "list_category":
+        list_category(return_provider, return_category)
+        return
+    if return_action == "sport_topic":
+        list_sport_topic(return_query or "sports")
+        return
+    if return_action == "search_all":
+        search_catalog()
+        return
+    list_manual_favorites()
 
 
 def search_catalog(provider_id=None):
@@ -2374,6 +3105,11 @@ def search_catalog(provider_id=None):
                 label,
                 {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
                 {"title": item["title"], "genre": item.get("genre", "")},
+            )
+            add_vote_actions(
+                item["title"],
+                {"provider": provider.id, "media_id": item["media_id"]},
+                "search_all",
             )
             found += 1
     if not found:
@@ -2424,8 +3160,8 @@ def play_provider_item(provider_id, media_id):
             "{0}|{1}|R{{SSM}}|".format(playback["license_url"], playback.get("license_headers", "")),
         )
 
-    _mark_provider_validated(provider.id, media_id)
     xbmcplugin.setResolvedUrl(HANDLE, True, item)
+    _validate_stream_after_play(provider_id=provider.id, media_id=media_id, title=playback.get("title", media_id))
 
 
 def router(params):
@@ -2551,6 +3287,7 @@ def router(params):
             return_target=params.get("return_target", ""),
             return_title=params.get("return_title", ""),
             return_addon_id=params.get("return_addon_id", ""),
+            return_query=params.get("return_query", ""),
         )
         return
 
@@ -2568,6 +3305,35 @@ def router(params):
 
     if action == "external_browse":
         list_external_browse(params.get("target", ""), params.get("title", "Add-on"))
+        return
+
+    if action == "external_search_prompt":
+        list_external_search_prompt(params.get("target", ""), params.get("title", "Add-on"))
+        return
+
+    if action == "external_search_results":
+        list_external_search_results(
+            params.get("target", ""),
+            params.get("title", "Add-on"),
+            params.get("query", ""),
+        )
+        return
+
+    if action == "vote_stream":
+        vote_stream_action(
+            params.get("vote", ""),
+            target=params.get("target", ""),
+            provider=params.get("provider", ""),
+            media_id=params.get("media_id", ""),
+            label=params.get("label", ""),
+            return_action=params.get("return_action", "favorites_menu"),
+            return_target=params.get("return_target", ""),
+            return_title=params.get("return_title", ""),
+            return_provider=params.get("return_provider", ""),
+            return_media_id=params.get("return_media_id", ""),
+            return_category=params.get("return_category", ""),
+            return_query=params.get("return_query", ""),
+        )
         return
 
     if action == "external_play":

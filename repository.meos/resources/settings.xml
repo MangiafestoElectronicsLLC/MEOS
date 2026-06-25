@@ -9,6 +9,10 @@
     <setting id="validated_marker_override" type="enum" label="Validated marker style" values="Auto (by Kodi version)|Unicode Check|OK Fallback|Legacy v" default="0" />
     <setting id="integration_select_mode" type="enum" label="Integrate all mode" values="Enabled only|All available" default="0" />
     <setting id="integrate_all_auto_build_favorites" type="bool" label="Integrate All: auto-build favorites from top matches" default="false" />
+    <setting id="external_validated_targets" type="text" label="Validated stream targets (internal)" default="" visible="false" />
+    <setting id="provider_validated_items" type="text" label="Validated provider items (internal)" default="" visible="false" />
+    <setting id="manual_favorites" type="text" label="Manual favorites (internal)" default="" visible="false" />
+    <setting id="external_stream_votes" type="text" label="Stream votes (internal)" default="" visible="false" />
     <setting id="external_integrated_addons" type="text" label="Integrated add-ons (internal)" default="" visible="false" />
     <setting id="integrated_menu_cache" type="text" label="Integrated add-ons cache (internal)" default="" visible="false" />
   </category>
