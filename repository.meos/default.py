@@ -63,11 +63,11 @@ VALIDATED_MARKER_UNICODE = "[COLOR limegreen][B]✔[/B][/COLOR] "
 VALIDATED_MARKER_FALLBACK = "[COLOR limegreen][B]OK[/B][/COLOR] "
 VALIDATED_MARKER_LEGACY = "[COLOR limegreen][B]v[/B][/COLOR] "
 CATEGORY_HINTS = {
-    "movies": ["movie", "movies", "film", "cinema", "one click movie", "1 click movie"],
-    "tv": ["tv", "shows", "tv shows", "series", "episodes", "one click tv", "1 click tv"],
+    "movies": ["movie", "movies", "film", "cinema", "one click movie", "1 click movie", "new releases", "featured movies", "boxsets"],
+    "tv": ["tv", "shows", "tv shows", "series", "episodes", "one click tv", "1 click tv", "full seasons", "seasons"],
     "docs": ["doc", "docs", "documentary", "documentaries"],
-    "live": ["live", "channels", "channel", "iptv", "live tv", "cable", "cable tv", "local channels", "broadcast", "one click live", "1 click live"],
-    "sports": ["sport", "sports", "nfl", "nba", "mlb", "ufc", "mma", "boxing", "wwe"],
+    "live": ["live", "channels", "channel", "iptv", "live tv", "cable", "cable tv", "cable sports", "local channels", "broadcast", "one click live", "1 click live"],
+    "sports": ["sport", "sports", "nfl", "nba", "mlb", "ufc", "mma", "boxing", "wwe", "replays", "ppv", "live events"],
     "award": ["award", "awards", "oscar", "emmy", "winner", "nominee"],
 }
 ADDON_CATEGORY_RULES = [
@@ -76,10 +76,10 @@ ADDON_CATEGORY_RULES = [
         "id_contains": ["scrubsv2", "scrubs", "plugin.video.scrubs", "plugin.video.scrubsv2"],
         "label_contains": ["scrubs", "scrubs v2"],
         "categories": {
-            "movies": ["movies", "my movies", "new movies", "movie world", "boxsets", "1-click movies", "one click movies", "trending movies"],
-            "tv": ["tv shows", "my tv shows", "new episodes", "series", "episodes", "1-click tv shows", "one click tv shows", "trending tv shows"],
-            "live": ["live tv", "live channels", "channels", "iptv", "cable tv"],
-            "sports": ["sports", "live sports", "sport"],
+            "movies": ["movies", "my movies", "new movies", "movie world", "boxsets", "1-click movies", "one click movies", "trending movies", "featured movies", "new releases"],
+            "tv": ["tv shows", "my tv shows", "new episodes", "series", "episodes", "1-click tv shows", "one click tv shows", "trending tv shows", "full seasons"],
+            "live": ["live tv", "live channels", "channels", "iptv", "cable tv", "cable sports"],
+            "sports": ["sports", "live sports", "sport", "24/7 sports", "sports zone", "sports area"],
             "docs": ["documentaries", "docs", "documentary"],
         },
     },
@@ -100,10 +100,10 @@ ADDON_CATEGORY_RULES = [
         "id_contains": ["theloop", "plugin.video.loop", "plugin.video.theloop", "plugin.video.the.loop"],
         "label_contains": ["loop", "the loop"],
         "categories": {
-            "movies": ["movies", "movie", "movie zone"],
-            "tv": ["tv shows", "shows", "series", "tv"],
-            "live": ["live tv", "channels", "live channels", "iptv", "cable", "abc mega list", "mega list", "abc", "cable channels"],
-            "sports": ["sports", "live sports", "sport", "24/7 sports", "24/7", "sports area", "sports zone", "zone sports"],
+            "movies": ["movies", "movie", "movie zone", "film", "boxsets"],
+            "tv": ["tv shows", "shows", "series", "tv", "episodes", "seasons"],
+            "live": ["live tv", "channels", "live channels", "iptv", "cable", "abc mega list", "mega list", "abc", "cable channels", "cable sports"],
+            "sports": ["sports", "live sports", "sport", "24/7 sports", "24/7", "sports area", "sports zone", "zone sports", "ppv", "replays"],
             "docs": ["documentaries", "docs"],
         },
     },
@@ -112,10 +112,10 @@ ADDON_CATEGORY_RULES = [
         "id_contains": ["ghost", "plugin.video.ghost", "plugin.video.theghost", "plugin.video.the.ghost"],
         "label_contains": ["ghost", "the ghost"],
         "categories": {
-            "movies": ["movies", "movie", "1-click movies", "one click movies", "boxsets"],
-            "tv": ["tv shows", "shows", "series", "1-click tv shows", "one click tv shows"],
-            "live": ["live tv", "channels", "live channels", "iptv", "cable"],
-            "sports": ["sports", "sport", "live sports"],
+            "movies": ["movies", "movie", "1-click movies", "one click movies", "boxsets", "new releases"],
+            "tv": ["tv shows", "shows", "series", "1-click tv shows", "one click tv shows", "episodes", "seasons"],
+            "live": ["live tv", "channels", "live channels", "iptv", "cable", "cable sports"],
+            "sports": ["sports", "sport", "live sports", "replays", "ppv", "fight replays"],
             "docs": ["documentaries", "docs", "documentary"],
         },
     },
@@ -136,10 +136,10 @@ ADDON_CATEGORY_RULES = [
         "id_contains": ["thecrew", "crew", "plugin.video.thecrew", "plugin.video.the.crew"],
         "label_contains": ["the crew", "crew"],
         "categories": {
-            "movies": ["movies", "movie", "1-click movies", "one click movies", "boxsets", "new movies"],
-            "tv": ["tv shows", "shows", "series", "1-click tv shows", "one click tv shows", "new episodes"],
-            "live": ["live tv", "channels", "live channels", "iptv", "cable", "tv"],
-            "sports": ["sports", "sport", "live sports", "nfl", "nba", "mlb", "nhl", "ufc", "boxing"],
+            "movies": ["movies", "movie", "1-click movies", "one click movies", "boxsets", "new movies", "new releases"],
+            "tv": ["tv shows", "shows", "series", "1-click tv shows", "one click tv shows", "new episodes", "full seasons"],
+            "live": ["live tv", "channels", "live channels", "iptv", "cable", "tv", "cable sports"],
+            "sports": ["sports", "sport", "live sports", "nfl", "nba", "mlb", "nhl", "ufc", "boxing", "replays", "ppv"],
             "docs": ["documentaries", "docs", "kids"],
         },
     },
@@ -611,6 +611,45 @@ def _get_installed_video_addons(include_meos=False, include_disabled=True):
     return rows
 
 
+def _get_installed_video_addon_map(include_meos=False, include_disabled=True):
+    return {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=include_meos, include_disabled=include_disabled)}
+
+
+def _integration_reference_details(reference, installed=None):
+    reference = (reference or "").strip()
+    installed = installed or {}
+
+    if not reference:
+        return {
+            "reference": "",
+            "addon_id": "",
+            "root_target": "",
+            "name": "",
+            "row": None,
+        }
+
+    addon_id = reference
+    root_target = "plugin://{0}/".format(reference)
+
+    if reference.startswith("plugin://"):
+        parsed = urlparse(reference)
+        addon_id = (parsed.netloc or "").strip()
+        if not addon_id and parsed.path:
+            addon_id = parsed.path.strip("/").split("/", 1)[0]
+        root_target = reference
+
+    row = installed.get(addon_id) if addon_id else None
+    name = (row or {}).get("name") or addon_id or reference
+
+    return {
+        "reference": reference,
+        "addon_id": addon_id,
+        "root_target": root_target,
+        "name": name,
+        "row": row,
+    }
+
+
 def _normalize_label(text):
     text = (text or "").lower()
     return "".join(ch if ch.isalnum() else " " for ch in text)
@@ -690,8 +729,12 @@ def _addon_category_keywords(addon_id, addon_name, category):
     return cleaned
 
 
-def _resolve_integrated_targets(addon_id, category, addon_name=""):
-    root_target = "plugin://{0}/".format(addon_id)
+def _resolve_integrated_targets(addon_ref, category, addon_name=""):
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
+    details = _integration_reference_details(addon_ref, installed)
+    addon_id = details["addon_id"] or addon_ref
+    root_target = details["root_target"] or ("plugin://{0}/".format(addon_id) if addon_id else "")
+    addon_name = addon_name or details["name"]
     keywords = _addon_category_keywords(addon_id, addon_name, category)
     queue = [(root_target, 0)]
     visited_targets = set()
@@ -892,18 +935,20 @@ def add_integrated_category_items(category, seen_title_keys=None):
     if seen_title_keys is None:
         seen_title_keys = set()
 
-    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=False)}
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=False)
     total_added = 0
 
-    for addon_id in selected:
-        row = installed.get(addon_id)
+    for addon_ref in selected:
+        details = _integration_reference_details(addon_ref, installed)
+        addon_id = details["addon_id"]
+        row = details["row"]
         if not row:
             continue
 
         addon_added = 0
-        start_points = _resolve_integrated_targets(addon_id, category, addon_name=row.get("name", ""))
+        start_points = _resolve_integrated_targets(addon_ref, category, addon_name=row.get("name", ""))
         for resolved in start_points:
-            start_target = resolved.get("target") or "plugin://{0}/".format(addon_id)
+            start_target = resolved.get("target") or details["root_target"] or ("plugin://{0}/".format(addon_id) if addon_id else "")
 
             if resolved.get("is_folder", True):
                 playable_entries = _iter_integrated_playables(
@@ -1014,6 +1059,7 @@ def list_root():
     add_folder_item("Sports Hub", {"action": "sports_menu"})
     add_folder_item("Manual Favorites", {"action": "favorites_menu"})
     add_folder_item("Integrate Other Add-ons", {"action": "integration_menu"})
+    add_folder_item("Manual Add-on Scan", {"action": "integration_custom_prompt"})
     for label, category in MENU_CATEGORIES:
         add_folder_item(label, {"action": "list_category", "provider": "all", "category": category})
     add_folder_item("Awards", {"action": "awards_menu"})
@@ -1314,6 +1360,7 @@ def list_integration_menu():
     selected = _get_integrated_addon_ids()
 
     add_folder_item("Select Installed Add-ons", {"action": "integration_picker"})
+    add_folder_item("Manual Add-on Scan", {"action": "integration_custom_prompt"})
     add_folder_item("Integrate All ({0})".format(_integration_mode_label()), {"action": "integration_select_all"})
     add_folder_item("Auto-Build Favorites from Top Matches", {"action": "favorites_autobuild"})
     add_folder_item("Integration Inspector", {"action": "integration_inspector"})
@@ -1324,15 +1371,16 @@ def list_integration_menu():
         xbmcplugin.endOfDirectory(HANDLE)
         return
 
-    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
-    for addon_id in selected:
-        row = installed.get(addon_id)
-        label = row["name"] if row else addon_id
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
+    for addon_ref in selected:
+        details = _integration_reference_details(addon_ref, installed)
+        row = details["row"]
+        label = details["name"] if details["name"] else addon_ref
         if row and not row.get("enabled", True):
             label = "[DISABLED] {0}".format(label)
         add_folder_item(
             "Integrated: {0}".format(label),
-            {"action": "external_browse", "target": "plugin://{0}/".format(addon_id), "title": label},
+            {"action": "external_browse", "target": details["root_target"], "title": label},
         )
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
@@ -1351,6 +1399,7 @@ def list_integration_picker():
     selected_set = set(selected_existing)
 
     add_folder_item("Done", {"action": "integration_menu"})
+    add_folder_item("Manual Add-on Scan", {"action": "integration_custom_prompt"})
     add_folder_item("Select All ({0})".format(_integration_mode_label()), {"action": "integration_select_all"})
     add_folder_item("Clear Integrated Add-ons", {"action": "integration_clear"})
 
@@ -1464,6 +1513,7 @@ def clear_integrated_addons():
 def list_integration_inspector():
     xbmcplugin.setPluginCategory(HANDLE, "Integration Inspector")
     add_folder_item("Manual Favorites", {"action": "favorites_menu"})
+    add_folder_item("Manual Add-on Scan", {"action": "integration_custom_prompt"})
 
     selected = _get_integrated_addon_ids()
     if not selected:
@@ -1471,15 +1521,16 @@ def list_integration_inspector():
         xbmcplugin.endOfDirectory(HANDLE)
         return
 
-    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
-    for addon_id in selected:
-        row = installed.get(addon_id)
-        addon_name = row["name"] if row else addon_id
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
+    for addon_ref in selected:
+        details = _integration_reference_details(addon_ref, installed)
+        row = details["row"]
+        addon_name = details["name"] if details["name"] else addon_ref
         if row and not row.get("enabled", True):
             addon_name = "[DISABLED] {0}".format(addon_name)
         add_folder_item(
             "Inspect: {0}".format(addon_name),
-            {"action": "integration_audit_addon", "addon_id": addon_id},
+            {"action": "integration_audit_addon", "addon_id": addon_ref},
         )
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
@@ -1493,10 +1544,11 @@ def list_integration_addon_audit(addon_id):
         list_integration_inspector()
         return
 
-    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
-    row = installed.get(addon_id)
-    addon_name = row["name"] if row else addon_id
-    root_target = "plugin://{0}/".format(addon_id)
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
+    details = _integration_reference_details(addon_id, installed)
+    row = details["row"]
+    addon_name = details["name"] if details["name"] else addon_id
+    root_target = details["root_target"] or "plugin://{0}/".format(details["addon_id"] or addon_id)
 
     xbmcplugin.setPluginCategory(HANDLE, "Inspect: {0}".format(addon_name))
     add_folder_item("Open Add-on Root", {"action": "external_browse", "target": root_target, "title": addon_name})
@@ -1569,9 +1621,10 @@ def list_integration_audit_report(addon_id):
         list_integration_inspector()
         return
 
-    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
-    row = installed.get(addon_id)
-    addon_name = row["name"] if row else addon_id
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
+    details = _integration_reference_details(addon_id, installed)
+    row = details["row"]
+    addon_name = details["name"] if details["name"] else addon_id
 
     xbmcplugin.setPluginCategory(HANDLE, "Coverage: {0}".format(addon_name))
     add_folder_item("Back to Add-on Inspector", {"action": "integration_audit_addon", "addon_id": addon_id})
@@ -1891,20 +1944,20 @@ def auto_build_favorites_from_integrated():
         list_integration_menu()
         return
 
-    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
     favorites = _get_manual_favorites()
     existing_targets = set((row.get("target") or "").strip().lower() for row in favorites)
 
     added = 0
-    for addon_id in selected:
-        row = installed.get(addon_id)
-        addon_name = row["name"] if row else addon_id
+    for addon_ref in selected:
+        details = _integration_reference_details(addon_ref, installed)
+        row = details["row"]
+        addon_name = details["name"] if details["name"] else addon_ref
 
         for category_label, category in MENU_CATEGORIES:
-            matches = _resolve_integrated_targets(addon_id, category, addon_name=addon_name)
+            matches = _resolve_integrated_targets(addon_ref, category, addon_name=addon_name)
             if not matches:
                 continue
-
             top = matches[0]
             target = (top.get("target") or "").strip()
             if not target or target.lower() in existing_targets:
@@ -1937,15 +1990,15 @@ def add_integrated_addon_shortcuts(category):
     if not selected:
         return
 
-    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
     category_label = (category or "Library").title()
 
-    for addon_id in selected:
-        row = installed.get(addon_id)
+    for addon_ref in selected:
+        details = _integration_reference_details(addon_ref, installed)
+        row = details["row"]
         if not row:
             continue
-
-        resolved = _resolve_integrated_target(addon_id, category, addon_name=row.get("name", ""))
+        resolved = _resolve_integrated_target(addon_ref, category, addon_name=row.get("name", ""))
         target = resolved["target"]
         matched_label = resolved.get("matched_label") or ""
 
@@ -2083,6 +2136,37 @@ def play_external_item(target):
     item.setArt(DEFAULT_ART)
     _mark_target_validated(target)
     xbmcplugin.setResolvedUrl(HANDLE, True, item)
+
+
+def add_custom_integrated_addon_prompt():
+    keyboard = xbmc.Keyboard("", "Addon id or plugin:// URL to integrate")
+    keyboard.doModal()
+    if not keyboard.isConfirmed():
+        list_integration_menu()
+        return
+
+    reference = (keyboard.getText() or "").strip()
+    if not reference:
+        xbmcgui.Dialog().notification("MEOS", "Add-on reference is empty", xbmcgui.NOTIFICATION_WARNING, 2500)
+        list_integration_menu()
+        return
+
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
+    details = _integration_reference_details(reference, installed)
+    normalized_reference = details["addon_id"] or reference
+
+    selected = _get_integrated_addon_ids()
+    if normalized_reference not in selected:
+        selected.append(normalized_reference)
+        _set_integrated_addon_ids(selected)
+
+    xbmcgui.Dialog().notification("MEOS", "Add-on added for integration", xbmcgui.NOTIFICATION_INFO, 2200)
+
+    if _setting_bool("integrate_all_auto_build_favorites", False):
+        auto_build_favorites_from_integrated()
+        return
+
+    list_integration_addon_audit(normalized_reference)
 
 
 def open_external_native(target):
@@ -2233,6 +2317,10 @@ def router(params):
 
     if action == "integration_picker":
         list_integration_picker()
+        return
+
+    if action == "integration_custom_prompt":
+        add_custom_integrated_addon_prompt()
         return
 
     if action == "integration_toggle":
