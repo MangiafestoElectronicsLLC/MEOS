@@ -655,46 +655,63 @@ def _normalize_label(text):
     return "".join(ch if ch.isalnum() else " " for ch in text)
 
 
-def _score_category_match(label, category):
-    normalized = " {0} ".format(_normalize_label(label))
-    keywords = CATEGORY_HINTS.get(category, [])
+def _keyword_match_details(label, keywords):
+    normalized = _normalize_label(label).strip()
+    if not normalized:
+        return 0, []
+
+    wrapped = " {0} ".format(normalized)
     score = 0
+    reasons = []
+    seen = set()
 
     for keyword in keywords:
-        normalized_keyword = _normalize_label(keyword).strip()
-        if not normalized_keyword:
+        token = _normalize_label(keyword).strip()
+        if not token or token in seen:
             continue
-        token = " {0} ".format(normalized_keyword)
-        if token in normalized:
-            score += 10
-            continue
-        if normalized_keyword in normalized:
-            score += 4
+        seen.add(token)
 
+        wrapped_token = " {0} ".format(token)
+        if normalized == token:
+            score += 80
+            reasons.append("exact match: {0}".format(keyword))
+            continue
+        if wrapped_token in wrapped:
+            score += 40
+            reasons.append("contains: {0}".format(keyword))
+            continue
+        if token in normalized:
+            score += 15
+            reasons.append("mentions: {0}".format(keyword))
+
+    return score, reasons
+
+
+def _score_category_match(label, category):
+    score, _ = _keyword_match_details(label, CATEGORY_HINTS.get(category, []))
     return score
 
 
 def _score_keywords(label, keywords):
-    normalized = _normalize_label(label).strip()
-    if not normalized:
-        return 0
-
-    wrapped = " {0} ".format(normalized)
-    score = 0
-    for keyword in keywords:
-        token = _normalize_label(keyword).strip()
-        if not token:
-            continue
-        wrapped_token = " {0} ".format(token)
-        if normalized == token:
-            score += 80
-            continue
-        if wrapped_token in wrapped:
-            score += 40
-            continue
-        if token in normalized:
-            score += 15
+    score, _ = _keyword_match_details(label, keywords)
     return score
+
+
+def _format_match_reason(source_label, reasons, depth_bonus=0, fallback=False):
+    parts = []
+    if fallback:
+        parts.append("category fallback")
+    elif source_label:
+        parts.append("matched {0}".format(source_label))
+
+    if reasons:
+        limited = reasons[:3]
+        parts.append(", ".join(limited))
+
+    if depth_bonus:
+        parts.append("depth bonus +{0}".format(depth_bonus))
+
+    return "; ".join(parts)
 
 
 def _find_addon_rule(addon_id, addon_name):
@@ -758,10 +775,11 @@ def _resolve_integrated_targets(addon_ref, category, addon_name=""):
             if not file_path:
                 continue
             label = entry.get("label") or entry.get("title") or file_path
-            score = _score_keywords(label, keywords)
+            score, reasons = _keyword_match_details(label, keywords)
             if score > 0:
-                score += max(0, (MAX_INTEGRATED_SCAN_DEPTH - depth) * 5)
-                candidates.append((score, depth, entry))
+                depth_bonus = max(0, (MAX_INTEGRATED_SCAN_DEPTH - depth) * 5)
+                score += depth_bonus
+                candidates.append((score, depth, entry, reasons, depth_bonus))
 
             if entry.get("filetype") == "directory" and depth < MAX_INTEGRATED_SCAN_DEPTH:
                 queue.append((file_path, depth + 1))
@@ -770,7 +788,7 @@ def _resolve_integrated_targets(addon_ref, category, addon_name=""):
         candidates.sort(key=lambda row: (row[0], -row[1]), reverse=True)
         resolved = []
         seen_targets = set()
-        for score, depth, entry in candidates:
+        for score, depth, entry, reasons, depth_bonus in candidates:
             if score < 30 and resolved:
                 continue
             target = entry.get("file") or ""
@@ -784,6 +802,7 @@ def _resolve_integrated_targets(addon_ref, category, addon_name=""):
                     "matched_label": entry.get("label") or entry.get("title") or "",
                     "thumbnail": entry.get("thumbnail") or "",
                     "fanart": entry.get("fanart") or "",
+                    "match_reason": _format_match_reason(entry.get("label") or entry.get("title") or "", reasons, depth_bonus=depth_bonus),
                 }
             )
             if len(resolved) >= MAX_INTEGRATED_TARGET_MATCHES:
@@ -797,15 +816,17 @@ def _resolve_integrated_targets(addon_ref, category, addon_name=""):
 
     best = None
     best_score = 0
+    best_reasons = []
     for entry in entries:
         file_path = entry.get("file") or ""
         if not file_path:
             continue
         label = entry.get("label") or entry.get("title") or file_path
-        score = _score_category_match(label, category)
+        score, reasons = _keyword_match_details(label, CATEGORY_HINTS.get(category, []))
         if score > best_score:
             best_score = score
             best = entry
+            best_reasons = reasons
 
     if not best:
         return [{"target": root_target, "is_folder": True, "matched_label": "", "thumbnail": "", "fanart": ""}]
@@ -817,6 +838,7 @@ def _resolve_integrated_targets(addon_ref, category, addon_name=""):
             "matched_label": best.get("label") or best.get("title") or "",
             "thumbnail": best.get("thumbnail") or "",
             "fanart": best.get("fanart") or "",
+            "match_reason": _format_match_reason(best.get("label") or best.get("title") or "", best_reasons, fallback=True),
         }
     ]
 
@@ -934,6 +956,7 @@ def _scan_integrated_addon_category(addon_ref, category, addon_name=""):
                     "thumbnail": entry.get("thumbnail") or resolved.get("thumbnail") or (row or {}).get("thumbnail") or "",
                     "fanart": entry.get("fanart") or resolved.get("fanart") or (row or {}).get("fanart") or "",
                     "source_label": resolved.get("matched_label") or "",
+                    "match_reason": resolved.get("match_reason") or _format_match_reason(resolved.get("matched_label") or addon_name or addon_id, [], fallback=True),
                 }
             )
             if len(preview_items) >= MAX_INTEGRATED_ITEMS_PER_ADDON:
@@ -952,6 +975,7 @@ def _scan_integrated_addon_category(addon_ref, category, addon_name=""):
                 "thumbnail": resolved.get("thumbnail") or (row or {}).get("thumbnail") or "",
                 "fanart": resolved.get("fanart") or (row or {}).get("fanart") or "",
                 "source_label": resolved.get("matched_label") or "",
+                "match_reason": resolved.get("match_reason") or _format_match_reason(resolved.get("matched_label") or addon_name or addon_id, [], fallback=True),
             }
         )
 
@@ -1114,14 +1138,18 @@ def add_integrated_category_items(category, seen_title_keys=None):
     return total_added
 
 
-def add_folder_item(label, query, art=None):
+def add_folder_item(label, query, art=None, label2=""):
     item = xbmcgui.ListItem(label=label)
+    if label2:
+        item.setLabel2(label2)
     item.setArt(art or DEFAULT_ART)
     xbmcplugin.addDirectoryItem(HANDLE, build_url(query), item, isFolder=True)
 
 
-def add_action_item(label, query, art=None):
+def add_action_item(label, query, art=None, label2=""):
     item = xbmcgui.ListItem(label=label)
+    if label2:
+        item.setLabel2(label2)
     item.setArt(art or DEFAULT_ART)
     xbmcplugin.addDirectoryItem(HANDLE, build_url(query), item, isFolder=False)
 
@@ -1136,7 +1164,7 @@ def add_playable_item(label, query, info=None, art=None, label2=""):
     xbmcplugin.addDirectoryItem(HANDLE, build_url(query), item, isFolder=False)
 
 
-def add_validated_playable_item(label, query, validated=False, info=None, art=None):
+def add_validated_playable_item(label, query, validated=False, info=None, art=None, label2=""):
     video_info = dict(info or {"title": label})
     video_info.setdefault("mediatype", "video")
     if validated:
@@ -1150,7 +1178,7 @@ def add_validated_playable_item(label, query, validated=False, info=None, art=No
         query,
         info=video_info,
         art=art,
-        label2="VALIDATED" if validated else "UNVERIFIED",
+        label2=label2 or ("VALIDATED" if validated else "UNVERIFIED"),
     )
 
 
@@ -2266,6 +2294,7 @@ def list_integration_scan_report(addon_id):
         preview_count = len(category_report["items"])
         first_label = category_report["items"][0]["label"] if preview_count else "No matches"
         label = "[{0}] {1} item(s) - {2}".format(category_report["menu_label"], preview_count, first_label)
+        reason = category_report["items"][0]["match_reason"] if preview_count else "No match reason"
         add_folder_item(
             label,
             {
@@ -2273,6 +2302,7 @@ def list_integration_scan_report(addon_id):
                 "addon_id": addon_id,
                 "category": category_report["category"],
             },
+            label2=reason,
         )
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
@@ -2315,11 +2345,13 @@ def list_integration_scan_category(addon_id, category):
             "fanart": item.get("fanart") or DEFAULT_ART["fanart"],
         }
         label = item["label"]
+        reason = item.get("match_reason") or "No match reason"
         if item.get("is_folder", True):
             add_folder_item(
                 label,
                 {"action": "external_browse", "target": item["target"], "title": report["addon_name"]},
                 art=art,
+                label2=reason,
             )
         else:
             add_validated_playable_item(
@@ -2328,6 +2360,7 @@ def list_integration_scan_category(addon_id, category):
                 validated=_is_target_validated(item["target"]),
                 info={"title": label, "genre": report["category_label"]},
                 art=art,
+                label2=reason,
             )
 
         add_action_item(
@@ -2344,6 +2377,7 @@ def list_integration_scan_category(addon_id, category):
                 "return_reference": report["addon_id"] or addon_id,
                 "return_category": category,
             },
+            label2=reason,
         )
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
