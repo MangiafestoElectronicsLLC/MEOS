@@ -7,9 +7,9 @@ MEOS is a Kodi repository plus a companion video add-on with a clean install pat
 Use the direct ZIP links instead of the GitHub page URL.
 
 1. Recommended repository install (all devices)
-- Download repository ZIP directly:
-  https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main/repository.meos.zip
-- In Kodi: Add-ons -> Install from zip file -> choose the downloaded `repository.meos.zip`.
+- Download `repository.meos.zip` directly from GitHub Releases or the raw file URL.
+- Copy it to the Firestick or another device Kodi can browse.
+- In Kodi: Add-ons -> Install from zip file -> choose `repository.meos.zip`.
 - Then open Install from repository -> MEOS Repository -> install MEOS.
 
 2. Why Kodi File Manager shows "Unable to connect"
@@ -38,9 +38,6 @@ Use the direct ZIP links instead of the GitHub page URL.
 
 ## Notes
 
-- Do not use `https://github.com/MangiafestoElectronicsLLC/MEOS.git` as a Kodi source.
+- Do not use `https://github.com/MangiafestoElectronicsLLC/MEOS.git` or the GitHub page URL as a Kodi source.
 - If remote browsing is blocked on the device, download ZIP files on a PC/phone and transfer them manually.
 - The repository feed points to the raw GitHub XML and ZIP files under `zips/`.
-- Repository feed files used by Kodi after repository install:
-  - https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main/addons-1.0.17.xml
-  - https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main/zips/plugin.video.meos/plugin.video.meos-1.0.17.zip

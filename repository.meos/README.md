@@ -7,10 +7,10 @@ MEOS is a Kodi repository plus a companion video add-on with a clean install pat
 Use the direct ZIP links instead of the GitHub page URL.
 
 1. Repository install for Kodi
-- Add this source in Kodi File Manager:
-  https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main/repository.meos.zip
-- Install `repository.meos.zip` from that source.
-- Open Install from repository, choose MEOS Repository, then install MEOS.
+- Download `repository.meos.zip` directly from GitHub Releases or the raw file URL.
+- Copy it to the Firestick or another device Kodi can browse.
+- In Kodi: Add-ons -> Install from zip file -> choose `repository.meos.zip`.
+- Then open Install from repository -> MEOS Repository -> install MEOS.
 
 2. Firestick / Kodi 21 direct install
 - Download `MEOS_ADDON_K21.zip` from the repository.
