@@ -59,9 +59,12 @@ VALIDATED_TARGETS_SETTING = "external_validated_targets"
 VALIDATED_PROVIDER_SETTING = "provider_validated_items"
 MANUAL_FAVORITES_SETTING = "manual_favorites"
 MAX_MANUAL_FAVORITES = 600
+MAX_INTEGRATED_MENU_CACHE_ITEMS = 1200
 VALIDATED_MARKER_UNICODE = "[COLOR limegreen][B]✔[/B][/COLOR] "
 VALIDATED_MARKER_FALLBACK = "[COLOR limegreen][B]OK[/B][/COLOR] "
 VALIDATED_MARKER_LEGACY = "[COLOR limegreen][B]v[/B][/COLOR] "
+VIDEO_ADDON_TYPES = ("xbmc.python.pluginsource", "xbmc.addon.video")
+INTEGRATED_MENU_CACHE_SETTING = "integrated_menu_cache"
 CATEGORY_HINTS = {
     "movies": ["movie", "movies", "film", "cinema", "one click movie", "1 click movie"],
     "tv": ["tv", "shows", "tv shows", "series", "episodes", "one click tv", "1 click tv"],
@@ -222,6 +225,90 @@ def _set_integrated_addon_ids(addon_ids):
         seen.add(addon_id)
         payload.append(addon_id)
     ADDON.setSetting("external_integrated_addons", json.dumps(payload))
+
+
+def _get_integrated_menu_cache():
+    return _get_json_object_list_setting(INTEGRATED_MENU_CACHE_SETTING)
+
+
+def _set_integrated_menu_cache(rows):
+    cleaned = []
+    seen = set()
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        addon_id = str(row.get("addon_id") or "").strip()
+        category = str(row.get("category") or "").strip()
+        target = str(row.get("target") or "").strip()
+        if not addon_id or not category or not target:
+            continue
+
+        key = (addon_id.lower(), category.lower(), target.lower())
+        if key in seen:
+            continue
+        seen.add(key)
+
+        cleaned.append(
+            {
+                "addon_id": addon_id,
+                "addon_name": str(row.get("addon_name") or addon_id).strip(),
+                "category": category,
+                "category_label": str(row.get("category_label") or category.title()).strip(),
+                "target": target,
+                "label": str(row.get("label") or target).strip(),
+                "title": str(row.get("title") or "").strip(),
+                "is_folder": bool(row.get("is_folder", True)),
+                "thumb": str(row.get("thumb") or "").strip(),
+                "fanart": str(row.get("fanart") or "").strip(),
+                "validated": bool(row.get("validated", False)),
+            }
+        )
+        if len(cleaned) >= MAX_INTEGRATED_MENU_CACHE_ITEMS:
+            break
+
+    ADDON.setSetting(INTEGRATED_MENU_CACHE_SETTING, json.dumps(cleaned))
+
+
+def _integrated_menu_cache_rows_for_addon(addon_id, addon_name, addon_row=None):
+    rows = []
+    if not addon_id:
+        return rows
+
+    for category_label, category in MENU_CATEGORIES:
+        matches = _resolve_integrated_targets(addon_id, category, addon_name=addon_name)
+        for match in matches:
+            target = (match.get("target") or "").strip()
+            if not target:
+                continue
+            rows.append(
+                {
+                    "addon_id": addon_id,
+                    "addon_name": addon_name,
+                    "category": category,
+                    "category_label": category_label,
+                    "target": target,
+                    "label": match.get("matched_label") or "Match",
+                    "title": addon_name,
+                    "is_folder": bool(match.get("is_folder", True)),
+                    "thumb": match.get("thumbnail") or (addon_row or {}).get("thumbnail") or "",
+                    "fanart": match.get("fanart") or (addon_row or {}).get("fanart") or "",
+                    "validated": _is_target_validated(target),
+                }
+            )
+
+    return rows
+
+
+def _refresh_integrated_menu_cache(addon_id, addon_name, addon_row=None):
+    addon_id = (addon_id or "").strip()
+    if not addon_id:
+        return 0
+
+    remaining = [row for row in _get_integrated_menu_cache() if (row.get("addon_id") or "").strip() != addon_id]
+    new_rows = _integrated_menu_cache_rows_for_addon(addon_id, addon_name, addon_row=addon_row)
+    remaining.extend(new_rows)
+    _set_integrated_menu_cache(remaining)
+    return len(new_rows)
 
 
 def _get_json_list_setting(setting_id):
@@ -574,38 +661,43 @@ def _format_validated_label(label, validated):
 
 
 def _get_installed_video_addons(include_meos=False, include_disabled=True):
-    result = _json_rpc(
-        "Addons.GetAddons",
-        {
-            "type": "xbmc.python.pluginsource",
-            "properties": ["name", "enabled", "thumbnail", "fanart", "version"],
-        },
-    )
-    addons = (result or {}).get("addons") or []
     meos_id = ADDON.getAddonInfo("id")
 
     rows = []
-    for addon in addons:
-        addon_id = addon.get("addonid") or ""
-        if not addon_id:
-            continue
-        if addon_id == meos_id and not include_meos:
-            continue
-
-        enabled = addon.get("enabled", True)
-        if (not enabled) and (not include_disabled):
-            continue
-
-        name = addon.get("name") or addon_id
-        rows.append(
+    seen = set()
+    for addon_type in VIDEO_ADDON_TYPES:
+        result = _json_rpc(
+            "Addons.GetAddons",
             {
-                "name": name,
-                "addon_id": addon_id,
-                "enabled": enabled,
-                "thumbnail": addon.get("thumbnail") or "",
-                "fanart": addon.get("fanart") or "",
-            }
+                "type": addon_type,
+                "properties": ["name", "enabled", "thumbnail", "fanart", "version"],
+            },
         )
+        addons = (result or {}).get("addons") or []
+        for addon in addons:
+            addon_id = addon.get("addonid") or ""
+            if not addon_id:
+                continue
+            if addon_id == meos_id and not include_meos:
+                continue
+
+            enabled = addon.get("enabled", True)
+            if (not enabled) and (not include_disabled):
+                continue
+            if addon_id in seen:
+                continue
+            seen.add(addon_id)
+
+            name = addon.get("name") or addon_id
+            rows.append(
+                {
+                    "name": name,
+                    "addon_id": addon_id,
+                    "enabled": enabled,
+                    "thumbnail": addon.get("thumbnail") or "",
+                    "fanart": addon.get("fanart") or "",
+                }
+            )
 
     rows.sort(key=lambda item: item["name"].lower())
     return rows
@@ -1319,6 +1411,7 @@ def list_integration_menu():
 
     add_folder_item("Select Installed Add-ons", {"action": "integration_picker"})
     add_folder_item("Integrate All ({0})".format(_integration_mode_label()), {"action": "integration_select_all"})
+    add_folder_item("Integrated Add-ons (Cached View)", {"action": "integration_cached_menu"})
     add_folder_item("Auto-Build Favorites from Top Matches", {"action": "favorites_autobuild"})
     add_folder_item("Integration Inspector", {"action": "integration_inspector"})
     add_folder_item("Clear Integrated Add-ons", {"action": "integration_clear"})
@@ -1468,6 +1561,7 @@ def clear_integrated_addons():
 def list_integration_inspector():
     xbmcplugin.setPluginCategory(HANDLE, "Integration Inspector")
     add_folder_item("Manual Favorites", {"action": "favorites_menu"})
+    add_folder_item("Integrated Add-ons (Cached View)", {"action": "integration_cached_menu"})
 
     selected = _get_integrated_addon_ids()
     if not selected:
@@ -1484,6 +1578,10 @@ def list_integration_inspector():
         add_folder_item(
             "Inspect: {0}".format(addon_name),
             {"action": "integration_audit_addon", "addon_id": addon_id},
+        )
+        add_action_item(
+            "Scan This Add-on Now: {0}".format(addon_name),
+            {"action": "integration_scan_addon", "addon_id": addon_id},
         )
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
@@ -1504,6 +1602,10 @@ def list_integration_addon_audit(addon_id):
 
     xbmcplugin.setPluginCategory(HANDLE, "Inspect: {0}".format(addon_name))
     add_folder_item("Open Add-on Root", {"action": "external_browse", "target": root_target, "title": addon_name})
+    add_action_item(
+        "Scan This Add-on Now",
+        {"action": "integration_scan_addon", "addon_id": addon_id},
+    )
     add_folder_item("Coverage Report", {"action": "integration_audit_report", "addon_id": addon_id})
     add_action_item(
         "Add Root to Favorites",
@@ -1564,6 +1666,156 @@ def list_integration_addon_audit(addon_id):
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
+
+
+def scan_integrated_addon_now(addon_id):
+    addon_id = (addon_id or "").strip()
+    if not addon_id:
+        xbmcgui.Dialog().notification("MEOS", "Missing add-on id", xbmcgui.NOTIFICATION_ERROR, 2500)
+        list_integration_inspector()
+        return
+
+    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
+    row = installed.get(addon_id)
+    if not row:
+        xbmcgui.Dialog().notification("MEOS", "Add-on is not installed", xbmcgui.NOTIFICATION_WARNING, 2500)
+        list_integration_inspector()
+        return
+
+    favorites = _get_manual_favorites()
+    existing_targets = set((item.get("target") or "").strip().lower() for item in favorites)
+    addon_name = row["name"]
+    cache_added = _refresh_integrated_menu_cache(addon_id, addon_name, addon_row=row)
+    added = 0
+
+    for cached_row in _integrated_menu_cache_rows_for_addon(addon_id, addon_name, addon_row=row):
+        target = cached_row.get("target") or ""
+        if not target or target.lower() in existing_targets:
+            continue
+        if _add_manual_favorite(
+            target,
+            label="[{0}] {1} - {2}".format(
+                cached_row.get("category_label") or "Category",
+                addon_name,
+                cached_row.get("label") or "Match",
+            ),
+            title=addon_name,
+            is_folder=bool(cached_row.get("is_folder", True)),
+            thumb=cached_row.get("thumb") or "",
+            fanart=cached_row.get("fanart") or "",
+        ):
+            existing_targets.add(target.lower())
+            added += 1
+
+    xbmcgui.Dialog().notification(
+        "MEOS",
+        "Refreshed cache for {0} ({1} entries) and added {2} favorites".format(addon_name, cache_added, added),
+        xbmcgui.NOTIFICATION_INFO,
+        3000,
+    )
+    list_integrated_addons_cache()
+
+
+def list_integrated_addons_cache(addon_id="", category=""):
+    addon_id = (addon_id or "").strip().lower()
+    category = (category or "").strip().lower()
+    cache = _get_integrated_menu_cache()
+    if addon_id:
+        cache = [row for row in cache if (row.get("addon_id") or "").strip().lower() == addon_id]
+    if category:
+        cache = [row for row in cache if (row.get("category") or "").strip().lower() == category]
+
+    xbmcplugin.setPluginCategory(HANDLE, "Integrated Add-ons")
+    add_folder_item("Refresh Cached Integrated Add-ons", {"action": "integration_cached_refresh"})
+    add_folder_item("Back to Integration Menu", {"action": "integration_menu"})
+
+    if not cache:
+        add_folder_item("No cached integrated add-ons yet", {"action": "integration_inspector"})
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    if not addon_id and not category:
+        counts = {}
+        for row in cache:
+            key = (row.get("category") or "").strip().lower() or "other"
+            counts[key] = counts.get(key, 0) + 1
+
+        for category_label, category_key in MENU_CATEGORIES:
+            count = counts.get(category_key, 0)
+            if not count:
+                continue
+            add_folder_item(
+                "[{0}] Cached ({1})".format(category_label, count),
+                {"action": "integration_cached_menu", "category": category_key},
+            )
+        other_count = counts.get("other", 0)
+        if other_count:
+            add_folder_item(
+                "[Other] Cached ({0})".format(other_count),
+                {"action": "integration_cached_menu", "category": "other"},
+            )
+        xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    cache.sort(
+        key=lambda row: (
+            (row.get("addon_name") or "").lower(),
+            (row.get("label") or "").lower(),
+            (row.get("target") or "").lower(),
+        )
+    )
+
+    for row in cache:
+        target = row.get("target") or ""
+        if not target:
+            continue
+        category_label = row.get("category_label") or "Category"
+        addon_name = row.get("addon_name") or row.get("addon_id") or "Add-on"
+        label = "[{0}] {1} - {2}".format(category_label, addon_name, row.get("label") or "Match")
+        art = {
+            "thumb": row.get("thumb") or DEFAULT_ART["thumb"],
+            "icon": row.get("thumb") or DEFAULT_ART["icon"],
+            "fanart": row.get("fanart") or DEFAULT_ART["fanart"],
+        }
+
+        if row.get("is_folder", True):
+            add_folder_item(label, {"action": "external_browse", "target": target, "title": addon_name}, art=art)
+        else:
+            add_validated_playable_item(
+                label,
+                {"action": "external_play", "target": target},
+                validated=bool(row.get("validated")) or _is_target_validated(target),
+                info={"title": label, "genre": category_label},
+                art=art,
+            )
+
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def refresh_integrated_addons_cache():
+    selected = _get_integrated_addon_ids()
+    if not selected:
+        xbmcgui.Dialog().notification("MEOS", "No integrated add-ons selected", xbmcgui.NOTIFICATION_INFO, 2500)
+        list_integrated_addons_cache()
+        return
+
+    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
+    refreshed = 0
+    for addon_id in selected:
+        row = installed.get(addon_id)
+        if not row:
+            continue
+        refreshed += _refresh_integrated_menu_cache(addon_id, row["name"], addon_row=row)
+
+    xbmcgui.Dialog().notification(
+        "MEOS",
+        "Refreshed integrated add-on cache ({0} entries)".format(refreshed),
+        xbmcgui.NOTIFICATION_INFO,
+        3000,
+    )
+    list_integrated_addons_cache()
 
 
 def list_integration_audit_report(addon_id):
@@ -2235,6 +2487,14 @@ def router(params):
         list_integration_inspector()
         return
 
+    if action == "integration_cached_menu":
+        list_integrated_addons_cache(params.get("addon_id", ""), params.get("category", ""))
+        return
+
+    if action == "integration_cached_refresh":
+        refresh_integrated_addons_cache()
+        return
+
     if action == "integration_picker":
         list_integration_picker()
         return
@@ -2249,6 +2509,10 @@ def router(params):
 
     if action == "integration_audit_report":
         list_integration_audit_report(params.get("addon_id", ""))
+        return
+
+    if action == "integration_scan_addon":
+        scan_integrated_addon_now(params.get("addon_id", ""))
         return
 
     if action == "integration_select_all":

@@ -10,5 +10,6 @@
     <setting id="integration_select_mode" type="enum" label="Integrate all mode" values="Enabled only|All available" default="0" />
     <setting id="integrate_all_auto_build_favorites" type="bool" label="Integrate All: auto-build favorites from top matches" default="false" />
     <setting id="external_integrated_addons" type="text" label="Integrated add-ons (internal)" default="" visible="false" />
+    <setting id="integrated_menu_cache" type="text" label="Integrated add-ons cache (internal)" default="" visible="false" />
   </category>
 </settings>
