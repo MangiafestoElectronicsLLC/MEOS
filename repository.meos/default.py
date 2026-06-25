@@ -1008,6 +1008,76 @@ def add_validated_playable_item(label, query, validated=False, info=None, art=No
     )
 
 
+def list_credits():
+    """Display attribution credits and information about MEOS and its content sources."""
+    addon_version = ADDON.getAddonInfo("version")
+    addon_id = ADDON.getAddonInfo("id")
+
+    xbmcplugin.setPluginCategory(HANDLE, "Credits & About")
+
+    add_action_item(
+        "MEOS v{0} — {1}".format(addon_version, addon_id),
+        {"action": "noop"},
+    )
+    add_action_item(
+        "Provider: MEOS Archive — Internet Archive (archive.org)",
+        {"action": "noop"},
+    )
+    add_action_item(
+        "Provider: Pluto TV — Free ad-supported streaming by Paramount",
+        {"action": "noop"},
+    )
+    add_action_item(
+        "Provider: MEOS Demo — Royalty-free sample content (Google/Mux)",
+        {"action": "noop"},
+    )
+    add_action_item(
+        "Live Channels: NASA TV (Public Domain — nasa.gov)",
+        {"action": "noop"},
+    )
+    add_action_item(
+        "Live Channels: DW News (Deutsche Welle — dw.com)",
+        {"action": "noop"},
+    )
+    add_action_item(
+        "Live Channels: France 24 English (france24.com)",
+        {"action": "noop"},
+    )
+    add_action_item(
+        "Live Channels: Al Jazeera English (aljazeera.com)",
+        {"action": "noop"},
+    )
+    add_action_item(
+        "Live Channels: Bloomberg Television (bloomberg.com)",
+        {"action": "noop"},
+    )
+    add_action_item(
+        "Live Channels: Euronews English (euronews.com)",
+        {"action": "noop"},
+    )
+    add_action_item(
+        "Live Channels: CGTN English (cgtn.com)",
+        {"action": "noop"},
+    )
+    add_action_item(
+        "Live Channels: Sky News (sky.com/skynews)",
+        {"action": "noop"},
+    )
+    add_action_item(
+        "Awards Data: Internet Archive — public domain / CC search",
+        {"action": "noop"},
+    )
+    add_action_item(
+        "License: MIT — Use responsibly and abide by your region's streaming regulations.",
+        {"action": "noop"},
+    )
+    add_action_item(
+        "Source: https://github.com/MangiafestoElectronicsLLC/MEOS",
+        {"action": "noop"},
+    )
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
 def list_root():
     add_folder_item("One-Click Live TV", {"action": "list_category", "provider": "all", "category": "live"})
     add_folder_item("One-Click Movies", {"action": "list_category", "provider": "all", "category": "movies"})
@@ -1019,6 +1089,7 @@ def list_root():
     add_folder_item("Awards", {"action": "awards_menu"})
     add_folder_item("Installed Add-ons Hub", {"action": "external_addons"})
     add_folder_item("Search All", {"action": "search_all"})
+    add_folder_item("Credits & About", {"action": "credits"})
     add_folder_item("Settings", {"action": "open_settings"})
     xbmcplugin.endOfDirectory(HANDLE)
 
@@ -2320,6 +2391,14 @@ def router(params):
 
     if action == "open_settings":
         open_settings()
+        return
+
+    if action == "credits":
+        list_credits()
+        return
+
+    if action == "noop":
+        xbmcplugin.endOfDirectory(HANDLE)
         return
 
     if action == "provider_auth":
