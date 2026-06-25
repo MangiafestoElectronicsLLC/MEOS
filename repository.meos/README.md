@@ -26,6 +26,7 @@ Use the direct ZIP links instead of the GitHub page URL.
 - `plugin.video.meos`: legal sample streams and provider scaffolding
 - `Installed Add-ons Hub`: browse installed add-ons from inside MEOS
 - Installed add-on scanning includes both common Kodi video add-on types.
+- Integration Inspector now includes a per-add-on scan action.
 
 ## Notes
 

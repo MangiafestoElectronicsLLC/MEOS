@@ -1487,6 +1487,10 @@ def list_integration_inspector():
             "Inspect: {0}".format(addon_name),
             {"action": "integration_audit_addon", "addon_id": addon_id},
         )
+        add_action_item(
+            "Scan This Add-on Now: {0}".format(addon_name),
+            {"action": "integration_scan_addon", "addon_id": addon_id},
+        )
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
@@ -1506,6 +1510,10 @@ def list_integration_addon_audit(addon_id):
 
     xbmcplugin.setPluginCategory(HANDLE, "Inspect: {0}".format(addon_name))
     add_folder_item("Open Add-on Root", {"action": "external_browse", "target": root_target, "title": addon_name})
+    add_action_item(
+        "Scan This Add-on Now",
+        {"action": "integration_scan_addon", "addon_id": addon_id},
+    )
     add_folder_item("Coverage Report", {"action": "integration_audit_report", "addon_id": addon_id})
     add_action_item(
         "Add Root to Favorites",
@@ -1566,6 +1574,57 @@ def list_integration_addon_audit(addon_id):
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
+
+
+def scan_integrated_addon_now(addon_id):
+    addon_id = (addon_id or "").strip()
+    if not addon_id:
+        xbmcgui.Dialog().notification("MEOS", "Missing add-on id", xbmcgui.NOTIFICATION_ERROR, 2500)
+        list_integration_inspector()
+        return
+
+    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
+    row = installed.get(addon_id)
+    if not row:
+        xbmcgui.Dialog().notification("MEOS", "Add-on is not installed", xbmcgui.NOTIFICATION_WARNING, 2500)
+        list_integration_inspector()
+        return
+
+    favorites = _get_manual_favorites()
+    existing_targets = set((item.get("target") or "").strip().lower() for item in favorites)
+    addon_name = row["name"]
+    added = 0
+
+    for category_label, category in MENU_CATEGORIES:
+        matches = _resolve_integrated_targets(addon_id, category, addon_name=addon_name)
+        if not matches:
+            continue
+
+        top = matches[0]
+        target = (top.get("target") or "").strip()
+        if not target or target.lower() in existing_targets:
+            continue
+
+        label_suffix = top.get("matched_label") or "Top Match"
+        is_folder = bool(top.get("is_folder", True))
+        if _add_manual_favorite(
+            target,
+            label="[{0}] {1} - {2}".format(category_label, addon_name, label_suffix),
+            title=addon_name,
+            is_folder=is_folder,
+            thumb=top.get("thumbnail") or (row or {}).get("thumbnail") or "",
+            fanart=top.get("fanart") or (row or {}).get("fanart") or "",
+        ):
+            existing_targets.add(target.lower())
+            added += 1
+
+    xbmcgui.Dialog().notification(
+        "MEOS",
+        "Scanned {0} and added {1} favorites".format(addon_name, added),
+        xbmcgui.NOTIFICATION_INFO,
+        3000,
+    )
+    list_integration_addon_audit(addon_id)
 
 
 def list_integration_audit_report(addon_id):
@@ -2251,6 +2310,10 @@ def router(params):
 
     if action == "integration_audit_report":
         list_integration_audit_report(params.get("addon_id", ""))
+        return
+
+    if action == "integration_scan_addon":
+        scan_integrated_addon_now(params.get("addon_id", ""))
         return
 
     if action == "integration_select_all":
