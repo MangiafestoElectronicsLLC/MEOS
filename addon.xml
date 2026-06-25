@@ -19,6 +19,6 @@
       <fanart>fanart.jpg</fanart>
     </assets>
     <disclaimer>Use responsibly and abide by your region's streaming regulations.</disclaimer>
-    <news>1.0.24: Integrated add-on manual favorite workflow, strict integration mode, and validation marker controls.</news>
+    <news>1.0.24: Integrated add-on manual favorite workflow, strict integration mode, validation marker controls, and broader installed add-on discovery.</news>
   </extension>
 </addon>

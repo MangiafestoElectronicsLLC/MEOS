@@ -62,6 +62,7 @@ MAX_MANUAL_FAVORITES = 600
 VALIDATED_MARKER_UNICODE = "[COLOR limegreen][B]✔[/B][/COLOR] "
 VALIDATED_MARKER_FALLBACK = "[COLOR limegreen][B]OK[/B][/COLOR] "
 VALIDATED_MARKER_LEGACY = "[COLOR limegreen][B]v[/B][/COLOR] "
+VIDEO_ADDON_TYPES = ("xbmc.python.pluginsource", "xbmc.addon.video")
 CATEGORY_HINTS = {
     "movies": ["movie", "movies", "film", "cinema", "one click movie", "1 click movie"],
     "tv": ["tv", "shows", "tv shows", "series", "episodes", "one click tv", "1 click tv"],
@@ -574,38 +575,43 @@ def _format_validated_label(label, validated):
 
 
 def _get_installed_video_addons(include_meos=False, include_disabled=True):
-    result = _json_rpc(
-        "Addons.GetAddons",
-        {
-            "type": "xbmc.python.pluginsource",
-            "properties": ["name", "enabled", "thumbnail", "fanart", "version"],
-        },
-    )
-    addons = (result or {}).get("addons") or []
     meos_id = ADDON.getAddonInfo("id")
 
     rows = []
-    for addon in addons:
-        addon_id = addon.get("addonid") or ""
-        if not addon_id:
-            continue
-        if addon_id == meos_id and not include_meos:
-            continue
-
-        enabled = addon.get("enabled", True)
-        if (not enabled) and (not include_disabled):
-            continue
-
-        name = addon.get("name") or addon_id
-        rows.append(
+    seen = set()
+    for addon_type in VIDEO_ADDON_TYPES:
+        result = _json_rpc(
+            "Addons.GetAddons",
             {
-                "name": name,
-                "addon_id": addon_id,
-                "enabled": enabled,
-                "thumbnail": addon.get("thumbnail") or "",
-                "fanart": addon.get("fanart") or "",
-            }
+                "type": addon_type,
+                "properties": ["name", "enabled", "thumbnail", "fanart", "version"],
+            },
         )
+        addons = (result or {}).get("addons") or []
+        for addon in addons:
+            addon_id = addon.get("addonid") or ""
+            if not addon_id:
+                continue
+            if addon_id == meos_id and not include_meos:
+                continue
+
+            enabled = addon.get("enabled", True)
+            if (not enabled) and (not include_disabled):
+                continue
+            if addon_id in seen:
+                continue
+            seen.add(addon_id)
+
+            name = addon.get("name") or addon_id
+            rows.append(
+                {
+                    "name": name,
+                    "addon_id": addon_id,
+                    "enabled": enabled,
+                    "thumbnail": addon.get("thumbnail") or "",
+                    "fanart": addon.get("fanart") or "",
+                }
+            )
 
     rows.sort(key=lambda item: item["name"].lower())
     return rows
