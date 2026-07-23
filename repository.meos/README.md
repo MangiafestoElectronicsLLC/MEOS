@@ -79,7 +79,7 @@ Header behavior:
 	- `X-MEOS-Signature`
 	- `X-MEOS-Signature-Version: v1`
 
-Secure baseline (recommended and now default in reference worker):
+Secure baseline (recommended for strongest protection):
 - Set `API_KEY` on server and in add-on settings.
 - Set `SIGNING_SECRET` on server and `remote_validation_signature_secret` in add-on settings.
 - Keep `REQUIRE_SIGNATURE=true`.
@@ -87,7 +87,8 @@ Secure baseline (recommended and now default in reference worker):
 
 If you are using simple mode for non-technical users:
 - Keep API key required.
-- Signatures can be left blank in the add-on only when server-side `REQUIRE_SIGNATURE=false`.
+- Set server `REQUIRE_SIGNATURE=false`.
+- Users only need API URL + API key in Quick Setup.
 
 Server hardening recommendation:
 - Optional signature validation and IP rate limiting reference implementation is included at:

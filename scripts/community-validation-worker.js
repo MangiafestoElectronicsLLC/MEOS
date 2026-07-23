@@ -8,7 +8,7 @@
 //
 // Environment variables:
 // - API_KEY (required)
-// - REQUIRE_SIGNATURE ("true"/"false", default "true")
+// - REQUIRE_SIGNATURE ("true"/"false", default "false")
 // - SIGNING_SECRET (required if REQUIRE_SIGNATURE=true)
 // - SIG_MAX_SKEW_SECONDS (default "120")
 // - RATE_LIMIT_ENABLED ("true"/"false", default "true")
@@ -140,7 +140,7 @@ async function hmacHex(secret, text) {
 }
 
 async function verifySignature(request, env, bodyText) {
-    const required = parseBool(env.REQUIRE_SIGNATURE, true);
+    const required = parseBool(env.REQUIRE_SIGNATURE, false);
     if (!required) {
         return { ok: true };
     }
