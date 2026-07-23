@@ -1,6 +1,9 @@
 import sys
 import random
 import json
+import time
+import hashlib
+import hmac
 
 import xbmc
 import xbmcaddon
@@ -12,8 +15,10 @@ from providers import get_providers
 try:
     from urllib import urlencode
     from urlparse import parse_qsl, urlparse, urlunparse
+    from urllib2 import Request, urlopen
 except ImportError:
     from urllib.parse import urlencode, parse_qsl, urlparse, urlunparse
+    from urllib.request import Request, urlopen
 
 
 ADDON = xbmcaddon.Addon()
@@ -74,9 +79,15 @@ VALIDATED_MARKER_LEGACY = "[COLOR limegreen][B]v[/B][/COLOR] "
 CUSTOM_MAPPED_MARKER = "[COLOR gold][B]Mapped[/B][/COLOR] "
 VOTE_MARKER_UP = "[COLOR limegreen][B]👍[/B][/COLOR] "
 VOTE_MARKER_DOWN = "[COLOR red][B]👎[/B][/COLOR] "
-MIN_STREAM_VALIDATION_SECONDS = 10
+MIN_STREAM_VALIDATION_SECONDS = 30
+STREAM_PLAYBACK_START_TIMEOUT_SECONDS = 25
+STREAM_PLAYBACK_IDLE_GRACE_SECONDS = 8
+STREAM_PLAYBACK_FAILURE_SECONDS = 5
+MAX_STREAM_VALIDATION_WAIT_SECONDS = 180
+REMOTE_VALIDATION_TIMEOUT_SECONDS = 4
 VIDEO_ADDON_TYPES = ("xbmc.python.pluginsource", "xbmc.addon.video")
 INTEGRATED_MENU_CACHE_SETTING = "integrated_menu_cache"
+REMOTE_VOTE_CACHE = {}
 CATEGORY_HINTS = {
     "movies": ["movie", "movies", "film", "cinema", "one click movie", "1 click movie"],
     "tv": ["tv", "shows", "tv shows", "series", "episodes", "one click tv", "1 click tv"],
@@ -254,6 +265,261 @@ def _setting_bool(setting_id, default=False):
     if not value:
         return default
     return value in ("true", "1", "yes", "on")
+
+
+def _remote_validation_enabled():
+    if not _setting_bool("remote_validation_enabled", False):
+        return False
+    if not _remote_validation_api_base_url():
+        return False
+    # Simple baseline: require URL + API key. Signature secret is optional.
+    if not _remote_validation_api_key():
+        return False
+    return True
+
+
+def _dialog_input_text(heading, default="", hidden=False):
+    default = default or ""
+    try:
+        if hidden:
+            return xbmcgui.Dialog().input(heading, defaultt=default, option=xbmcgui.ALPHANUM_HIDE_INPUT)
+        return xbmcgui.Dialog().input(heading, defaultt=default)
+    except Exception:
+        # Fallback for older Kodi input signatures.
+        try:
+            return xbmcgui.Dialog().input(heading, default)
+        except Exception:
+            return ""
+
+
+def community_validation_setup_wizard():
+    dialog = xbmcgui.Dialog()
+    confirmed = dialog.yesno(
+        "MEOS",
+        "Quick setup for Community Validation?",
+        "You only need API URL and API key.",
+        yeslabel="Start",
+        nolabel="Cancel",
+    )
+    if not confirmed:
+        list_root()
+        return
+
+    api_url = _dialog_input_text("Community API URL", _remote_validation_api_base_url())
+    api_url = (api_url or "").strip().rstrip("/")
+    if not api_url:
+        xbmcgui.Dialog().notification("MEOS", "Setup cancelled: missing API URL", xbmcgui.NOTIFICATION_WARNING, 2500)
+        list_root()
+        return
+
+    api_key = _dialog_input_text("Community API Key", _remote_validation_api_key(), hidden=True)
+    api_key = (api_key or "").strip()
+    if not api_key:
+        xbmcgui.Dialog().notification("MEOS", "Setup cancelled: missing API key", xbmcgui.NOTIFICATION_WARNING, 2500)
+        list_root()
+        return
+
+    use_signature = dialog.yesno(
+        "MEOS",
+        "Use advanced signature secret?",
+        "Recommended for stronger anti-tamper security.",
+        yeslabel="Use Signature",
+        nolabel="Skip",
+    )
+
+    signature_secret = _remote_validation_signature_secret()
+    if use_signature:
+        signature_secret = _dialog_input_text(
+            "Community Signature Secret",
+            _remote_validation_signature_secret(),
+            hidden=True,
+        )
+        signature_secret = (signature_secret or "").strip()
+        if not signature_secret:
+            xbmcgui.Dialog().notification(
+                "MEOS",
+                "No signature secret entered. Continuing without signatures.",
+                xbmcgui.NOTIFICATION_INFO,
+                2600,
+            )
+
+    ADDON.setSetting("remote_validation_api_url", api_url)
+    ADDON.setSetting("remote_validation_api_key", api_key)
+    ADDON.setSetting("remote_validation_signature_secret", signature_secret or "")
+    ADDON.setSetting("remote_validation_enabled", "true")
+
+    status = "Enabled"
+    if signature_secret:
+        status += " + signature"
+    xbmcgui.Dialog().notification("MEOS", "Community validation: {0}".format(status), xbmcgui.NOTIFICATION_INFO, 2800)
+    list_root()
+
+
+def _remote_validation_api_base_url():
+    value = (ADDON.getSetting("remote_validation_api_url") or "").strip().rstrip("/")
+    if not value:
+        return ""
+    if not value.startswith("http://") and not value.startswith("https://"):
+        return ""
+    return value
+
+
+def _remote_validation_api_key():
+    return (ADDON.getSetting("remote_validation_api_key") or "").strip()
+
+
+def _remote_validation_signature_secret():
+    return (ADDON.getSetting("remote_validation_signature_secret") or "").strip()
+
+
+def _remote_validation_headers():
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "User-Agent": "MEOS/{0}".format(ADDON.getAddonInfo("version") or "unknown"),
+    }
+    api_key = _remote_validation_api_key()
+    if api_key:
+        headers["X-API-Key"] = api_key
+        headers["Authorization"] = "Bearer {0}".format(api_key)
+    return headers
+
+
+def _to_bytes(value):
+    if isinstance(value, bytes):
+        return value
+    try:
+        return (value or "").encode("utf-8")
+    except Exception:
+        return b""
+
+
+def _sha256_hex(payload):
+    return hashlib.sha256(_to_bytes(payload)).hexdigest()
+
+
+def _request_path_and_query(url):
+    try:
+        parsed = urlparse(url)
+        return parsed.path or "/", parsed.query or ""
+    except Exception:
+        return "/", ""
+
+
+def _remote_signature_headers(method, url, body_bytes=b""):
+    secret = _remote_validation_signature_secret()
+    if not secret:
+        return {}
+
+    timestamp = str(int(time.time()))
+    method = (method or "GET").upper()
+    path, query = _request_path_and_query(url)
+    body_hash = _sha256_hex(body_bytes)
+    canonical = "\n".join([timestamp, method, path, query, body_hash])
+    signature = hmac.new(_to_bytes(secret), _to_bytes(canonical), hashlib.sha256).hexdigest()
+    return {
+        "X-MEOS-Timestamp": timestamp,
+        "X-MEOS-Signature": signature,
+        "X-MEOS-Signature-Version": "v1",
+    }
+
+
+def _http_json_request(method, url, payload=None, timeout=REMOTE_VALIDATION_TIMEOUT_SECONDS):
+    method = (method or "GET").upper()
+    data = None
+    if payload is not None:
+        try:
+            data = json.dumps(payload).encode("utf-8")
+        except Exception:
+            return None
+
+    headers = _remote_validation_headers()
+    headers.update(_remote_signature_headers(method, url, body_bytes=data or b""))
+    request = Request(url, data=data, headers=headers)
+    if method != "GET":
+        request.get_method = lambda: method
+
+    try:
+        response = urlopen(request, timeout=timeout)
+        body = response.read() or ""
+        if isinstance(body, bytes):
+            body = body.decode("utf-8", "ignore")
+        body = (body or "").strip()
+        if not body:
+            return {}
+        return json.loads(body)
+    except Exception:
+        return None
+
+
+def _normalize_remote_vote(value):
+    value = (value or "").strip().lower()
+    if value in ("up", "working", "validated", "ok", "good", "true", "1"):
+        return "up"
+    if value in ("down", "nonworking", "non-working", "fail", "false", "0"):
+        return "down"
+    return ""
+
+
+def _extract_remote_vote(payload):
+    if not isinstance(payload, dict):
+        return ""
+
+    vote = _normalize_remote_vote(payload.get("vote") or payload.get("status") or payload.get("result"))
+    if vote:
+        return vote
+
+    if payload.get("validated") is True:
+        return "up"
+    if payload.get("validated") is False:
+        return "down"
+
+    data = payload.get("data")
+    if isinstance(data, dict):
+        nested_vote = _normalize_remote_vote(data.get("vote") or data.get("status") or data.get("result"))
+        if nested_vote:
+            return nested_vote
+        if data.get("validated") is True:
+            return "up"
+        if data.get("validated") is False:
+            return "down"
+
+    return ""
+
+
+def _remote_validation_fetch_vote(key):
+    key = (key or "").strip()
+    if not key or not _remote_validation_enabled():
+        return ""
+
+    if key in REMOTE_VOTE_CACHE:
+        return REMOTE_VOTE_CACHE.get(key) or ""
+
+    url = "{0}/validation?{1}".format(_remote_validation_api_base_url(), urlencode({"key": key}))
+    payload = _http_json_request("GET", url)
+    vote = _extract_remote_vote(payload)
+    REMOTE_VOTE_CACHE[key] = vote
+    return vote
+
+
+def _remote_validation_publish_vote(key, vote, source="playback"):
+    key = (key or "").strip()
+    vote = _normalize_remote_vote(vote)
+    if not key or vote not in ("up", "down") or not _remote_validation_enabled():
+        return False
+
+    payload = {
+        "key": key,
+        "vote": vote,
+        "source": source,
+        "addon": ADDON.getAddonInfo("id") or "repository.meos",
+        "version": ADDON.getAddonInfo("version") or "unknown",
+        "timestamp": int(time.time()),
+    }
+
+    response = _http_json_request("POST", "{0}/validation".format(_remote_validation_api_base_url()), payload=payload)
+    REMOTE_VOTE_CACHE[key] = vote
+    return response is not None
 
 
 def _json_rpc(method, params=None):
@@ -795,25 +1061,92 @@ def _target_validation_keys(target):
     if canonical and canonical not in keys:
         keys.append(canonical)
 
+    shared_plugin = _shared_plugin_target_key(target)
+    if shared_plugin and shared_plugin not in keys:
+        keys.append(shared_plugin)
+
     if "://" in target:
         try:
             parsed = urlparse(target)
-            no_query = urlunparse(
-                (
-                    (parsed.scheme or "").lower(),
-                    (parsed.netloc or "").lower(),
-                    parsed.path or "",
-                    parsed.params or "",
-                    "",
-                    "",
+            scheme = (parsed.scheme or "").lower()
+            if scheme != "plugin":
+                no_query = urlunparse(
+                    (
+                        scheme,
+                        (parsed.netloc or "").lower(),
+                        parsed.path or "",
+                        parsed.params or "",
+                        "",
+                        "",
+                    )
                 )
-            )
-            if no_query and no_query not in keys:
-                keys.append(no_query)
+                if no_query and no_query not in keys:
+                    keys.append(no_query)
         except Exception:
             pass
 
     return keys
+
+
+def _shared_plugin_target_key(target):
+    target = (target or "").strip()
+    if not target.startswith("plugin://"):
+        return ""
+
+    try:
+        parsed = urlparse(target)
+    except Exception:
+        return ""
+
+    addon_id = (parsed.netloc or "").strip().lower()
+    if not addon_id:
+        return ""
+
+    shared_pairs = []
+    preferred_keys = [
+        "video_id",
+        "id",
+        "media_id",
+        "imdb",
+        "tmdb",
+        "tvdb",
+        "url",
+        "file",
+        "path",
+        "stream",
+        "name",
+        "title",
+        "action",
+        "mode",
+    ]
+
+    try:
+        pairs = parse_qsl(parsed.query, keep_blank_values=True)
+    except Exception:
+        pairs = []
+
+    wanted = set(preferred_keys)
+    for key, value in pairs:
+        normalized_key = (key or "").strip().lower()
+        if normalized_key not in wanted:
+            continue
+        normalized_value = (value or "").strip()
+        if "://" in normalized_value:
+            normalized_value = _canonical_target(normalized_value) or normalized_value
+        if not normalized_value:
+            continue
+        shared_pairs.append((normalized_key, normalized_value))
+
+    if not shared_pairs:
+        path_value = (parsed.path or "").strip("/")
+        if path_value:
+            shared_pairs.append(("path", path_value.lower()))
+
+    if not shared_pairs:
+        return "plugin-shared://{0}".format(addon_id)
+
+    shared_pairs.sort(key=lambda row: (row[0], row[1]))
+    return "plugin-shared://{0}?{1}".format(addon_id, urlencode(shared_pairs))
 
 
 def _is_target_validated(target):
@@ -823,6 +1156,11 @@ def _is_target_validated(target):
     for key in _target_validation_keys(target):
         if key in validated:
             return True
+
+    # Cross-device sync: treat a remote "up" vote as validated.
+    if _get_stream_vote(target=target) == "up":
+        _mark_target_validated(target)
+        return True
     return False
 
 
@@ -841,7 +1179,14 @@ def _provider_validation_key(provider_id, media_id):
 
 def _is_provider_validated(provider_id, media_id):
     key = _provider_validation_key(provider_id, media_id)
-    return bool(provider_id and media_id and key in set(_get_json_list_setting(VALIDATED_PROVIDER_SETTING)))
+    if not provider_id or not media_id:
+        return False
+    if key in set(_get_json_list_setting(VALIDATED_PROVIDER_SETTING)):
+        return True
+    if _get_stream_vote(provider_id=provider_id, media_id=media_id) == "up":
+        _mark_provider_validated(provider_id, media_id)
+        return True
+    return False
 
 
 def _mark_provider_validated(provider_id, media_id):
@@ -970,6 +1315,9 @@ def _stream_vote_key(target="", provider_id="", media_id=""):
     target = (target or "").strip()
     if not target:
         return ""
+    shared_plugin = _shared_plugin_target_key(target)
+    if shared_plugin:
+        return shared_plugin
     return _canonical_target(target) or target
 
 
@@ -991,10 +1339,15 @@ def _get_stream_vote(target="", provider_id="", media_id=""):
             if vote in ("up", "down"):
                 return vote
             return ""
+
+    remote_vote = _remote_validation_fetch_vote(key)
+    if remote_vote in ("up", "down"):
+        _set_stream_vote(target=target, provider_id=provider_id, media_id=media_id, vote=remote_vote, sync_remote=False)
+        return remote_vote
     return ""
 
 
-def _set_stream_vote(target="", provider_id="", media_id="", vote=""):
+def _set_stream_vote(target="", provider_id="", media_id="", vote="", sync_remote=True):
     key = _stream_vote_key(target=target, provider_id=provider_id, media_id=media_id)
     vote = (vote or "").strip().lower()
     if not key:
@@ -1004,6 +1357,11 @@ def _set_stream_vote(target="", provider_id="", media_id="", vote=""):
     if vote in ("up", "down"):
         rows.insert(0, {"target": key, "vote": vote})
     _set_stream_vote_rows(rows)
+
+    if sync_remote and vote in ("up", "down"):
+        source = "provider" if provider_id and media_id else "integrated"
+        _remote_validation_publish_vote(key, vote, source=source)
+
     return True
 
 
@@ -1941,37 +2299,80 @@ def _validate_stream_after_play(target="", provider_id="", media_id="", title=""
         if _is_target_validated(target) or _get_stream_vote(target=target) == "down":
             return
 
-    player = xbmc.Player()
-    saw_playback = False
-    for _ in range(MIN_STREAM_VALIDATION_SECONDS):
-        xbmc.sleep(1000)
-        if player.isPlaying():
-            saw_playback = True
-            continue
-        if saw_playback:
-            _set_stream_vote(target=target, provider_id=provider_id, media_id=media_id, vote="down")
-            display = title or media_id or target or "Stream"
-            xbmcgui.Dialog().notification(
-                "MEOS",
-                "{0} marked non-working".format(display),
-                xbmcgui.NOTIFICATION_WARNING,
-                1800,
-            )
-            return
+    required_seconds = max(int(MIN_STREAM_VALIDATION_SECONDS), 30)
+    max_wait = max(required_seconds + STREAM_PLAYBACK_START_TIMEOUT_SECONDS, 60)
+    max_wait = min(max_wait, MAX_STREAM_VALIDATION_WAIT_SECONDS)
 
-    if not saw_playback:
+    player = xbmc.Player()
+    watched_seconds = 0
+    waited_seconds = 0
+    started = False
+    stalled_seconds = 0
+
+    while waited_seconds < max_wait:
+        xbmc.sleep(1000)
+        waited_seconds += 1
+
+        if player.isPlaying():
+            started = True
+            stalled_seconds = 0
+            watched_seconds += 1
+            if watched_seconds >= required_seconds:
+                break
+            continue
+
+        if not started:
+            if waited_seconds >= STREAM_PLAYBACK_START_TIMEOUT_SECONDS:
+                break
+            continue
+
+        stalled_seconds += 1
+        if stalled_seconds >= STREAM_PLAYBACK_IDLE_GRACE_SECONDS:
+            break
+
+    display = title or media_id or target or "Stream"
+
+    if watched_seconds >= required_seconds:
+        if provider_id and media_id:
+            _mark_provider_validated(provider_id, media_id)
+        else:
+            _mark_target_validated(target)
+
+        _set_stream_vote(target=target, provider_id=provider_id, media_id=media_id, vote="up")
+        xbmcgui.Dialog().notification(
+            "MEOS",
+            "{0} validated after {1}s".format(display, required_seconds),
+            xbmcgui.NOTIFICATION_INFO,
+            2200,
+        )
         return
 
-    if provider_id and media_id:
-        _mark_provider_validated(provider_id, media_id)
-        display = title or media_id
-    else:
-        _mark_target_validated(target)
-        display = title or target
+    if not started:
+        _set_stream_vote(target=target, provider_id=provider_id, media_id=media_id, vote="down")
+        xbmcgui.Dialog().notification(
+            "MEOS",
+            "{0} did not start; marked non-working".format(display),
+            xbmcgui.NOTIFICATION_WARNING,
+            2200,
+        )
+        return
 
-    _set_stream_vote(target=target, provider_id=provider_id, media_id=media_id, vote="up")
+    if watched_seconds < STREAM_PLAYBACK_FAILURE_SECONDS:
+        _set_stream_vote(target=target, provider_id=provider_id, media_id=media_id, vote="down")
+        xbmcgui.Dialog().notification(
+            "MEOS",
+            "{0} stopped too quickly; marked non-working".format(display),
+            xbmcgui.NOTIFICATION_WARNING,
+            2200,
+        )
+        return
 
-    xbmcgui.Dialog().notification("MEOS", "{0} validated".format(display), xbmcgui.NOTIFICATION_INFO, 1800)
+    xbmcgui.Dialog().notification(
+        "MEOS",
+        "Watch at least {0}s to validate {1}".format(required_seconds, display),
+        xbmcgui.NOTIFICATION_INFO,
+        2200,
+    )
 
 
 def list_root():
@@ -1988,6 +2389,7 @@ def list_root():
     add_folder_item("Awards", {"action": "awards_menu"})
     add_folder_item("Installed Add-ons Hub", {"action": "external_addons"})
     add_folder_item("Search All", {"action": "search_all"})
+    add_folder_item("Community Validation Quick Setup", {"action": "community_validation_setup"})
     add_folder_item("Settings", {"action": "open_settings"})
     xbmcplugin.endOfDirectory(HANDLE)
 
@@ -2194,11 +2596,16 @@ def list_sport_topic(query):
             if key in seen:
                 continue
             seen.add(key)
-            label = "[{}] {}".format(provider.name, item["title"])
-            add_playable_item(
+            is_validated = _is_provider_validated(provider.id, item.get("media_id", ""))
+            vote = _get_stream_vote(provider_id=provider.id, media_id=item.get("media_id", ""))
+            if not _stream_visible_by_filter(validated=is_validated, vote=vote):
+                continue
+            label = _format_validated_label("[{0}] {1}".format(provider.name, item["title"]), is_validated)
+            add_validated_playable_item(
                 label,
                 {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
-                {"title": item["title"], "genre": item.get("genre", "Sports")},
+                validated=is_validated,
+                info={"title": item["title"], "genre": item.get("genre", "Sports")},
             )
             add_vote_actions(
                 item["title"],
@@ -2325,10 +2732,15 @@ def list_provider_catalog(provider_id):
         return
 
     for item in catalog:
-        add_playable_item(
-            item["title"],
+        is_validated = _is_provider_validated(provider.id, item.get("media_id", ""))
+        vote = _get_stream_vote(provider_id=provider.id, media_id=item.get("media_id", ""))
+        if not _stream_visible_by_filter(validated=is_validated, vote=vote):
+            continue
+        add_validated_playable_item(
+            _format_validated_label(item["title"], is_validated),
             {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
-            {"title": item["title"], "genre": item.get("genre", "")},
+            validated=is_validated,
+            info={"title": item["title"], "genre": item.get("genre", "")},
         )
         add_vote_actions(
             item["title"],
@@ -2462,10 +2874,15 @@ def list_award_year(provider_id, award, result, year):
         return
 
     for item in catalog:
-        add_playable_item(
-            item["title"],
+        is_validated = _is_provider_validated(provider.id, item.get("media_id", ""))
+        vote = _get_stream_vote(provider_id=provider.id, media_id=item.get("media_id", ""))
+        if not _stream_visible_by_filter(validated=is_validated, vote=vote):
+            continue
+        add_validated_playable_item(
+            _format_validated_label(item["title"], is_validated),
             {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
-            {"title": item["title"], "genre": item.get("genre", "")},
+            validated=is_validated,
+            info={"title": item["title"], "genre": item.get("genre", "")},
         )
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
@@ -4316,6 +4733,10 @@ def router(params):
 
     if action == "search_all_prompt":
         search_all_prompt(params.get("mode", "all"))
+        return
+
+    if action == "community_validation_setup":
+        community_validation_setup_wizard()
         return
 
     if action == "search_all_results":

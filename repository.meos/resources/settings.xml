@@ -7,6 +7,10 @@
     <setting id="external_include_meos" type="bool" label="Installed Add-ons Hub: include MEOS add-on" default="false" />
     <setting id="validated_only" type="bool" label="Category views: show validated items only" default="false" />
     <setting id="stream_validation_filter" type="enum" label="Category views: stream validation filter" values="Show all|Working only|Non-working only" default="0" />
+    <setting id="remote_validation_enabled" type="bool" label="Community validation: enable shared remote status" default="false" />
+    <setting id="remote_validation_api_url" type="text" label="Community validation API base URL" default="" />
+    <setting id="remote_validation_api_key" type="text" label="Community validation API key (optional)" default="" option="hidden" />
+    <setting id="remote_validation_signature_secret" type="text" label="Community validation signature secret (optional)" default="" option="hidden" />
     <setting id="validated_marker_override" type="enum" label="Validated marker style" values="Auto (by Kodi version)|Unicode Check|OK Fallback|Legacy v" default="0" />
     <setting id="integration_select_mode" type="enum" label="Integrate all mode" values="Enabled only|All available" default="0" />
     <setting id="integrate_all_auto_build_favorites" type="bool" label="Integrate All: auto-build favorites from top matches" default="false" />
