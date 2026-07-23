@@ -6,6 +6,7 @@
     <setting id="external_include_disabled" type="bool" label="Installed Add-ons Hub: include disabled add-ons" default="false" />
     <setting id="external_include_meos" type="bool" label="Installed Add-ons Hub: include MEOS add-on" default="false" />
     <setting id="validated_only" type="bool" label="Category views: show validated items only" default="false" />
+    <setting id="stream_validation_filter" type="enum" label="Category views: stream validation filter" values="Show all|Working only|Non-working only" default="0" />
     <setting id="validated_marker_override" type="enum" label="Validated marker style" values="Auto (by Kodi version)|Unicode Check|OK Fallback|Legacy v" default="0" />
     <setting id="integration_select_mode" type="enum" label="Integrate all mode" values="Enabled only|All available" default="0" />
     <setting id="integrate_all_auto_build_favorites" type="bool" label="Integrate All: auto-build favorites from top matches" default="false" />
@@ -14,6 +15,7 @@
     <setting id="manual_favorites" type="text" label="Manual favorites (internal)" default="" visible="false" />
     <setting id="external_stream_votes" type="text" label="Stream votes (internal)" default="" visible="false" />
     <setting id="external_integrated_addons" type="text" label="Integrated add-ons (internal)" default="" visible="false" />
+    <setting id="integrated_custom_targets" type="text" label="Integrated custom targets (internal)" default="" visible="false" />
     <setting id="integrated_menu_cache" type="text" label="Integrated add-ons cache (internal)" default="" visible="false" />
   </category>
 </settings>
