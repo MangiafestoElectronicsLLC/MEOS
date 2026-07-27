@@ -87,6 +87,8 @@ MAX_STREAM_VALIDATION_WAIT_SECONDS = 180
 REMOTE_VALIDATION_TIMEOUT_SECONDS = 4
 VIDEO_ADDON_TYPES = ("xbmc.python.pluginsource", "xbmc.addon.video")
 INTEGRATED_MENU_CACHE_SETTING = "integrated_menu_cache"
+AUTO_INTEGRATION_LAST_CHECK_SETTING = "auto_integration_last_check"
+AUTO_INTEGRATION_CHECK_INTERVAL_SECONDS = 300
 REMOTE_VOTE_CACHE = {}
 CATEGORY_HINTS = {
     "movies": ["movie", "movies", "film", "cinema", "one click movie", "1 click movie"],
@@ -1694,10 +1696,117 @@ def _resolve_integrated_path_sequence(addon_id, sequence):
     return current_entry
 
 
+def _is_scrubs_addon(addon_id, addon_name=""):
+    haystack = "{0} {1}".format((addon_id or "").lower(), (addon_name or "").lower())
+    return ("scrubsv2" in haystack) or ("plugin.video.scrubs" in haystack) or ("scrubs v2" in haystack) or (" scrubs" in haystack)
+
+
+def _scrubs_deep_priority_targets(addon_id, category, addon_name=""):
+    if category not in ("movies", "tv"):
+        return []
+    if not _is_scrubs_addon(addon_id, addon_name):
+        return []
+
+    # Scrubs V2 often nests best entry points under multiple similarly named folders.
+    priority_paths = {
+        "movies": [
+            ["Movies"],
+            ["Movie"],
+            ["1 Click Movies"],
+            ["One Click Movies"],
+            ["My Movies"],
+            ["Trending Movies"],
+            ["Boxsets"],
+            ["Movies", "My Stuff"],
+            ["Movies", "More Stuff"],
+            ["Movies", "Tools"],
+        ],
+        "tv": [
+            ["TV Shows"],
+            ["TV"],
+            ["1 Click TV Shows"],
+            ["One Click TV Shows"],
+            ["My TV Shows"],
+            ["New Episodes"],
+            ["TV Shows", "My Stuff"],
+            ["TV Shows", "More Stuff"],
+            ["TV Shows", "Tools"],
+        ],
+    }
+
+    results = []
+    seen_targets = set()
+    score = 4000
+    for sequence in priority_paths.get(category, []):
+        resolved = _resolve_integrated_path_sequence(addon_id, sequence)
+        if not resolved:
+            score -= 10
+            continue
+        target = (resolved.get("file") or "").strip()
+        if not target or target in seen_targets:
+            score -= 10
+            continue
+        seen_targets.add(target)
+        results.append(
+            {
+                "target": target,
+                "is_folder": resolved.get("filetype") == "directory",
+                "matched_label": resolved.get("label") or resolved.get("title") or "",
+                "thumbnail": resolved.get("thumbnail") or "",
+                "fanart": resolved.get("fanart") or "",
+                "score": score,
+            }
+        )
+        score -= 10
+        if len(results) >= MAX_INTEGRATED_TARGET_MATCHES:
+            return results
+
+    if results:
+        return results
+
+    root_target = "plugin://{0}/".format(addon_id)
+    root_entries = _browse_directory_entries(root_target)
+    if not root_entries:
+        return []
+
+    keyword_map = {
+        "movies": ["movies", "movie"],
+        "tv": ["tv shows", "tv", "shows", "series"],
+    }
+    best = None
+    best_score = 0
+    for entry in root_entries:
+        if entry.get("filetype") != "directory":
+            continue
+        label = entry.get("label") or entry.get("title") or ""
+        score = _score_keywords(label, keyword_map.get(category, []))
+        if score > best_score:
+            best_score = score
+            best = entry
+
+    if best and best_score > 0:
+        return [
+            {
+                "target": best.get("file") or root_target,
+                "is_folder": True,
+                "matched_label": best.get("label") or best.get("title") or "",
+                "thumbnail": best.get("thumbnail") or "",
+                "fanart": best.get("fanart") or "",
+                "score": 3500,
+            }
+        ]
+
+    return []
+
+
 def _resolve_integrated_targets(addon_id, category, addon_name=""):
     custom_matches = _custom_targets_for_addon_category(addon_id, category)
     if custom_matches:
         return custom_matches
+
+    scrubs_priority = _scrubs_deep_priority_targets(addon_id, category, addon_name=addon_name)
+    if scrubs_priority:
+        return scrubs_priority
 
     root_target = "plugin://{0}/".format(addon_id)
     exact_paths = _addon_category_paths(addon_id, addon_name, category)
@@ -1866,7 +1975,7 @@ def _browse_directory_entries(target):
         {},
     ]
 
-    properties = ["label", "title", "file", "filetype", "thumbnail", "fanart", "plot"]
+    properties = ["label", "title", "file", "filetype", "thumbnail", "fanart", "plot", "art"]
 
     for directory in targets_to_try:
         for profile in request_profiles:
@@ -1889,6 +1998,12 @@ def _browse_directory_entries(target):
                 if file_path in ("..", "."):
                     continue
                 seen_files.add(file_path)
+                # Some add-ons return artwork under the nested "art" object only.
+                art = entry.get("art") or {}
+                if not entry.get("thumbnail"):
+                    entry["thumbnail"] = art.get("thumb") or art.get("poster") or art.get("icon") or ""
+                if not entry.get("fanart"):
+                    entry["fanart"] = art.get("fanart") or art.get("landscape") or entry.get("thumbnail") or ""
                 cleaned.append(entry)
 
             if cleaned:
@@ -2023,25 +2138,24 @@ def add_integrated_category_items(category, seen_title_keys=None):
                 browse_seen_targets.add(start_target)
                 browse_shortcuts += 1
                 mapped_label = (resolved.get("matched_label") or category.title()).strip() or category.title()
-                folder_validated, folder_vote = _integrated_target_status(start_target, is_folder=True)
-                if _stream_visible_by_filter(validated=folder_validated, vote=folder_vote):
-                    browse_label = _format_validated_label(
-                        "[Integrated {0}] Browse {1}".format(row["name"], mapped_label),
-                        folder_validated,
-                    )
-                    browse_label = _format_custom_mapped_label(browse_label, source_is_custom)
-                    browse_art = {
-                        "thumb": resolved.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["thumb"],
-                        "icon": resolved.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["icon"],
-                        "fanart": resolved.get("fanart") or row.get("fanart") or DEFAULT_ART["fanart"],
-                    }
-                    add_folder_item(
-                        browse_label,
-                        {"action": "external_browse", "target": start_target, "title": row["name"]},
-                        art=browse_art,
-                    )
-                    total_added += 1
-                    addon_added += 1
+                folder_validated, _ = _integrated_target_status(start_target, is_folder=True)
+                browse_label = _format_validated_label(
+                    "[Integrated {0}] Browse {1}".format(row["name"], mapped_label),
+                    folder_validated,
+                )
+                browse_label = _format_custom_mapped_label(browse_label, source_is_custom)
+                browse_art = {
+                    "thumb": resolved.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["thumb"],
+                    "icon": resolved.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["icon"],
+                    "fanart": resolved.get("fanart") or row.get("fanart") or DEFAULT_ART["fanart"],
+                }
+                add_folder_item(
+                    browse_label,
+                    {"action": "external_browse", "target": start_target, "title": row["name"]},
+                    art=browse_art,
+                )
+                total_added += 1
+                addon_added += 1
 
             if resolved.get("is_folder", True):
                 playable_entries = _iter_integrated_playables(
@@ -2173,7 +2287,8 @@ def _add_cached_integrated_category_content(category, seen_title_keys=None):
         cached_validated = bool(row.get("validated"))
         is_validated, vote = _integrated_target_status(target, is_folder=row_is_folder)
         is_validated = cached_validated or is_validated
-        if not _stream_visible_by_filter(validated=is_validated, vote=vote):
+        # Keep folder shortcuts visible even when stream filters are strict.
+        if (not row_is_folder) and (not _stream_visible_by_filter(validated=is_validated, vote=vote)):
             continue
 
         if dedupe_key:
@@ -2376,6 +2491,7 @@ def _validate_stream_after_play(target="", provider_id="", media_id="", title=""
 
 
 def list_root():
+    _maybe_auto_integrate_priority_addons()
     add_folder_item("One-Click Live TV", {"action": "list_category", "provider": "all", "category": "live"})
     add_folder_item("One-Click Movies", {"action": "list_category", "provider": "all", "category": "movies"})
     add_folder_item("One-Click TV Shows", {"action": "list_category", "provider": "all", "category": "tv"})
@@ -2915,6 +3031,7 @@ def list_external_addons():
 
 
 def list_integration_menu():
+    _maybe_auto_integrate_priority_addons()
     xbmcplugin.setPluginCategory(HANDLE, "Integrate Other Add-ons")
     selected = _get_integrated_addon_ids()
 
@@ -2923,6 +3040,7 @@ def list_integration_menu():
     add_folder_item("Custom Integration Targets", {"action": "integration_custom_targets"})
     add_folder_item("Integrated Add-ons (Cached View)", {"action": "integration_cached_menu"})
     add_folder_item("Auto-Build Favorites from Top Matches", {"action": "favorites_autobuild"})
+    add_action_item("Rebuild All Integrations + Favorites", {"action": "integration_rebuild_all"})
     add_folder_item("Integration Inspector", {"action": "integration_inspector"})
     add_folder_item("Clear Integrated Add-ons", {"action": "integration_clear"})
 
@@ -3016,28 +3134,7 @@ def select_all_integrated_addons(include_disabled=False):
     _sync_integrated_menu_cache(addon_ids)
     auto_build_enabled = _setting_bool("integrate_all_auto_build_favorites", False)
     if auto_build_enabled:
-        favorites_before = len(_get_manual_favorites())
-        for addon_id in addon_ids:
-            row = next((item for item in rows if item.get("addon_id") == addon_id), None)
-            addon_name = (row or {}).get("name") or addon_id
-            for category_label, category in MENU_CATEGORIES:
-                matches = _resolve_integrated_targets(addon_id, category, addon_name=addon_name)
-                if not matches:
-                    continue
-                top = matches[0]
-                target = (top.get("target") or "").strip()
-                if not target:
-                    continue
-                _add_manual_favorite(
-                    target,
-                    label="[{0}] {1} - {2}".format(category_label, addon_name, top.get("matched_label") or "Top Match"),
-                    title=addon_name,
-                    is_folder=bool(top.get("is_folder", True)),
-                    thumb=top.get("thumbnail") or (row or {}).get("thumbnail") or "",
-                    fanart=top.get("fanart") or (row or {}).get("fanart") or "",
-                )
-        favorites_after = len(_get_manual_favorites())
-        added_count = max(0, favorites_after - favorites_before)
+        added_count = _auto_build_favorites_from_integrated_impl(selected=addon_ids, installed_rows=rows)
         xbmcgui.Dialog().notification(
             "MEOS",
             "Integrated {0} {1} add-ons, auto-built {2} favorites".format(len(addon_ids), mode_label, added_count),
@@ -3069,6 +3166,103 @@ def clear_integrated_addons():
     _set_integrated_menu_cache([])
     xbmcgui.Dialog().notification("MEOS", "Integrated add-ons cleared", xbmcgui.NOTIFICATION_INFO, 2500)
     list_integration_menu()
+
+
+def _addon_matches_tokens(addon_id, addon_name, tokens):
+    haystack = "{0} {1}".format((addon_id or "").lower(), (addon_name or "").lower())
+    for token in tokens:
+        token = (token or "").strip().lower()
+        if token and token in haystack:
+            return True
+    return False
+
+
+def _auto_integrate_priority_specs():
+    return [
+        {
+            "name": "Scrubs V2",
+            "tokens": ["scrubsv2", "plugin.video.scrubs", "scrubs v2"],
+            "bootstrap_categories": ["movies", "tv"],
+        },
+        {
+            "name": "The Loop",
+            "tokens": ["theloop", "plugin.video.theloop", "plugin.video.loop", "the loop"],
+            "bootstrap_categories": ["movies", "tv", "live", "cable", "sports"],
+        },
+    ]
+
+
+def _maybe_auto_integrate_priority_addons(force=False):
+    if (not force) and (not _setting_bool("auto_integrate_priority_addons", True)):
+        return {"added": 0, "mapped": 0, "cache": 0, "favorites": 0}
+
+    now_ts = int(time.time())
+    if not force:
+        last_raw = (ADDON.getSetting(AUTO_INTEGRATION_LAST_CHECK_SETTING) or "").strip()
+        try:
+            last_ts = int(float(last_raw))
+        except Exception:
+            last_ts = 0
+        if last_ts and (now_ts - last_ts) < AUTO_INTEGRATION_CHECK_INTERVAL_SECONDS:
+            return {"added": 0, "mapped": 0, "cache": 0, "favorites": 0}
+
+    ADDON.setSetting(AUTO_INTEGRATION_LAST_CHECK_SETTING, str(now_ts))
+
+    installed = _get_installed_video_addons(include_meos=False, include_disabled=False)
+    if not installed:
+        return {"added": 0, "mapped": 0, "cache": 0, "favorites": 0}
+
+    selected = _get_integrated_addon_ids()
+    selected_set = set(selected)
+    added = 0
+    mapped = 0
+
+    for spec in _auto_integrate_priority_specs():
+        for row in installed:
+            addon_id = (row.get("addon_id") or "").strip()
+            addon_name = (row.get("name") or addon_id).strip()
+            if not addon_id:
+                continue
+            if not _addon_matches_tokens(addon_id, addon_name, spec.get("tokens", [])):
+                continue
+
+            if addon_id not in selected_set:
+                selected.append(addon_id)
+                selected_set.add(addon_id)
+                added += 1
+
+            for category in spec.get("bootstrap_categories", []):
+                matches = _resolve_integrated_targets(addon_id, category, addon_name=addon_name)
+                if not matches:
+                    continue
+                top = matches[0]
+                target = (top.get("target") or "").strip()
+                if not target:
+                    continue
+                if _is_custom_integrated_target(addon_id, category, target):
+                    continue
+                if _set_custom_integrated_target(
+                    addon_id,
+                    category,
+                    target,
+                    label=top.get("matched_label") or "Top Match",
+                    is_folder=bool(top.get("is_folder", True)),
+                    thumb=top.get("thumbnail") or row.get("thumbnail") or "",
+                    fanart=top.get("fanart") or row.get("fanart") or "",
+                ):
+                    mapped += 1
+
+            break
+
+    cache_rows = 0
+    favorite_rows = 0
+    if added or mapped or force:
+        _set_integrated_addon_ids(selected)
+        cache_rows = _sync_integrated_menu_cache(selected)
+        if _setting_bool("auto_integrate_priority_build_favorites", True):
+            favorite_rows = _auto_build_favorites_from_integrated_impl(selected=selected, installed_rows=installed)
+
+    return {"added": added, "mapped": mapped, "cache": cache_rows, "favorites": favorite_rows}
 
 
 def list_integration_inspector():
@@ -3737,7 +3931,26 @@ def auto_build_favorites_from_integrated():
         list_integration_menu()
         return
 
-    installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
+    added = _auto_build_favorites_from_integrated_impl(selected=selected)
+
+    xbmcgui.Dialog().notification(
+        "MEOS",
+        "Auto-build added {0} favorites".format(added),
+        xbmcgui.NOTIFICATION_INFO,
+        3000,
+    )
+    list_manual_favorites()
+
+
+def _auto_build_favorites_from_integrated_impl(selected=None, installed_rows=None):
+    selected = selected or _get_integrated_addon_ids()
+    if not selected:
+        return 0
+
+    if installed_rows is None:
+        installed_rows = _get_installed_video_addons(include_meos=False, include_disabled=True)
+
+    installed = {item["addon_id"]: item for item in installed_rows if item.get("addon_id")}
     favorites = _get_manual_favorites()
     existing_targets = set((row.get("target") or "").strip().lower() for row in favorites)
 
@@ -3769,13 +3982,31 @@ def auto_build_favorites_from_integrated():
                 existing_targets.add(target.lower())
                 added += 1
 
+    return added
+
+
+def rebuild_all_integrations_and_favorites():
+    bootstrap_result = _maybe_auto_integrate_priority_addons(force=True)
+    selected = _get_integrated_addon_ids()
+    if not selected:
+        xbmcgui.Dialog().notification("MEOS", "No integrated add-ons selected", xbmcgui.NOTIFICATION_INFO, 2600)
+        list_integration_menu()
+        return
+
+    refreshed = _sync_integrated_menu_cache(selected)
+    added = _auto_build_favorites_from_integrated_impl(selected=selected)
+
     xbmcgui.Dialog().notification(
         "MEOS",
-        "Auto-build added {0} favorites".format(added),
+        "Rebuilt {0} cache entries + {1} favorites (auto add: {2})".format(
+            refreshed,
+            added,
+            bootstrap_result.get("added", 0),
+        ),
         xbmcgui.NOTIFICATION_INFO,
-        3000,
+        3600,
     )
-    list_manual_favorites()
+    list_integration_menu()
 
 
 def add_integrated_addon_shortcuts(category):
@@ -4683,6 +4914,10 @@ def router(params):
 
     if action == "favorites_autobuild":
         auto_build_favorites_from_integrated()
+        return
+
+    if action == "integration_rebuild_all":
+        rebuild_all_integrations_and_favorites()
         return
 
     if action == "external_browse":
