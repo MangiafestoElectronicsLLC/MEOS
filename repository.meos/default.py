@@ -71,7 +71,6 @@ MANUAL_FAVORITES_SETTING = "manual_favorites"
 CUSTOM_INTEGRATED_TARGETS_SETTING = "integrated_custom_targets"
 MAX_MANUAL_FAVORITES = 600
 MAX_INTEGRATED_MENU_CACHE_ITEMS = 1200
-MAX_INTEGRATED_BROWSE_SHORTCUTS_PER_ADDON = 4
 VALIDATED_MARKER_UNICODE = "[COLOR limegreen][B]✔[/B][/COLOR] "
 VALIDATED_MARKER_REJECTED = "[COLOR red][B]✘[/B][/COLOR] "
 VALIDATED_MARKER_FALLBACK = "[COLOR limegreen][B]OK[/B][/COLOR] "
@@ -1479,6 +1478,10 @@ def _integration_mode_label():
     return "All available" if _integration_include_disabled_from_setting() else "Enabled only"
 
 
+def _show_integrated_folder_shortcuts_in_category_views():
+    return _setting_bool("show_integrated_folder_shortcuts_in_category_views", False)
+
+
 def _format_validated_label(label, validated):
     if not validated:
         return label
@@ -2122,40 +2125,10 @@ def add_integrated_category_items(category, seen_title_keys=None):
         if not row:
             continue
 
-        addon_added = 0
-        browse_shortcuts = 0
-        browse_seen_targets = set()
         start_points = _resolve_integrated_targets(addon_id, category, addon_name=row.get("name", ""))
         for resolved in start_points:
             start_target = resolved.get("target") or "plugin://{0}/".format(addon_id)
             source_is_custom = bool(resolved.get("custom_mapped", False))
-
-            if (
-                resolved.get("is_folder", True)
-                and start_target not in browse_seen_targets
-                and browse_shortcuts < MAX_INTEGRATED_BROWSE_SHORTCUTS_PER_ADDON
-            ):
-                browse_seen_targets.add(start_target)
-                browse_shortcuts += 1
-                mapped_label = (resolved.get("matched_label") or category.title()).strip() or category.title()
-                folder_validated, _ = _integrated_target_status(start_target, is_folder=True)
-                browse_label = _format_validated_label(
-                    "[Integrated {0}] Browse {1}".format(row["name"], mapped_label),
-                    folder_validated,
-                )
-                browse_label = _format_custom_mapped_label(browse_label, source_is_custom)
-                browse_art = {
-                    "thumb": resolved.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["thumb"],
-                    "icon": resolved.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["icon"],
-                    "fanart": resolved.get("fanart") or row.get("fanart") or DEFAULT_ART["fanart"],
-                }
-                add_folder_item(
-                    browse_label,
-                    {"action": "external_browse", "target": start_target, "title": row["name"]},
-                    art=browse_art,
-                )
-                total_added += 1
-                addon_added += 1
 
             if resolved.get("is_folder", True):
                 playable_entries = _iter_integrated_playables(
@@ -2211,119 +2184,8 @@ def add_integrated_category_items(category, seen_title_keys=None):
                     art=art,
                 )
                 total_added += 1
-                addon_added += 1
-
-        # Some add-ons don't expose browsable items via Files.GetDirectory for deep plugin paths.
-        # In that case, add one native shortcut so users still reach the correct section.
-        if addon_added == 0 and start_points:
-            fallback = start_points[0]
-            fallback_target = fallback.get("target") or "plugin://{0}/".format(addon_id)
-            fallback_label = fallback.get("matched_label") or category.title()
-            art = {
-                "thumb": fallback.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["thumb"],
-                "icon": fallback.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["icon"],
-                "fanart": fallback.get("fanart") or row.get("fanart") or DEFAULT_ART["fanart"],
-            }
-            add_folder_item(
-                _format_custom_mapped_label(
-                    "[Integrated {0}] Open {1} in {2}".format(category.title(), fallback_label, row["name"]),
-                    source_is_custom,
-                ),
-                {"action": "external_native", "target": fallback_target},
-                art=art,
-            )
-            total_added += 1
 
     return total_added
-
-
-def _add_integrated_category_content(category, seen_title_keys=None):
-    if seen_title_keys is None:
-        seen_title_keys = set()
-    return add_integrated_category_items(category, seen_title_keys=seen_title_keys)
-
-
-def _add_cached_integrated_category_content(category, seen_title_keys=None):
-    if seen_title_keys is None:
-        seen_title_keys = set()
-
-    selected = set(_get_integrated_addon_ids())
-    if not selected:
-        return 0
-
-    cache = _get_integrated_menu_cache()
-    cache.sort(
-        key=lambda row: (
-            (row.get("addon_name") or "").lower(),
-            (row.get("label") or "").lower(),
-            (row.get("target") or "").lower(),
-        )
-    )
-
-    added = 0
-    for row in cache:
-        addon_id = (row.get("addon_id") or "").strip()
-        if addon_id not in selected:
-            continue
-
-        row_category = (row.get("category") or "").strip().lower()
-        if row_category != (category or "").strip().lower():
-            continue
-
-        target = row.get("target") or ""
-        if not target:
-            continue
-
-        title = row.get("title") or row.get("label") or target
-        title_key = _title_key(title)
-        if title_key:
-            dedupe_key = "{0}:{1}".format(addon_id, title_key)
-        else:
-            dedupe_key = "{0}:{1}".format(addon_id, target.lower())
-        if dedupe_key in seen_title_keys:
-            continue
-
-        row_is_folder = bool(row.get("is_folder", True))
-        cached_validated = bool(row.get("validated"))
-        is_validated, vote = _integrated_target_status(target, is_folder=row_is_folder)
-        is_validated = cached_validated or is_validated
-        # Keep folder shortcuts visible even when stream filters are strict.
-        if (not row_is_folder) and (not _stream_visible_by_filter(validated=is_validated, vote=vote)):
-            continue
-
-        if dedupe_key:
-            seen_title_keys.add(dedupe_key)
-
-        addon_name = row.get("addon_name") or addon_id
-        label = _format_validated_label("[Integrated {0}] {1}".format(addon_name, title), is_validated)
-        label = _format_custom_mapped_label(label, bool(row.get("custom_mapped", False)))
-        art = {
-            "thumb": row.get("thumb") or DEFAULT_ART["thumb"],
-            "icon": row.get("thumb") or DEFAULT_ART["icon"],
-            "fanart": row.get("fanart") or DEFAULT_ART["fanart"],
-        }
-
-        if row_is_folder:
-            add_folder_item(label, {"action": "external_browse", "target": target, "title": addon_name}, art=art)
-        else:
-            add_validated_playable_item(
-                label,
-                {"action": "external_play", "target": target},
-                validated=is_validated,
-                info={"title": title, "genre": category.title()},
-                art=art,
-            )
-
-        add_vote_actions(
-            title,
-            {"target": target},
-            "list_category",
-            {"return_provider": "all", "return_category": category},
-            art=art,
-        )
-        added += 1
-
-    return added
 
 
 def add_folder_item(label, query, art=None, context_items=None):
@@ -2362,7 +2224,12 @@ def add_validated_playable_item(label, query, validated=False, info=None, art=No
         media_id=query.get("media_id", ""),
     )
     marker = _stream_status_marker(validated=validated, vote=vote)
-    if marker:
+    if marker and not (
+        (label or "").startswith(VALIDATED_MARKER_UNICODE)
+        or (label or "").startswith(VALIDATED_MARKER_FALLBACK)
+        or (label or "").startswith(VALIDATED_MARKER_LEGACY)
+        or (label or "").startswith(VALIDATED_MARKER_REJECTED)
+    ):
         label = "{0}{1}".format(marker, label)
 
     video_info = dict(info or {"title": label})
@@ -2885,6 +2752,9 @@ def list_category(provider_id, category):
                 },
             )
 
+        if selected_integrated and _show_integrated_folder_shortcuts_in_category_views():
+            add_integrated_addon_shortcuts(category)
+
         seen = set()
         for provider in sorted(PROVIDERS.values(), key=lambda p: p.name.lower()):
             auth_state = get_auth_state(provider.id)
@@ -2921,8 +2791,7 @@ def list_category(provider_id, category):
                 )
                 found += 1
 
-        found += _add_integrated_category_content(category, seen_title_keys=seen_titles)
-        found += _add_cached_integrated_category_content(category, seen_title_keys=seen_titles)
+        found += add_integrated_category_items(category, seen_title_keys=seen_titles)
 
         add_folder_item("Relevant Integrated Add-ons", {"action": "integration_menu"})
 
@@ -4012,10 +3881,11 @@ def rebuild_all_integrations_and_favorites():
 def add_integrated_addon_shortcuts(category):
     selected = _get_integrated_addon_ids()
     if not selected:
-        return
+        return 0
 
     installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
     category_label = (category or "Library").title()
+    added = 0
 
     for addon_id in selected:
         row = installed.get(addon_id)
@@ -4037,20 +3907,17 @@ def add_integrated_addon_shortcuts(category):
             "icon": resolved.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["icon"],
             "fanart": resolved.get("fanart") or row.get("fanart") or DEFAULT_ART["fanart"],
         }
-        if resolved.get("is_folder", True):
-            add_folder_item(
-                label,
-                {"action": "external_browse", "target": target, "title": row["name"]},
-                art=art,
-            )
-        else:
-            add_validated_playable_item(
-                label,
-                {"action": "external_play", "target": target},
-                validated=_is_target_validated(target),
-                info={"title": label},
-                art=art,
-            )
+        if not resolved.get("is_folder", True):
+            continue
+
+        add_folder_item(
+            label,
+            {"action": "external_browse", "target": target, "title": row["name"]},
+            art=art,
+        )
+        added += 1
+
+    return added
 
 
 def list_external_browse(target, title="Add-on"):

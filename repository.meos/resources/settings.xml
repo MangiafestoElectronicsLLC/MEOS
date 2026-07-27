@@ -7,6 +7,7 @@
     <setting id="external_include_meos" type="bool" label="Installed Add-ons Hub: include MEOS add-on" default="false" />
     <setting id="validated_only" type="bool" label="Category views: show validated items only" default="false" />
     <setting id="stream_validation_filter" type="enum" label="Category views: stream validation filter" values="Show all|Working only|Non-working only" default="0" />
+    <setting id="show_integrated_folder_shortcuts_in_category_views" type="bool" label="Show integrated folder shortcuts in category views" default="false" />
     <setting id="remote_validation_enabled" type="bool" label="Community validation: enable shared remote status" default="false" />
     <setting id="remote_validation_api_url" type="text" label="Community validation API base URL" default="" />
     <setting id="remote_validation_api_key" type="text" label="Community validation API key (optional)" default="" option="hidden" />

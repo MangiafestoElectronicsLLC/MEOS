@@ -35,6 +35,15 @@ Use the direct ZIP links instead of the GitHub page URL.
 - If raw browsing is blocked on the device, download the ZIP on a PC and transfer it manually.
 - The repository feed points to the raw GitHub XML and ZIP files under `zips/`.
 
+## Support Toggles
+
+For fast troubleshooting on different devices, MEOS includes two category-view controls in Settings:
+
+- `Category views: stream validation filter` controls whether category views show all streams, working streams only, or non-working streams only.
+- `Show integrated folder shortcuts in category views` restores legacy integrated folder shortcut rows in category pages when enabled (default is off for cleaner content-first views).
+
+Validated/non-working markers are now applied once per playable row to avoid duplicate status prefixes on some Kodi skins.
+
 ## Community Validation API
 
 MEOS can now share stream validation status across different devices/users when they point to the same API.
