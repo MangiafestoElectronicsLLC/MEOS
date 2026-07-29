@@ -2483,13 +2483,18 @@ def list_root():
     add_folder_item("Sports Hub", {"action": "sports_menu"})
     add_folder_item("Manual Favorites", {"action": "favorites_menu"})
     add_folder_item("Integrate Other Add-ons", {"action": "integration_menu"})
-    for label, category in MENU_CATEGORIES:
-        add_folder_item(label, {"action": "list_category", "provider": "all", "category": category})
-    add_folder_item("Awards", {"action": "awards_menu"})
+    add_folder_item("More Tools", {"action": "tools_menu"})
+    add_folder_item("Settings", {"action": "open_settings"})
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_tools_menu():
+    xbmcplugin.setPluginCategory(HANDLE, "MEOS Tools")
     add_folder_item("Installed Add-ons Hub", {"action": "external_addons"})
     add_folder_item("Search All", {"action": "search_all"})
+    add_folder_item("Awards", {"action": "awards_menu"})
     add_folder_item("Community Validation Quick Setup", {"action": "community_validation_setup"})
-    add_folder_item("Settings", {"action": "open_settings"})
+    add_folder_item("Integration Inspector", {"action": "integration_inspector"})
     xbmcplugin.endOfDirectory(HANDLE)
 
 
@@ -3049,12 +3054,10 @@ def list_integration_menu():
 
     add_folder_item("Select Installed Add-ons", {"action": "integration_picker"})
     add_folder_item("Integrate All ({0})".format(_integration_mode_label()), {"action": "integration_select_all"})
+    add_action_item("Rebuild Integrations + Favorites", {"action": "integration_rebuild_all"})
     add_folder_item("Custom Integration Targets", {"action": "integration_custom_targets"})
-    add_folder_item("Integrated Add-ons (Cached View)", {"action": "integration_cached_menu"})
-    add_folder_item("Auto-Build Favorites from Top Matches", {"action": "favorites_autobuild"})
-    add_action_item("Rebuild All Integrations + Favorites", {"action": "integration_rebuild_all"})
-    add_folder_item("Integration Inspector", {"action": "integration_inspector"})
-    add_folder_item("Clear Integrated Add-ons", {"action": "integration_clear"})
+    add_folder_item("Browse Integrated Cache", {"action": "integration_cached_menu"})
+    add_folder_item("Advanced Integration Tools", {"action": "integration_tools_menu"})
 
     if not selected:
         add_folder_item("No integrated add-ons selected", {"action": "integration_picker"})
@@ -3073,6 +3076,14 @@ def list_integration_menu():
         )
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_integration_tools_menu():
+    xbmcplugin.setPluginCategory(HANDLE, "Integration Tools")
+    add_folder_item("Auto-Build Favorites from Top Matches", {"action": "favorites_autobuild"})
+    add_folder_item("Integration Inspector", {"action": "integration_inspector"})
+    add_folder_item("Clear Integrated Add-ons", {"action": "integration_clear"})
     xbmcplugin.endOfDirectory(HANDLE)
 
 
@@ -4749,6 +4760,10 @@ def router(params):
         list_sports_menu()
         return
 
+    if action == "tools_menu":
+        list_tools_menu()
+        return
+
     if action == "sport_topic":
         list_sport_topic(params.get("query", "sports"))
         return
@@ -4787,6 +4802,10 @@ def router(params):
 
     if action == "integration_menu":
         list_integration_menu()
+        return
+
+    if action == "integration_tools_menu":
+        list_integration_tools_menu()
         return
 
     if action == "integration_inspector":
