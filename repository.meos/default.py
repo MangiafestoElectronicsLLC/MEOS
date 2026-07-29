@@ -2932,7 +2932,7 @@ def list_category(provider_id, category):
                 )
                 found += 1
 
-        found += add_integrated_category_items(category, seen_title_keys=seen_titles)
+        found += add_integrated_category_items(category)
 
         if not found:
             xbmcgui.Dialog().notification("MEOS", "No items in this category", xbmcgui.NOTIFICATION_INFO, 2500)
