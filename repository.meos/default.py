@@ -78,6 +78,41 @@ VALIDATED_MARKER_LEGACY = "[COLOR limegreen][B]v[/B][/COLOR] "
 CUSTOM_MAPPED_MARKER = "[COLOR gold][B]Mapped[/B][/COLOR] "
 VOTE_MARKER_UP = "[COLOR limegreen][B]👍[/B][/COLOR] "
 VOTE_MARKER_DOWN = "[COLOR red][B]👎[/B][/COLOR] "
+NON_CONTENT_PLUGIN_ACTIONS = {
+    "vote_stream",
+    "favorite_add",
+    "favorite_remove",
+    "favorite_clear",
+    "favorite_add_prompt",
+    "integration_set_target",
+    "integration_set_target_menu",
+    "integration_scan_folder",
+    "integration_scan_addon",
+    "integration_rescan_category",
+    "integration_picker",
+    "integration_toggle",
+    "integration_menu",
+    "integration_custom_targets",
+    "integration_cached_menu",
+    "integration_inspector",
+    "external_browse",
+    "external_search_prompt",
+    "external_search_results",
+    "external_addons",
+    "search_all",
+    "search_all_prompt",
+    "search_all_results",
+    "open_settings",
+}
+NON_CONTENT_LABEL_PREFIXES = (
+    "thumbs up:",
+    "thumbs down:",
+    "add to favorites:",
+    "remove:",
+    "map to meos:",
+    "scan this",
+    "search this",
+)
 MIN_STREAM_VALIDATION_SECONDS = 30
 STREAM_PLAYBACK_START_TIMEOUT_SECONDS = 25
 STREAM_PLAYBACK_IDLE_GRACE_SECONDS = 8
@@ -1368,10 +1403,10 @@ def _set_stream_vote(target="", provider_id="", media_id="", vote="", sync_remot
 
 def _stream_status_marker(validated=False, vote=""):
     vote = (vote or "").strip().lower()
-    if _stream_is_working(validated=validated, vote=vote):
-        return _validated_marker_for_runtime()
     if vote == "down":
-        return VALIDATED_MARKER_REJECTED
+        return VOTE_MARKER_DOWN
+    if _stream_is_working(validated=validated, vote=vote):
+        return VOTE_MARKER_UP
     return ""
 
 
@@ -1389,6 +1424,31 @@ def _stream_status_label(validated=False, vote=""):
     elif vote == "down":
         parts.append("Thumbs Down")
     return " · ".join(parts)
+
+
+def _strip_status_prefixes(label):
+    label = label or ""
+    if not label:
+        return ""
+
+    markers = (
+        VOTE_MARKER_UP,
+        VOTE_MARKER_DOWN,
+        VALIDATED_MARKER_UNICODE,
+        VALIDATED_MARKER_REJECTED,
+        VALIDATED_MARKER_FALLBACK,
+        VALIDATED_MARKER_LEGACY,
+    )
+
+    changed = True
+    while changed:
+        changed = False
+        for marker in markers:
+            if marker and label.startswith(marker):
+                label = label[len(marker) :].lstrip()
+                changed = True
+
+    return label
 
 
 def _integrated_target_status(target, is_folder=False):
@@ -1715,6 +1775,10 @@ def _scrubs_deep_priority_targets(addon_id, category, addon_name=""):
         "movies": [
             ["Movies"],
             ["Movie"],
+            ["Movies", "TMDB"],
+            ["Movies", "TMDB", "In Theaters"],
+            ["Movies", "TBMD"],
+            ["Movies", "TBMD", "In Theaters"],
             ["1 Click Movies"],
             ["One Click Movies"],
             ["My Movies"],
@@ -2025,6 +2089,42 @@ def _title_key(text):
     return " ".join(parts)
 
 
+def _is_non_content_label(label):
+    normalized = _normalize_label(label).strip()
+    if not normalized:
+        return True
+    for prefix in NON_CONTENT_LABEL_PREFIXES:
+        normalized_prefix = _normalize_label(prefix).strip()
+        if normalized.startswith(normalized_prefix):
+            return True
+    return False
+
+
+def _is_non_content_plugin_target(file_path):
+    file_path = (file_path or "").strip()
+    if not file_path.startswith("plugin://"):
+        return False
+    try:
+        parsed = urlparse(file_path)
+        params = dict(parse_qsl(parsed.query, keep_blank_values=True))
+    except Exception:
+        return False
+    action = (params.get("action") or "").strip().lower()
+    return action in NON_CONTENT_PLUGIN_ACTIONS
+
+
+def _is_integrated_playable_candidate(entry):
+    file_path = (entry.get("file") or "").strip()
+    if not file_path:
+        return False
+    if _is_non_content_plugin_target(file_path):
+        return False
+    label = entry.get("label") or entry.get("title") or file_path
+    if _is_non_content_label(label):
+        return False
+    return True
+
+
 def _iter_integrated_playables(target, max_depth, max_items):
     stack = [(target, 0)]
     visited = set()
@@ -2048,6 +2148,9 @@ def _iter_integrated_playables(target, max_depth, max_items):
             if entry.get("filetype") == "directory":
                 if depth < max_depth:
                     stack.append((file_path, depth + 1))
+                continue
+
+            if not _is_integrated_playable_candidate(entry):
                 continue
 
             yielded += 1
@@ -2098,6 +2201,9 @@ def _search_integrated_playables(target, query, max_depth=6, max_items=120):
             if entry.get("filetype") == "directory":
                 if depth < max_depth:
                     stack.append((file_path, depth + 1))
+                continue
+
+            if not _is_integrated_playable_candidate(entry):
                 continue
 
             if normalized_query in haystack and file_path not in seen_targets:
@@ -2176,13 +2282,6 @@ def add_integrated_category_items(category, seen_title_keys=None):
                     info={"title": title, "genre": category.title()},
                     art=art,
                 )
-                add_vote_actions(
-                    title,
-                    {"target": target},
-                    "external_browse",
-                    {"return_target": start_target, "return_title": row["name"]},
-                    art=art,
-                )
                 total_added += 1
 
     return total_added
@@ -2223,13 +2322,9 @@ def add_validated_playable_item(label, query, validated=False, info=None, art=No
         provider_id=query.get("provider", ""),
         media_id=query.get("media_id", ""),
     )
+    label = _strip_status_prefixes(label)
     marker = _stream_status_marker(validated=validated, vote=vote)
-    if marker and not (
-        (label or "").startswith(VALIDATED_MARKER_UNICODE)
-        or (label or "").startswith(VALIDATED_MARKER_FALLBACK)
-        or (label or "").startswith(VALIDATED_MARKER_LEGACY)
-        or (label or "").startswith(VALIDATED_MARKER_REJECTED)
-    ):
+    if marker:
         label = "{0}{1}".format(marker, label)
 
     video_info = dict(info or {"title": label})
@@ -2248,25 +2343,43 @@ def add_validated_playable_item(label, query, validated=False, info=None, art=No
 
 
 def add_vote_actions(label, query, return_action, return_args=None, art=None):
-    return_args = return_args or {}
-    base = {
-        "action": "vote_stream",
-        "return_action": return_action,
-        "label": label,
-        "target": query.get("target", ""),
-        "provider": query.get("provider", ""),
-        "media_id": query.get("media_id", ""),
-        "return_target": return_args.get("return_target", ""),
-        "return_title": return_args.get("return_title", ""),
-        "return_provider": return_args.get("return_provider", ""),
-        "return_media_id": return_args.get("return_media_id", ""),
-        "return_category": return_args.get("return_category", ""),
-        "return_query": return_args.get("return_query", ""),
-        "return_mode": return_args.get("return_mode", ""),
-    }
+    # Voting is collected after playback to avoid noisy category lists.
+    return 0
 
-    add_action_item("Thumbs Up: {0}".format(label), dict(base, vote="up"), art=art)
-    add_action_item("Thumbs Down: {0}".format(label), dict(base, vote="down"), art=art)
+
+def _prompt_stream_vote_after_play(target="", provider_id="", media_id="", title=""):
+    vote_key = _stream_vote_key(target=target, provider_id=provider_id, media_id=media_id)
+    if not vote_key:
+        return
+
+    heading = "MEOS"
+    line1 = "Rate stream quality for other users"
+    line2 = title or media_id or target or "Stream"
+
+    selection = ""
+    try:
+        choice = xbmcgui.Dialog().yesnocustom(
+            heading,
+            line1,
+            line2,
+            "",
+            yeslabel="Thumbs Up",
+            nolabel="Thumbs Down",
+            customlabel="Skip",
+        )
+        if choice == 1:
+            selection = "up"
+        elif choice == 0:
+            selection = "down"
+    except Exception:
+        choice = xbmcgui.Dialog().select("Rate stream", ["Thumbs Up", "Thumbs Down", "Skip"])
+        if choice == 0:
+            selection = "up"
+        elif choice == 1:
+            selection = "down"
+
+    if selection in ("up", "down"):
+        _set_stream_vote(target=target, provider_id=provider_id, media_id=media_id, vote=selection)
 
 
 def _validate_stream_after_play(target="", provider_id="", media_id="", title=""):
@@ -2327,6 +2440,7 @@ def _validate_stream_after_play(target="", provider_id="", media_id="", title=""
             xbmcgui.NOTIFICATION_INFO,
             2200,
         )
+        _prompt_stream_vote_after_play(target=target, provider_id=provider_id, media_id=media_id, title=display)
         return
 
     if not started:
@@ -2347,6 +2461,7 @@ def _validate_stream_after_play(target="", provider_id="", media_id="", title=""
             xbmcgui.NOTIFICATION_WARNING,
             2200,
         )
+        _prompt_stream_vote_after_play(target=target, provider_id=provider_id, media_id=media_id, title=display)
         return
 
     xbmcgui.Dialog().notification(
@@ -2355,6 +2470,7 @@ def _validate_stream_after_play(target="", provider_id="", media_id="", title=""
         xbmcgui.NOTIFICATION_INFO,
         2200,
     )
+    _prompt_stream_vote_after_play(target=target, provider_id=provider_id, media_id=media_id, title=display)
 
 
 def list_root():
@@ -2560,8 +2676,19 @@ def list_sources(category):
     xbmcplugin.endOfDirectory(HANDLE)
 
 
+def show_overlay_legend(return_provider="all", return_category="movies"):
+    xbmcgui.Dialog().ok(
+        "MEOS Overlay Legend",
+        "[COLOR limegreen]👍[/COLOR] Working stream (recommended by users)",
+        "[COLOR red]👎[/COLOR] Non-working stream (reported bad)",
+        "No icon = Unverified stream",
+    )
+    list_category(return_provider or "all", return_category or "movies")
+
+
 def list_sports_menu():
     xbmcplugin.setPluginCategory(HANDLE, "Sports Hub")
+    add_folder_item("All Sports (Integrated + Providers)", {"action": "list_category", "provider": "all", "category": "sports"})
     for label, query in SPORT_TOPICS:
         add_folder_item(label, {"action": "sport_topic", "query": query})
     xbmcplugin.endOfDirectory(HANDLE)
@@ -2740,6 +2867,15 @@ def list_category(provider_id, category):
         found = 0
         selected_integrated = _get_integrated_addon_ids()
 
+        add_action_item(
+            "Legend: 👍 Working | 👎 Non-working | No icon Unverified",
+            {
+                "action": "show_overlay_legend",
+                "return_provider": provider_id,
+                "return_category": category,
+            },
+        )
+
         _sync_integrated_menu_cache()
 
         if category in ("movies", "tv", "live", "sports") and selected_integrated:
@@ -2793,8 +2929,6 @@ def list_category(provider_id, category):
 
         found += add_integrated_category_items(category, seen_title_keys=seen_titles)
 
-        add_folder_item("Relevant Integrated Add-ons", {"action": "integration_menu"})
-
         if not found:
             xbmcgui.Dialog().notification("MEOS", "No items in this category", xbmcgui.NOTIFICATION_INFO, 2500)
         xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
@@ -2812,6 +2946,15 @@ def list_category(provider_id, category):
         xbmcgui.Dialog().notification("MEOS", "No items in this category", xbmcgui.NOTIFICATION_INFO, 2500)
         xbmcplugin.endOfDirectory(HANDLE)
         return
+
+    add_action_item(
+        "Legend: 👍 Working | 👎 Non-working | No icon Unverified",
+        {
+            "action": "show_overlay_legend",
+            "return_provider": provider_id,
+            "return_category": category,
+        },
+    )
 
     for item in catalog:
         is_validated = _is_provider_validated(provider.id, item.get("media_id", ""))
@@ -4629,6 +4772,13 @@ def router(params):
 
     if action == "list_sources":
         list_sources(params.get("category", ""))
+        return
+
+    if action == "show_overlay_legend":
+        show_overlay_legend(
+            params.get("return_provider", "all"),
+            params.get("return_category", "movies"),
+        )
         return
 
     if action == "external_addons":
