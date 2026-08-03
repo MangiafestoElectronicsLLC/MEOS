@@ -189,8 +189,8 @@ function Set-RepositoryFeedUrls {
         throw "Missing repository feed nodes in $AddonXmlPath"
     }
 
-    $infoNode.InnerText = "{0}/addons-{1}.xml" -f $baseRaw, $Version
-    $checksumNode.InnerText = "{0}/addons-{1}.xml.md5" -f $baseRaw, $Version
+    $infoNode.InnerText = "{0}/addons.xml" -f $baseRaw
+    $checksumNode.InnerText = "{0}/addons.xml.md5" -f $baseRaw
     $datadirNode.InnerText = "{0}/zips/" -f $baseRaw
     $xmlDoc.Save($AddonXmlPath)
 }

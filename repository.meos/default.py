@@ -2281,6 +2281,12 @@ def add_integrated_category_items(category, seen_title_keys=None):
                     validated=is_validated,
                     info={"title": title, "genre": category.title()},
                     art=art,
+                    context_items=_scan_context_items_for_target(
+                        target,
+                        title=row.get("name", ""),
+                        label=title,
+                        is_folder=False,
+                    ),
                 )
                 total_added += 1
 
@@ -2894,7 +2900,7 @@ def list_category(provider_id, category):
             )
 
         if selected_integrated and _show_integrated_folder_shortcuts_in_category_views():
-            add_integrated_addon_shortcuts(category)
+            found += add_integrated_addon_shortcuts(category)
 
         seen = set()
         for provider in sorted(PROVIDERS.values(), key=lambda p: p.name.lower()):
@@ -4040,36 +4046,52 @@ def add_integrated_addon_shortcuts(category):
     installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
     category_label = (category or "Library").title()
     added = 0
+    seen_targets = set()
 
     for addon_id in selected:
         row = installed.get(addon_id)
         if not row:
             continue
 
-        resolved = _resolve_integrated_target(addon_id, category, addon_name=row.get("name", ""))
-        target = resolved["target"]
-        matched_label = resolved.get("matched_label") or ""
+        resolved_rows = _resolve_integrated_targets(addon_id, category, addon_name=row.get("name", ""))
+        for resolved in resolved_rows:
+            target = (resolved.get("target") or "").strip()
+            if not target:
+                continue
+            if not resolved.get("is_folder", True):
+                continue
 
-        label = "[Integrated {0}] {1}".format(category_label, row["name"])
-        if not row.get("enabled", True):
-            label = "[DISABLED] {0}".format(label)
-        elif matched_label:
-            label = "{0} - {1}".format(label, matched_label)
+            dedupe_key = "{0}:{1}".format(addon_id, target.lower())
+            if dedupe_key in seen_targets:
+                continue
+            seen_targets.add(dedupe_key)
 
-        art = {
-            "thumb": resolved.get("thumbnail") or row.get("thumbnail") or row.get("fanart") or DEFAULT_ART["thumb"],
-            "icon": resolved.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["icon"],
-            "fanart": resolved.get("fanart") or row.get("fanart") or DEFAULT_ART["fanart"],
-        }
-        if not resolved.get("is_folder", True):
-            continue
+            matched_label = (resolved.get("matched_label") or "").strip()
 
-        add_folder_item(
-            label,
-            {"action": "external_browse", "target": target, "title": row["name"]},
-            art=art,
-        )
-        added += 1
+            label = "[Integrated {0}] {1}".format(category_label, row["name"])
+            if not row.get("enabled", True):
+                label = "[DISABLED] {0}".format(label)
+            if matched_label:
+                label = "{0} - {1}".format(label, matched_label)
+
+            art = {
+                "thumb": resolved.get("thumbnail") or row.get("thumbnail") or row.get("fanart") or DEFAULT_ART["thumb"],
+                "icon": resolved.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["icon"],
+                "fanart": resolved.get("fanart") or row.get("fanart") or DEFAULT_ART["fanart"],
+            }
+
+            add_folder_item(
+                label,
+                {"action": "external_browse", "target": target, "title": row["name"]},
+                art=art,
+                context_items=_scan_context_items_for_target(
+                    target,
+                    title=row.get("name", ""),
+                    label=matched_label or label,
+                    is_folder=True,
+                ),
+            )
+            added += 1
 
     return added
 

@@ -7,7 +7,7 @@
     <setting id="external_include_meos" type="bool" label="Add-ons Hub: show MEOS add-on" default="false" />
     <setting id="validated_only" type="bool" label="Working streams only (legacy toggle)" default="false" />
     <setting id="stream_validation_filter" type="enum" label="Stream status filter" values="Show all|Working only|Non-working only" default="0" />
-    <setting id="show_integrated_folder_shortcuts_in_category_views" type="bool" label="Show integrated folder shortcuts in category pages" default="false" />
+    <setting id="show_integrated_folder_shortcuts_in_category_views" type="bool" label="Show integrated folder shortcuts in category pages" default="true" />
     <setting id="remote_validation_enabled" type="bool" label="Community ratings: enable shared status" default="false" />
     <setting id="remote_validation_api_url" type="text" label="Community API URL" default="" />
     <setting id="remote_validation_api_key" type="text" label="Community API key" default="" option="hidden" />
