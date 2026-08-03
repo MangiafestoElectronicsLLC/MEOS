@@ -1879,13 +1879,38 @@ def _match_path_step(entries, step_labels):
     if isinstance(step_labels, (str,)):
         step_labels = [step_labels]
 
+    normalized_step_labels = []
+    for step in step_labels:
+        normalized = _normalize_label(step).strip()
+        if normalized:
+            normalized_step_labels.append(normalized)
+
     best_entry = None
     best_score = 0
     for entry in entries:
         if entry.get("filetype") != "directory":
             continue
         label = entry.get("label") or entry.get("title") or ""
+        normalized_label = _normalize_label(label).strip()
         score = _score_keywords(label, step_labels)
+
+        # Prefer deterministic exact folder matches to avoid landing in
+        # similarly named branches like "1 Click TV Shows".
+        if normalized_label and normalized_label in normalized_step_labels:
+            score += 1000
+
+        if normalized_label:
+            for step_label in normalized_step_labels:
+                if not step_label:
+                    continue
+                if normalized_label.startswith(step_label):
+                    score += 100
+                    break
+
+        if normalized_label and ("1 click" in normalized_label or "one click" in normalized_label):
+            if not any(("1 click" in step_label or "one click" in step_label) for step_label in normalized_step_labels):
+                score -= 150
+
         if score > best_score:
             best_score = score
             best_entry = entry
@@ -2844,7 +2869,7 @@ def _auto_map_integrated_addon_targets(addon_id, addon_name=""):
     mapped = 0
     category_list = [key for (_, key) in MENU_CATEGORIES]
     for category in category_list:
-        matches = _resolve_integrated_targets(addon_id, category, addon_name=addon_name or addon_id)
+        matches = _integration_category_choice_targets(addon_id, category, addon_name=addon_name or addon_id)
         if not matches:
             continue
         top = matches[0]
