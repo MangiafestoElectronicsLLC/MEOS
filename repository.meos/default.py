@@ -3238,6 +3238,13 @@ def list_category(provider_id, category):
                 },
             )
 
+        if selected_integrated and category in ("movies", "tv"):
+            add_folder_item(
+                "Browse Integrated {0} Categories".format("Movies" if category == "movies" else "TV Shows"),
+                {"action": "integration_category_sources", "category": category},
+            )
+            found += 1
+
         seen = set()
         for provider in sorted(PROVIDERS.values(), key=lambda p: p.name.lower()):
             auth_state = get_auth_state(provider.id)
@@ -3277,10 +3284,6 @@ def list_category(provider_id, category):
 
         integrated_added = add_integrated_category_items(category)
         found += integrated_added
-
-        # Show integrated folder shortcuts only as a fallback when no direct merged items were found.
-        if selected_integrated and integrated_added == 0:
-            found += add_integrated_addon_shortcuts(category)
 
         if not found:
             xbmcgui.Dialog().notification("MEOS", "No items in this category", xbmcgui.NOTIFICATION_INFO, 2500)
@@ -3330,6 +3333,114 @@ def list_category(provider_id, category):
                 "return_category": category,
             },
         )
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_integration_category_sources(category):
+    category = (category or "").strip().lower()
+    if category not in ("movies", "tv"):
+        xbmcgui.Dialog().notification("MEOS", "Category is not supported", xbmcgui.NOTIFICATION_WARNING, 2200)
+        list_integration_content_menu()
+        return
+
+    selected = _get_integrated_addon_ids()
+    if not selected:
+        xbmcgui.Dialog().notification("MEOS", "No integrated add-ons selected", xbmcgui.NOTIFICATION_INFO, 2500)
+        list_integration_menu()
+        return
+
+    category_label = "Movies" if category == "movies" else "TV Shows"
+    xbmcplugin.setPluginCategory(HANDLE, "Integrated {0} Sources".format(category_label))
+    _add_integration_navigation(back_action="list_category", back_params={"provider": "all", "category": category}, back_label="Back to {0}".format(category_label))
+
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
+    added = 0
+    for addon_ref in selected:
+        details = _integration_reference_details(addon_ref, installed)
+        addon_id = details.get("addon_id") or addon_ref
+        row = details.get("row") or {}
+        addon_name = details.get("name") or addon_ref
+        if _is_low_value_integration_reference(addon_id, addon_name):
+            continue
+
+        matches = _resolve_integrated_targets(addon_id, category, addon_name=addon_name)
+        if not matches:
+            continue
+
+        art = {
+            "thumb": row.get("thumbnail") or DEFAULT_ART["thumb"],
+            "icon": row.get("thumbnail") or DEFAULT_ART["icon"],
+            "fanart": row.get("fanart") or DEFAULT_ART["fanart"],
+        }
+        add_folder_item(
+            "{0}: Choose {1} Category".format(addon_name, category_label),
+            {
+                "action": "integration_addon_category",
+                "addon_id": addon_id,
+                "category": category,
+                "addon_name": addon_name,
+            },
+            art=art,
+        )
+        added += 1
+
+    if not added:
+        add_folder_item("No integrated {0} category sources found".format(category_label), {"action": "integration_menu"})
+
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_integration_addon_category(addon_id, category, addon_name=""):
+    addon_id = (addon_id or "").strip()
+    category = (category or "").strip().lower()
+    if not addon_id or category not in ("movies", "tv"):
+        xbmcgui.Dialog().notification("MEOS", "Missing integrated category target", xbmcgui.NOTIFICATION_WARNING, 2200)
+        list_integration_menu()
+        return
+
+    addon_name = (addon_name or addon_id).strip()
+    category_label = "Movies" if category == "movies" else "TV Shows"
+    xbmcplugin.setPluginCategory(HANDLE, "{0} / {1}".format(addon_name, category_label))
+    _add_integration_navigation(
+        back_action="integration_category_sources",
+        back_params={"category": category},
+        back_label="Back to Integrated {0} Sources".format(category_label),
+    )
+
+    matches = _resolve_integrated_targets(addon_id, category, addon_name=addon_name)
+    if not matches:
+        add_folder_item("No {0} categories found for this add-on".format(category_label), {"action": "integration_category_sources", "category": category})
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    for match in matches:
+        target = (match.get("target") or "").strip()
+        if not target:
+            continue
+        matched_label = (match.get("matched_label") or "").strip() or "Open"
+        art = {
+            "thumb": match.get("thumbnail") or DEFAULT_ART["thumb"],
+            "icon": match.get("thumbnail") or DEFAULT_ART["icon"],
+            "fanart": match.get("fanart") or DEFAULT_ART["fanart"],
+        }
+
+        if match.get("is_folder", True):
+            add_folder_item(
+                matched_label,
+                {"action": "external_browse", "target": target, "title": addon_name},
+                art=art,
+            )
+        else:
+            add_validated_playable_item(
+                matched_label,
+                {"action": "external_play", "target": target},
+                status=_target_validation_status(target),
+                info={"title": matched_label, "genre": category_label},
+                art=art,
+            )
+
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
 
@@ -5437,6 +5548,18 @@ def router(params):
 
     if action == "integration_content_menu":
         list_integration_content_menu()
+        return
+
+    if action == "integration_category_sources":
+        list_integration_category_sources(params.get("category", "movies"))
+        return
+
+    if action == "integration_addon_category":
+        list_integration_addon_category(
+            params.get("addon_id", ""),
+            params.get("category", "movies"),
+            params.get("addon_name", ""),
+        )
         return
 
     if action == "integration_addon_content_menu":
