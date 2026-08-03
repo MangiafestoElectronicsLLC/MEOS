@@ -138,6 +138,7 @@ INTEGRATED_MENU_CACHE_SETTING = "integrated_menu_cache"
 AUTO_INTEGRATION_LAST_CHECK_SETTING = "auto_integration_last_check"
 AUTO_INTEGRATION_CHECK_INTERVAL_SECONDS = 300
 REMOTE_VOTE_CACHE = {}
+BROWSABLE_TARGET_CACHE = {}
 CATEGORY_HINTS = {
     "movies": ["movie", "movies", "film", "cinema", "one click movie", "1 click movie", "new releases", "featured movies", "boxsets"],
     "tv": ["tv", "shows", "tv shows", "series", "episodes", "one click tv", "1 click tv", "full seasons", "seasons"],
@@ -1892,7 +1893,7 @@ def _match_path_step(entries, step_labels):
     best_entry = None
     best_score = 0
     for entry in entries:
-        if entry.get("filetype") != "directory":
+        if not _entry_is_browseable_directory(entry):
             continue
         label = entry.get("label") or entry.get("title") or ""
         normalized_label = _normalize_label(label).strip()
@@ -2052,7 +2053,7 @@ def _scrubs_deep_priority_targets(addon_id, category, addon_name=""):
         results.append(
             {
                 "target": target,
-                "is_folder": resolved.get("filetype") == "directory",
+                "is_folder": _entry_is_browseable_directory(resolved),
                 "matched_label": resolved.get("label") or resolved.get("title") or "",
                 "thumbnail": resolved.get("thumbnail") or "",
                 "fanart": resolved.get("fanart") or "",
@@ -2078,7 +2079,7 @@ def _scrubs_deep_priority_targets(addon_id, category, addon_name=""):
     best = None
     best_score = 0
     for entry in root_entries:
-        if entry.get("filetype") != "directory":
+        if not _entry_is_browseable_directory(entry):
             continue
         label = entry.get("label") or entry.get("title") or ""
         score = _score_keywords(label, keyword_map.get(category, []))
@@ -2125,7 +2126,7 @@ def _resolve_integrated_targets(addon_id, category, addon_name=""):
         exact_results.append(
             {
                 "target": target,
-                "is_folder": resolved.get("filetype") == "directory",
+                "is_folder": _entry_is_browseable_directory(resolved),
                 "matched_label": resolved.get("label") or resolved.get("title") or "",
                 "thumbnail": resolved.get("thumbnail") or "",
                 "fanart": resolved.get("fanart") or "",
@@ -2167,7 +2168,7 @@ def _resolve_integrated_targets(addon_id, category, addon_name=""):
                 score += depth_bonus
                 candidates.append((score, depth, entry, reasons, depth_bonus))
 
-            if entry.get("filetype") == "directory" and depth < MAX_INTEGRATED_SCAN_DEPTH:
+            if _entry_is_browseable_directory(entry) and depth < MAX_INTEGRATED_SCAN_DEPTH:
                 queue.append((file_path, depth + 1))
 
     if candidates:
@@ -2184,7 +2185,7 @@ def _resolve_integrated_targets(addon_id, category, addon_name=""):
             resolved.append(
                 {
                     "target": target,
-                    "is_folder": entry.get("filetype") == "directory",
+                    "is_folder": _entry_is_browseable_directory(entry),
                     "matched_label": entry.get("label") or entry.get("title") or "",
                     "thumbnail": entry.get("thumbnail") or "",
                     "fanart": entry.get("fanart") or "",
@@ -2229,7 +2230,7 @@ def _resolve_integrated_targets(addon_id, category, addon_name=""):
         fallback_results.append(
             {
                 "target": target,
-                "is_folder": entry.get("filetype") == "directory",
+                "is_folder": _entry_is_browseable_directory(entry),
                 "matched_label": entry.get("label") or entry.get("title") or "",
                 "thumbnail": entry.get("thumbnail") or "",
                 "fanart": entry.get("fanart") or "",
@@ -2315,6 +2316,32 @@ def _browse_directory_entries(target):
     return []
 
 
+def _target_is_browseable_directory(target):
+    target = (target or "").strip()
+    if not target:
+        return False
+
+    cached = BROWSABLE_TARGET_CACHE.get(target)
+    if cached is not None:
+        return cached
+
+    if not target.startswith("plugin://"):
+        BROWSABLE_TARGET_CACHE[target] = False
+        return False
+
+    is_browseable = bool(_browse_directory_entries(target))
+    BROWSABLE_TARGET_CACHE[target] = is_browseable
+    return is_browseable
+
+
+def _entry_is_browseable_directory(entry):
+    if not entry:
+        return False
+    if entry.get("filetype") == "directory":
+        return True
+    return _target_is_browseable_directory(entry.get("file") or "")
+
+
 def _resolve_integrated_target(addon_id, category, addon_name=""):
     return _resolve_integrated_targets(addon_id, category, addon_name=addon_name)[0]
 
@@ -2359,7 +2386,7 @@ def _scan_integrated_addon_category(addon_ref, category, addon_name=""):
                 {
                     "target": target,
                     "label": label,
-                    "is_folder": entry.get("filetype") == "directory",
+                    "is_folder": _entry_is_browseable_directory(entry),
                     "thumbnail": entry.get("thumbnail") or resolved.get("thumbnail") or (row or {}).get("thumbnail") or "",
                     "fanart": entry.get("fanart") or resolved.get("fanart") or (row or {}).get("fanart") or "",
                     "source_label": resolved.get("matched_label") or "",
@@ -2484,7 +2511,7 @@ def _iter_integrated_playables(target, max_depth, max_items):
             if not file_path:
                 continue
 
-            if entry.get("filetype") == "directory":
+            if _entry_is_browseable_directory(entry):
                 if depth < max_depth:
                     stack.append((file_path, depth + 1))
                 continue
@@ -2537,7 +2564,7 @@ def _search_integrated_playables(target, query, max_depth=6, max_items=120):
             label = entry.get("label") or entry.get("title") or file_path
             haystack = " {0} {1} ".format(_normalize_label(label), _normalize_label(file_path))
 
-            if entry.get("filetype") == "directory":
+            if _entry_is_browseable_directory(entry):
                 if depth < max_depth:
                     stack.append((file_path, depth + 1))
                 continue
@@ -3578,7 +3605,7 @@ def list_integration_addon_category(addon_id, category, addon_name=""):
                         "icon": entry.get("thumbnail") or DEFAULT_ART["icon"],
                         "fanart": entry.get("fanart") or DEFAULT_ART["fanart"],
                     }
-                    if entry.get("filetype") == "directory":
+                    if _entry_is_browseable_directory(entry):
                         add_folder_item(label, {"action": "external_browse", "target": file_path, "title": addon_name}, art=art)
                     else:
                         add_validated_playable_item(
@@ -4935,7 +4962,7 @@ def list_external_browse(target, title="Add-on", redirected="false"):
             "fanart": entry.get("fanart") or DEFAULT_ART["fanart"],
         }
 
-        if entry.get("filetype") == "directory":
+        if _entry_is_browseable_directory(entry):
             if addon_id:
                 add_action_item(
                     "Map to MEOS: {0}".format(label),
@@ -5581,7 +5608,8 @@ def list_search_all_results(query, mode="all", provider_id=None):
             raw_label = entry.get("label") or entry.get("title") or file_path
             addon_name = entry.get("_addon_name") or entry.get("_addon_id") or "Add-on"
             label = "[Integrated {0}] {1}".format(addon_name, raw_label)
-            is_validated, vote = _integrated_target_status(file_path, is_folder=entry.get("filetype") == "directory")
+            entry_is_folder = _entry_is_browseable_directory(entry)
+            is_validated, vote = _integrated_target_status(file_path, is_folder=entry_is_folder)
             if not _stream_visible_by_filter(validated=is_validated, vote=vote):
                 continue
 
@@ -5594,10 +5622,10 @@ def list_search_all_results(query, mode="all", provider_id=None):
                 file_path,
                 title=addon_name,
                 label=raw_label,
-                is_folder=entry.get("filetype") == "directory",
+                is_folder=entry_is_folder,
             )
 
-            if entry.get("filetype") == "directory":
+            if entry_is_folder:
                 add_folder_item(
                     _format_validated_label(label, is_validated),
                     {"action": "external_browse", "target": file_path, "title": addon_name},
