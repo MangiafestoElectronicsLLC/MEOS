@@ -3383,9 +3383,17 @@ def list_integration_menu():
     xbmcplugin.endOfDirectory(HANDLE)
 
 
+def _add_integration_navigation(back_action="integration_menu", back_params=None, back_label="Back to Integration Menu"):
+    params = {"action": back_action}
+    if back_params:
+        params.update(back_params)
+    add_folder_item(back_label, params)
+    add_folder_item("Return to ME/OS Home", {"action": "home"})
+
+
 def list_integration_content_menu():
     xbmcplugin.setPluginCategory(HANDLE, "Use Integrated Content")
-    add_folder_item("Return to Integration Menu", {"action": "integration_menu"})
+    _add_integration_navigation()
     add_folder_item("Movies", {"action": "list_category", "provider": "all", "category": "movies"})
     add_folder_item("TV Shows", {"action": "list_category", "provider": "all", "category": "tv"})
     add_folder_item("Cable TV", {"action": "list_category", "provider": "all", "category": "cable"})
@@ -3398,6 +3406,7 @@ def list_integration_content_menu():
 
 def list_integration_tools_menu():
     xbmcplugin.setPluginCategory(HANDLE, "Integration Tools")
+    _add_integration_navigation()
     add_folder_item("Manual Add-on Scan", {"action": "integration_custom_prompt"})
     add_folder_item("Custom Integration Targets", {"action": "integration_custom_targets"})
     add_folder_item("Browse Integrated Cache", {"action": "integration_cached_menu"})
@@ -3418,7 +3427,7 @@ def list_integration_picker():
     selected_existing = _get_integrated_addon_ids()
     selected_set = set(selected_existing)
 
-    add_folder_item("Done", {"action": "integration_menu"})
+    _add_integration_navigation(back_label="Done")
     add_folder_item("Manual Add-on Scan", {"action": "integration_custom_prompt"})
     add_folder_item("Select All ({0})".format(_integration_mode_label()), {"action": "integration_select_all"})
     add_folder_item("Clear Integrated Add-ons", {"action": "integration_clear"})
@@ -3611,6 +3620,7 @@ def _maybe_auto_integrate_priority_addons(force=False):
 
 def list_integration_inspector():
     xbmcplugin.setPluginCategory(HANDLE, "Integration Inspector")
+    _add_integration_navigation()
     add_folder_item("Manual Favorites", {"action": "favorites_menu"})
     add_folder_item("Integrated Add-ons (Cached View)", {"action": "integration_cached_menu"})
 
@@ -3659,6 +3669,7 @@ def list_integration_addon_audit(addon_id):
     root_target = details["root_target"] or "plugin://{0}/".format(details["addon_id"] or addon_id)
 
     xbmcplugin.setPluginCategory(HANDLE, "Inspect: {0}".format(addon_name))
+    _add_integration_navigation(back_action="integration_inspector", back_label="Back to Integration Inspector")
     add_folder_item("Open Add-on Root", {"action": "external_browse", "target": root_target, "title": addon_name})
     add_folder_item("Manual Browse & Search", {"action": "external_browse", "target": root_target, "title": addon_name})
     add_folder_item("Search Within Add-on", {"action": "external_search_prompt", "target": root_target, "title": addon_name})
@@ -3787,6 +3798,7 @@ def list_integrated_addons_cache(addon_id="", category=""):
         cache = [row for row in cache if (row.get("category") or "").strip().lower() == category]
 
     xbmcplugin.setPluginCategory(HANDLE, "Integrated Add-ons")
+    add_folder_item("Return to ME/OS Home", {"action": "home"})
     add_folder_item("Refresh Cached Integrated Add-ons", {"action": "integration_cached_refresh"})
     add_folder_item("Back to Integration Menu", {"action": "integration_menu"})
 
@@ -3986,7 +3998,7 @@ def list_integration_audit_report(addon_id):
     addon_name = details["name"] if details["name"] else addon_id
 
     xbmcplugin.setPluginCategory(HANDLE, "Coverage: {0}".format(addon_name))
-    add_folder_item("Back to Add-on Inspector", {"action": "integration_audit_addon", "addon_id": addon_id})
+    _add_integration_navigation(back_action="integration_audit_addon", back_params={"addon_id": addon_id}, back_label="Back to Add-on Inspector")
 
     for category_label, category in MENU_CATEGORIES:
         targets = _resolve_integrated_targets(addon_id, category, addon_name=addon_name)
@@ -4088,6 +4100,7 @@ def list_manual_favorites():
 
 def list_favorite_add_from_integrated_menu():
     xbmcplugin.setPluginCategory(HANDLE, "Add Favorite from Integrated Add-ons")
+    _add_integration_navigation(back_label="Back to Integration Menu")
     selected = _get_integrated_addon_ids()
     if not selected:
         add_folder_item("No integrated add-ons selected", {"action": "integration_picker"})
@@ -4122,6 +4135,7 @@ def list_favorite_add_from_integrated_addon(addon_id):
     root_target = "plugin://{0}/".format(addon_id)
 
     xbmcplugin.setPluginCategory(HANDLE, "Add from: {0}".format(addon_name))
+    _add_integration_navigation(back_action="favorite_add_integrated_menu", back_label="Back to Integrated Add-on List")
     add_action_item(
         "Add Root to Favorites",
         {
@@ -4460,6 +4474,7 @@ def list_external_browse(target, title="Add-on"):
         return
 
     xbmcplugin.setPluginCategory(HANDLE, "Integrated: {0}".format(title or "Add-on"))
+    add_folder_item("Return to ME/OS Home", {"action": "home"})
 
     add_action_item(
         "Open Native Add-on Page",
@@ -4627,6 +4642,7 @@ def list_integration_scan_report(addon_id):
 
     report = _scan_integrated_addon_report(addon_id)
     xbmcplugin.setPluginCategory(HANDLE, "Scan Report: {0}".format(report["addon_name"]))
+    _add_integration_navigation(back_action="integration_inspector", back_label="Back to Integration Inspector")
 
     status = "installed" if report["installed"] else "reference"
     if not report["enabled"] and report["installed"]:
@@ -4678,6 +4694,7 @@ def list_integration_scan_category(addon_id, category):
 
     report = _scan_integrated_addon_category(addon_id, category)
     xbmcplugin.setPluginCategory(HANDLE, "Scan: {0} / {1}".format(report["addon_name"], report["category_label"]))
+    _add_integration_navigation(back_action="integration_scan_report", back_params={"addon_id": addon_id}, back_label="Back to Scan Report")
 
     add_action_item(
         "Integrate This Add-on",
@@ -4767,7 +4784,7 @@ def list_custom_integration_targets(addon_id=""):
         rows = [row for row in rows if (row.get("addon_id") or "").strip().lower() == addon_id]
 
     xbmcplugin.setPluginCategory(HANDLE, "Custom Integration Targets")
-    add_folder_item("Back to Integration Menu", {"action": "integration_menu"})
+    _add_integration_navigation()
 
     if not rows:
         add_folder_item("No custom targets saved", {"action": "integration_menu"})
@@ -4842,7 +4859,7 @@ def list_integration_set_target_menu(addon_id, target, title="", label="", is_fo
         return
 
     xbmcplugin.setPluginCategory(HANDLE, "Set Integration Target")
-    add_folder_item("Back", {"action": "external_browse", "target": return_target, "title": return_title})
+    _add_integration_navigation(back_action="external_browse", back_params={"target": return_target, "title": return_title}, back_label="Back")
     add_folder_item("Custom Integration Targets", {"action": "integration_custom_targets", "addon_id": addon_id})
 
     for category_label, category in MENU_CATEGORIES:
