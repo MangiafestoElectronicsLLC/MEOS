@@ -3517,6 +3517,10 @@ def list_integration_inspector():
             "Scan This Add-on Now: {0}".format(addon_name),
             {"action": "integration_scan_addon", "addon_id": addon_id},
         )
+        add_action_item(
+            "Scan This Add-on Now: {0}".format(addon_name),
+            {"action": "integration_scan_addon", "addon_id": addon_id},
+        )
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
