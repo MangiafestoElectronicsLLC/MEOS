@@ -139,6 +139,8 @@ AUTO_INTEGRATION_LAST_CHECK_SETTING = "auto_integration_last_check"
 AUTO_INTEGRATION_CHECK_INTERVAL_SECONDS = 300
 REMOTE_VOTE_CACHE = {}
 BROWSABLE_TARGET_CACHE = {}
+SCRUBS_CLEANUP_SETTING = "scrubs_cleanup_revision"
+SCRUBS_CLEANUP_REVISION = "1"
 CATEGORY_HINTS = {
     "movies": ["movie", "movies", "film", "cinema", "one click movie", "1 click movie", "new releases", "featured movies", "boxsets"],
     "tv": ["tv", "shows", "tv shows", "series", "episodes", "one click tv", "1 click tv", "full seasons", "seasons"],
@@ -854,6 +856,7 @@ def _get_custom_integrated_targets():
                 "thumb": (row.get("thumb") or "").strip(),
                 "fanart": (row.get("fanart") or "").strip(),
                 "custom_mapped": bool(row.get("custom_mapped", True)),
+                "manual_redirect": bool(row.get("manual_redirect", False)),
             }
         )
     return cleaned
@@ -886,6 +889,7 @@ def _set_custom_integrated_targets(rows):
                 "thumb": str(row.get("thumb") or "").strip(),
                 "fanart": str(row.get("fanart") or "").strip(),
                 "custom_mapped": bool(row.get("custom_mapped", True)),
+                "manual_redirect": bool(row.get("manual_redirect", False)),
             }
         )
         if len(cleaned) >= MAX_INTEGRATED_MENU_CACHE_ITEMS:
@@ -911,7 +915,7 @@ def _is_custom_integrated_target(addon_id, category, target):
     return False
 
 
-def _set_custom_integrated_target(addon_id, category, target, label="", is_folder=True, thumb="", fanart=""):
+def _set_custom_integrated_target(addon_id, category, target, label="", is_folder=True, thumb="", fanart="", manual_redirect=False):
     addon_id = (addon_id or "").strip()
     category = (category or "").strip().lower()
     target = (target or "").strip()
@@ -939,6 +943,7 @@ def _set_custom_integrated_target(addon_id, category, target, label="", is_folde
             "thumb": (thumb or "").strip(),
             "fanart": (fanart or "").strip(),
             "custom_mapped": True,
+            "manual_redirect": bool(manual_redirect),
         },
     )
     _set_custom_integrated_targets(rows)
@@ -991,10 +996,108 @@ def _custom_targets_for_addon_category(addon_id, category):
                 "thumbnail": (row.get("thumb") or "").strip(),
                 "fanart": (row.get("fanart") or "").strip(),
                 "custom_mapped": bool(row.get("custom_mapped", True)),
+                "manual_redirect": bool(row.get("manual_redirect", False)),
                 "score": 5000,
             }
         )
     return matches
+
+
+def _manual_redirect_targets_for_addon_category(addon_id, category):
+    addon_id = (addon_id or "").strip().lower()
+    category = (category or "").strip().lower()
+    if not addon_id or not category:
+        return []
+
+    matches = []
+    for row in _get_custom_integrated_targets():
+        row_addon = (row.get("addon_id") or "").strip().lower()
+        row_category = (row.get("category") or "").strip().lower()
+        if row_addon != addon_id or row_category != category:
+            continue
+        if not bool(row.get("manual_redirect", False)):
+            continue
+
+        target = (row.get("target") or "").strip()
+        if not target:
+            continue
+
+        matches.append(
+            {
+                "target": target,
+                "is_folder": bool(row.get("is_folder", True)),
+                "matched_label": (row.get("label") or "").strip() or "Manual Redirect",
+                "thumbnail": (row.get("thumb") or "").strip(),
+                "fanart": (row.get("fanart") or "").strip(),
+                "custom_mapped": True,
+                "manual_redirect": True,
+                "score": 9000,
+            }
+        )
+    return matches
+
+
+def _auto_clean_stale_scrubs_custom_mappings(force=False):
+    if not force:
+        if (ADDON.getSetting(SCRUBS_CLEANUP_SETTING) or "").strip() == SCRUBS_CLEANUP_REVISION:
+            return 0
+
+    rows = _get_custom_integrated_targets()
+    if not rows:
+        ADDON.setSetting(SCRUBS_CLEANUP_SETTING, SCRUBS_CLEANUP_REVISION)
+        return 0
+
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
+    deep_cache = {}
+    cleaned = []
+    removed = 0
+
+    for row in rows:
+        addon_id = (row.get("addon_id") or "").strip()
+        category = (row.get("category") or "").strip().lower()
+        target = (row.get("target") or "").strip()
+        if not addon_id or category not in ("movies", "tv"):
+            cleaned.append(row)
+            continue
+
+        addon_name = ""
+        addon_row = installed.get(addon_id)
+        if addon_row:
+            addon_name = addon_row.get("name") or ""
+
+        if not _is_scrubs_addon(addon_id, addon_name):
+            cleaned.append(row)
+            continue
+
+        if bool(row.get("manual_redirect", False)):
+            cleaned.append(row)
+            continue
+
+        cache_key = (addon_id.lower(), category)
+        if cache_key not in deep_cache:
+            deep = _scrubs_deep_priority_targets(addon_id, category, addon_name=addon_name)
+            deep_cache[cache_key] = set((item.get("target") or "").strip().lower() for item in deep if item.get("target"))
+        deep_targets = deep_cache.get(cache_key, set())
+
+        normalized_target = target.lower().rstrip("/")
+        addon_root = "plugin://{0}".format(addon_id.lower()).rstrip("/")
+        label_normalized = _normalize_label(row.get("label") or "")
+
+        stale_label = ("top match" in label_normalized) or (label_normalized in ("open", "movies", "movie", "tv", "tv shows"))
+        stale_root = normalized_target == addon_root
+        stale_not_in_deep = bool(deep_targets) and (target.lower() not in deep_targets)
+
+        if stale_not_in_deep and (stale_label or stale_root):
+            removed += 1
+            continue
+
+        cleaned.append(row)
+
+    if removed:
+        _set_custom_integrated_targets(cleaned)
+
+    ADDON.setSetting(SCRUBS_CLEANUP_SETTING, SCRUBS_CLEANUP_REVISION)
+    return removed
 
 
 def _to_bool(value, default=False):
@@ -2103,13 +2206,17 @@ def _scrubs_deep_priority_targets(addon_id, category, addon_name=""):
 
 
 def _resolve_integrated_targets(addon_id, category, addon_name=""):
-    custom_matches = _custom_targets_for_addon_category(addon_id, category)
-    if custom_matches:
-        return custom_matches
+    manual_redirect_matches = _manual_redirect_targets_for_addon_category(addon_id, category)
+    if manual_redirect_matches:
+        return manual_redirect_matches
 
     scrubs_priority = _scrubs_deep_priority_targets(addon_id, category, addon_name=addon_name)
     if scrubs_priority:
         return scrubs_priority
+
+    custom_matches = _custom_targets_for_addon_category(addon_id, category)
+    if custom_matches:
+        return custom_matches
 
     root_target = "plugin://{0}/".format(addon_id)
     exact_paths = _addon_category_paths(addon_id, addon_name, category)
@@ -2861,6 +2968,9 @@ def _validate_stream_after_play(target="", provider_id="", media_id="", title=""
 
 
 def list_root():
+    cleaned = _auto_clean_stale_scrubs_custom_mappings()
+    if cleaned:
+        xbmcgui.Dialog().notification("MEOS", "Cleaned {0} stale Scrubs mapping(s)".format(cleaned), xbmcgui.NOTIFICATION_INFO, 2400)
     _maybe_auto_integrate_priority_addons()
     add_folder_item("One-Click Live TV", {"action": "list_category", "provider": "all", "category": "live"})
     add_folder_item("Movies", {"action": "list_category", "provider": "all", "category": "movies"})
@@ -3368,6 +3478,9 @@ def list_category(provider_id, category):
             )
             found += 1
 
+            shortcut_count = add_integrated_addon_shortcuts(category)
+            found += shortcut_count
+
         seen = set()
         for provider in sorted(PROVIDERS.values(), key=lambda p: p.name.lower()):
             auth_state = get_auth_state(provider.id)
@@ -3714,6 +3827,7 @@ def list_external_addons():
 
 
 def list_integration_menu():
+    _auto_clean_stale_scrubs_custom_mappings()
     _maybe_auto_integrate_priority_addons()
     xbmcplugin.setPluginCategory(HANDLE, "Integrate Other Add-ons")
     selected = _get_integrated_addon_ids()
@@ -3815,12 +3929,222 @@ def list_integration_tools_menu():
     xbmcplugin.setPluginCategory(HANDLE, "Integration Tools")
     _add_integration_navigation()
     add_folder_item("Manual Add-on Scan", {"action": "integration_custom_prompt"})
+    add_folder_item("Scrubs Redirect (Movies/TV)", {"action": "integration_scrubs_redirect_menu"})
     add_folder_item("Custom Integration Targets", {"action": "integration_custom_targets"})
     add_folder_item("Browse Integrated Cache", {"action": "integration_cached_menu"})
     add_folder_item("Auto-Build Favorites from Top Matches", {"action": "favorites_autobuild"})
     add_folder_item("Integration Inspector", {"action": "integration_inspector"})
     add_folder_item("Clear Integrated Add-ons", {"action": "integration_clear"})
     xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_scrubs_redirect_menu():
+    xbmcplugin.setPluginCategory(HANDLE, "Scrubs Redirect")
+    _add_integration_navigation(back_action="integration_tools_menu", back_label="Back to Integration Tools")
+    add_action_item("Run Scrubs Stale-Mapping Cleanup Now", {"action": "integration_scrubs_cleanup_now"})
+
+    selected = _get_integrated_addon_ids()
+    if not selected:
+        add_folder_item("No integrated add-ons selected", {"action": "integration_picker"})
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
+    added = 0
+    for addon_ref in selected:
+        details = _integration_reference_details(addon_ref, installed)
+        addon_id = details.get("addon_id") or addon_ref
+        addon_name = details.get("name") or addon_ref
+        if not _is_scrubs_addon(addon_id, addon_name):
+            continue
+
+        add_folder_item(
+            "{0}: Redirect Movies".format(addon_name),
+            {
+                "action": "integration_scrubs_redirect_category",
+                "addon_id": addon_id,
+                "addon_name": addon_name,
+                "category": "movies",
+            },
+        )
+        add_folder_item(
+            "{0}: Redirect TV Shows".format(addon_name),
+            {
+                "action": "integration_scrubs_redirect_category",
+                "addon_id": addon_id,
+                "addon_name": addon_name,
+                "category": "tv",
+            },
+        )
+        add_action_item(
+            "{0}: Clear Manual Redirects".format(addon_name),
+            {
+                "action": "integration_scrubs_redirect_clear",
+                "addon_id": addon_id,
+                "addon_name": addon_name,
+                "category": "all",
+            },
+        )
+        added += 1
+
+    if not added:
+        add_folder_item("No integrated Scrubs add-ons found", {"action": "integration_picker"})
+
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_scrubs_redirect_category(addon_id, category, addon_name=""):
+    addon_id = (addon_id or "").strip()
+    category = (category or "").strip().lower()
+    addon_name = (addon_name or addon_id).strip()
+    if not addon_id or category not in ("movies", "tv"):
+        xbmcgui.Dialog().notification("MEOS", "Missing Scrubs redirect category", xbmcgui.NOTIFICATION_WARNING, 2200)
+        list_scrubs_redirect_menu()
+        return
+
+    category_label = "Movies" if category == "movies" else "TV Shows"
+    xbmcplugin.setPluginCategory(HANDLE, "Scrubs Redirect: {0} / {1}".format(addon_name, category_label))
+    _add_integration_navigation(
+        back_action="integration_scrubs_redirect_menu",
+        back_label="Back to Scrubs Redirect",
+    )
+
+    current_manual = _manual_redirect_targets_for_addon_category(addon_id, category)
+    active_manual_target = ""
+    if current_manual:
+        active_manual_target = (current_manual[0].get("target") or "").strip().lower()
+        current_label = current_manual[0].get("matched_label") or "Manual Redirect"
+        add_action_item(
+            "[ACTIVE] Current Redirect: {0}".format(current_label),
+            {"action": "noop"},
+        )
+    else:
+        add_action_item("[ACTIVE] Current Redirect: Automatic Deep Matching", {"action": "noop"})
+
+    add_action_item(
+        "Use Automatic Deep Matching",
+        {
+            "action": "integration_scrubs_redirect_clear",
+            "addon_id": addon_id,
+            "addon_name": addon_name,
+            "category": category,
+        },
+    )
+
+    matches = _scrubs_deep_priority_targets(addon_id, category, addon_name=addon_name)
+    if not matches:
+        add_folder_item("No Scrubs category targets found", {"action": "integration_scrubs_redirect_menu"})
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    seen_targets = set()
+    for match in matches:
+        target = (match.get("target") or "").strip()
+        if not target:
+            continue
+        dedupe_key = target.lower()
+        if dedupe_key in seen_targets:
+            continue
+        seen_targets.add(dedupe_key)
+
+        matched_label = (match.get("matched_label") or "").strip() or target
+        row_label = "Redirect to: {0}".format(matched_label)
+        if active_manual_target and dedupe_key == active_manual_target:
+            row_label = "[ACTIVE] {0}".format(row_label)
+        add_action_item(
+            row_label,
+            {
+                "action": "integration_scrubs_redirect_apply",
+                "addon_id": addon_id,
+                "addon_name": addon_name,
+                "category": category,
+                "target": target,
+                "label": matched_label,
+                "is_folder": "true" if bool(match.get("is_folder", True)) else "false",
+                "thumb": match.get("thumbnail") or "",
+                "fanart": match.get("fanart") or "",
+            },
+        )
+
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def apply_scrubs_redirect_action(addon_id, category, target, addon_name="", label="", is_folder="true", thumb="", fanart=""):
+    addon_id = (addon_id or "").strip()
+    category = (category or "").strip().lower()
+    target = (target or "").strip()
+    addon_name = (addon_name or addon_id).strip()
+    label = (label or "").strip() or target
+    is_folder_value = _to_bool(is_folder, True)
+
+    if not addon_id or category not in ("movies", "tv") or not target:
+        xbmcgui.Dialog().notification("MEOS", "Missing Scrubs redirect values", xbmcgui.NOTIFICATION_WARNING, 2200)
+        list_scrubs_redirect_menu()
+        return
+
+    _set_custom_integrated_target(
+        addon_id,
+        category,
+        target,
+        label=label,
+        is_folder=is_folder_value,
+        thumb=thumb,
+        fanart=fanart,
+        manual_redirect=True,
+    )
+
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
+    row = installed.get(addon_id)
+    resolved_name = (row or {}).get("name") or addon_name or addon_id
+    _refresh_integrated_menu_cache(addon_id, resolved_name, addon_row=row)
+    xbmcgui.Dialog().notification("MEOS", "Scrubs redirect saved", xbmcgui.NOTIFICATION_INFO, 2200)
+    list_scrubs_redirect_category(addon_id, category, resolved_name)
+
+
+def clear_scrubs_redirect_action(addon_id, category="all", addon_name=""):
+    addon_id = (addon_id or "").strip()
+    category = (category or "all").strip().lower()
+    addon_name = (addon_name or addon_id).strip()
+    if not addon_id:
+        xbmcgui.Dialog().notification("MEOS", "Missing Scrubs add-on id", xbmcgui.NOTIFICATION_WARNING, 2200)
+        list_scrubs_redirect_menu()
+        return
+
+    rows = _get_custom_integrated_targets()
+    kept = []
+    removed = 0
+    for row in rows:
+        row_addon = (row.get("addon_id") or "").strip().lower()
+        row_category = (row.get("category") or "").strip().lower()
+        is_manual = bool(row.get("manual_redirect", False))
+        if row_addon == addon_id.lower() and is_manual and (category == "all" or row_category == category):
+            removed += 1
+            continue
+        kept.append(row)
+
+    if removed:
+        _set_custom_integrated_targets(kept)
+        installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
+        addon_row = installed.get(addon_id)
+        resolved_name = (addon_row or {}).get("name") or addon_name or addon_id
+        _refresh_integrated_menu_cache(addon_id, resolved_name, addon_row=addon_row)
+        xbmcgui.Dialog().notification("MEOS", "Removed {0} manual redirect(s)".format(removed), xbmcgui.NOTIFICATION_INFO, 2200)
+    else:
+        xbmcgui.Dialog().notification("MEOS", "No manual redirects found", xbmcgui.NOTIFICATION_INFO, 2200)
+
+    if category in ("movies", "tv"):
+        list_scrubs_redirect_category(addon_id, category, addon_name)
+        return
+    list_scrubs_redirect_menu()
+
+
+def run_scrubs_cleanup_now_action():
+    removed = _auto_clean_stale_scrubs_custom_mappings(force=True)
+    if removed:
+        xbmcgui.Dialog().notification("MEOS", "Removed {0} stale Scrubs mapping(s)".format(removed), xbmcgui.NOTIFICATION_INFO, 2200)
+    else:
+        xbmcgui.Dialog().notification("MEOS", "No stale Scrubs mappings found", xbmcgui.NOTIFICATION_INFO, 2200)
+    list_scrubs_redirect_menu()
 
 
 def list_integration_picker():
@@ -5807,6 +6131,43 @@ def router(params):
 
     if action == "integration_tools_menu":
         list_integration_tools_menu()
+        return
+
+    if action == "integration_scrubs_redirect_menu":
+        list_scrubs_redirect_menu()
+        return
+
+    if action == "integration_scrubs_redirect_category":
+        list_scrubs_redirect_category(
+            params.get("addon_id", ""),
+            params.get("category", "movies"),
+            params.get("addon_name", ""),
+        )
+        return
+
+    if action == "integration_scrubs_redirect_apply":
+        apply_scrubs_redirect_action(
+            params.get("addon_id", ""),
+            params.get("category", "movies"),
+            params.get("target", ""),
+            addon_name=params.get("addon_name", ""),
+            label=params.get("label", ""),
+            is_folder=params.get("is_folder", "true"),
+            thumb=params.get("thumb", ""),
+            fanart=params.get("fanart", ""),
+        )
+        return
+
+    if action == "integration_scrubs_redirect_clear":
+        clear_scrubs_redirect_action(
+            params.get("addon_id", ""),
+            category=params.get("category", "all"),
+            addon_name=params.get("addon_name", ""),
+        )
+        return
+
+    if action == "integration_scrubs_cleanup_now":
+        run_scrubs_cleanup_now_action()
         return
 
     if action == "integration_inspector":
