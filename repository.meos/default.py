@@ -1885,6 +1885,10 @@ def _match_path_step(entries, step_labels):
         if normalized:
             normalized_step_labels.append(normalized)
 
+    expanded_step_labels = set(normalized_step_labels)
+    if any(label in ("tmdb", "tbmd", "tmbd") for label in normalized_step_labels):
+        expanded_step_labels.update(("tmdb", "tbmd", "tmbd"))
+
     best_entry = None
     best_score = 0
     for entry in entries:
@@ -1896,11 +1900,17 @@ def _match_path_step(entries, step_labels):
 
         # Prefer deterministic exact folder matches to avoid landing in
         # similarly named branches like "1 Click TV Shows".
-        if normalized_label and normalized_label in normalized_step_labels:
+        if normalized_label and normalized_label in expanded_step_labels:
             score += 1000
 
+        # Scrubs menus commonly use TMDB/TBMD/TMBD interchangeably.
+        if normalized_label and any(label in expanded_step_labels for label in ("tmdb", "tbmd", "tmbd")):
+            wrapped_label = " {0} ".format(normalized_label)
+            if " tmdb " in wrapped_label or " tbmd " in wrapped_label or " tmbd " in wrapped_label:
+                score += 250
+
         if normalized_label:
-            for step_label in normalized_step_labels:
+            for step_label in expanded_step_labels:
                 if not step_label:
                     continue
                 if normalized_label.startswith(step_label):
@@ -1988,6 +1998,32 @@ def _scrubs_deep_priority_targets(addon_id, category, addon_name=""):
             ["Movies", "Tools"],
         ],
         "tv": [
+            ["TV Shows", "TMDB"],
+            ["TV Shows", "TMDB", "TV Categories"],
+            ["TV Shows", "TMDB", "Airing Today"],
+            ["TV Shows", "TMDB", "On The Air"],
+            ["TV Shows", "TMDB", "Popular"],
+            ["TV Shows", "TMDB", "Top Rated"],
+            ["TV Shows", "TMDB", "Trending Daily"],
+            ["TV Shows", "TMDB", "Trending Weekly"],
+            ["TV Shows", "TMDB", "Genres"],
+            ["TV Shows", "TMDB", "Networks"],
+            ["TV Shows", "TMDB", "Years"],
+            ["TV Shows", "TBMD"],
+            ["TV Shows", "TBMD", "TV Categories"],
+            ["TV Shows", "TBMD", "Airing Today"],
+            ["TV Shows", "TBMD", "On The Air"],
+            ["TV Shows", "TBMD", "Popular"],
+            ["TV Shows", "TBMD", "Top Rated"],
+            ["TV Shows", "TBMD", "Trending Daily"],
+            ["TV Shows", "TBMD", "Trending Weekly"],
+            ["TV Shows", "TBMD", "Genres"],
+            ["TV Shows", "TBMD", "Networks"],
+            ["TV Shows", "TBMD", "Years"],
+            ["TV Shows", "TMBD"],
+            ["TV", "TMDB"],
+            ["TV", "TBMD"],
+            ["TV", "TMBD"],
             ["TV Shows"],
             ["TV"],
             ["1 Click TV Shows"],
@@ -2037,7 +2073,7 @@ def _scrubs_deep_priority_targets(addon_id, category, addon_name=""):
 
     keyword_map = {
         "movies": ["movies", "movie"],
-        "tv": ["tv shows", "tv", "shows", "series"],
+        "tv": ["tv shows", "tv", "shows", "series", "tmdb", "tbmd", "tmbd"],
     }
     best = None
     best_score = 0
@@ -3458,6 +3494,20 @@ def _integration_category_choice_targets(addon_id, category, addon_name=""):
     if category in ("movies", "tv") and _is_scrubs_addon(addon_id, addon_name):
         deep = _scrubs_deep_priority_targets(addon_id, category, addon_name=addon_name)
         if deep:
+            if category == "tv":
+                def _scrubs_tv_rank(match):
+                    text = "{0} {1}".format(match.get("matched_label") or "", match.get("target") or "")
+                    normalized = _normalize_label(text)
+                    score = int(match.get("score", 0))
+                    if "tmdb" in normalized or "tbmd" in normalized or "tmbd" in normalized:
+                        score += 600
+                    if any(token in normalized for token in ("tv categories", "airing", "on the air", "popular", "top rated", "trending", "genre", "network", "years")):
+                        score += 200
+                    if "1 click" in normalized or "one click" in normalized:
+                        score -= 150
+                    return score
+
+                deep = sorted(deep, key=_scrubs_tv_rank, reverse=True)
             return deep
     return _resolve_integrated_targets(addon_id, category, addon_name=addon_name)
 
@@ -3488,7 +3538,33 @@ def list_integration_addon_category(addon_id, category, addon_name=""):
     # Scrubs-specific UX: surface first-level category folders (e.g., Explore TMDb)
     # so users can drill into TMDb/TV categories naturally instead of a single Top Match.
     if _is_scrubs_addon(addon_id, addon_name) and category in ("movies", "tv"):
-        base_target = (matches[0].get("target") or "").strip()
+        base_target = ""
+        if category == "tv":
+            for match in matches:
+                candidate_target = (match.get("target") or "").strip()
+                candidate_label = _normalize_label(match.get("matched_label") or "")
+                candidate_text = _normalize_label("{0} {1}".format(match.get("matched_label") or "", candidate_target))
+                if not candidate_target:
+                    continue
+                if "tmdb" in candidate_text or "tbmd" in candidate_text or "tmbd" in candidate_text:
+                    base_target = candidate_target
+                    break
+                if candidate_label in ("tmdb", "tbmd", "tmbd"):
+                    base_target = candidate_target
+                    break
+        if not base_target:
+            base_target = (matches[0].get("target") or "").strip()
+
+        if category == "tv" and base_target:
+            add_folder_item(
+                "Search TV Shows",
+                {
+                    "action": "external_search_prompt",
+                    "target": base_target,
+                    "title": addon_name,
+                },
+            )
+
         if base_target:
             entries = _browse_directory_entries(base_target)
             if entries:
@@ -4821,8 +4897,16 @@ def list_external_browse(target, title="Add-on", redirected="false"):
             "return_title": title,
         },
     )
-    add_folder_item("Search This Add-on", {"action": "external_search_prompt", "target": target, "title": title})
     addon_id = _addon_id_from_target(target)
+    search_label = "Search This Add-on"
+    if addon_id and _is_scrubs_addon(addon_id, title):
+        inferred = _infer_category_from_text("{0} {1}".format(title or "", target), default="")
+        if inferred == "tv":
+            search_label = "Search TV Shows"
+        elif inferred == "movies":
+            search_label = "Search Movies"
+    add_folder_item(search_label, {"action": "external_search_prompt", "target": target, "title": title})
+
     add_vote_actions(
         title or "Add-on",
         {"target": target},
