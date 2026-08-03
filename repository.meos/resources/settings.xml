@@ -18,7 +18,9 @@
     <setting id="auto_integrate_priority_addons" type="bool" label="Auto-integrate Scrubs V2 and The Loop" default="true" />
     <setting id="auto_integrate_priority_build_favorites" type="bool" label="Auto-integrate: add top favorites" default="true" />
     <setting id="external_validated_targets" type="text" label="Validated stream targets (internal)" default="" visible="false" />
+    <setting id="external_failed_targets" type="text" label="Failed stream targets (internal)" default="" visible="false" />
     <setting id="provider_validated_items" type="text" label="Validated provider items (internal)" default="" visible="false" />
+    <setting id="provider_failed_items" type="text" label="Failed provider items (internal)" default="" visible="false" />
     <setting id="manual_favorites" type="text" label="Manual favorites (internal)" default="" visible="false" />
     <setting id="external_stream_votes" type="text" label="Stream votes (internal)" default="" visible="false" />
     <setting id="external_integrated_addons" type="text" label="Integrated add-ons (internal)" default="" visible="false" />

@@ -3191,10 +3191,6 @@ def list_category(provider_id, category):
                 },
             )
 
-        show_integrated_shortcuts = bool(selected_integrated)
-        if show_integrated_shortcuts:
-            found += add_integrated_addon_shortcuts(category)
-
         seen = set()
         for provider in sorted(PROVIDERS.values(), key=lambda p: p.name.lower()):
             auth_state = get_auth_state(provider.id)
@@ -3232,7 +3228,12 @@ def list_category(provider_id, category):
                 )
                 found += 1
 
-        found += add_integrated_category_items(category)
+        integrated_added = add_integrated_category_items(category)
+        found += integrated_added
+
+        # Show integrated folder shortcuts only as a fallback when no direct merged items were found.
+        if selected_integrated and integrated_added == 0:
+            found += add_integrated_addon_shortcuts(category)
 
         if not found:
             xbmcgui.Dialog().notification("MEOS", "No items in this category", xbmcgui.NOTIFICATION_INFO, 2500)
@@ -4465,36 +4466,6 @@ def list_external_browse(target, title="Add-on"):
     )
     add_folder_item("Search This Add-on", {"action": "external_search_prompt", "target": target, "title": title})
     addon_id = _addon_id_from_target(target)
-    if addon_id:
-        add_action_item(
-            "Scan This Integrated Add-on For Content",
-            {"action": "integration_scan_addon", "addon_id": addon_id},
-        )
-        add_action_item(
-            "Scan This Folder To Add Into MEOS",
-            {
-                "action": "integration_scan_folder",
-                "target": target,
-                "title": title,
-                "label": title,
-                "is_folder": "true",
-                "return_target": target,
-                "return_title": title,
-            },
-        )
-        add_folder_item(
-            "Set This Folder as Integrated Target",
-            {
-                "action": "integration_set_target_menu",
-                "addon_id": addon_id,
-                "target": target,
-                "title": title,
-                "label": title,
-                "is_folder": "true",
-                "return_target": target,
-                "return_title": title,
-            },
-        )
     add_vote_actions(
         title or "Add-on",
         {"target": target},
