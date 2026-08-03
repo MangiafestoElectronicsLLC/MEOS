@@ -3354,10 +3354,11 @@ def list_integration_menu():
     xbmcplugin.setPluginCategory(HANDLE, "Integrate Other Add-ons")
     selected = _get_integrated_addon_ids()
 
+    add_folder_item("0) Return to ME/OS Home", {"action": "home"})
     add_folder_item("1) Select Integrated Add-ons", {"action": "integration_picker"})
     add_folder_item("2) Integrate All ({0})".format(_integration_mode_label()), {"action": "integration_select_all"})
     add_action_item("3) Rebuild/Rescan Everything", {"action": "integration_rebuild_all"})
-    add_folder_item("4) Browse Integrated Content", {"action": "integration_cached_menu"})
+    add_folder_item("4) Use Integrated Content in ME/OS", {"action": "integration_content_menu"})
     add_folder_item("5) Add Favorites from Integrated", {"action": "favorite_add_integrated_menu"})
     add_folder_item("Advanced Integration Tools", {"action": "integration_tools_menu"})
 
@@ -3375,10 +3376,23 @@ def list_integration_menu():
             label = "[DISABLED] {0}".format(label)
         add_folder_item(
             "Integrated: {0}".format(label),
-            {"action": "external_browse", "target": details["root_target"], "title": label},
+            {"action": "integration_cached_menu", "addon_id": details.get("addon_id") or addon_ref},
         )
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_integration_content_menu():
+    xbmcplugin.setPluginCategory(HANDLE, "Use Integrated Content")
+    add_folder_item("Return to Integration Menu", {"action": "integration_menu"})
+    add_folder_item("Movies", {"action": "list_category", "provider": "all", "category": "movies"})
+    add_folder_item("TV Shows", {"action": "list_category", "provider": "all", "category": "tv"})
+    add_folder_item("Cable TV", {"action": "list_category", "provider": "all", "category": "cable"})
+    add_folder_item("PPV Events", {"action": "list_category", "provider": "all", "category": "ppv"})
+    add_folder_item("Documentaries", {"action": "list_category", "provider": "all", "category": "docs"})
+    add_folder_item("Live Channels", {"action": "list_category", "provider": "all", "category": "live"})
+    add_folder_item("Sports", {"action": "list_category", "provider": "all", "category": "sports"})
     xbmcplugin.endOfDirectory(HANDLE)
 
 
@@ -5246,6 +5260,10 @@ def router(params):
         list_root()
         return
 
+    if action == "home":
+        list_root()
+        return
+
     if action == "play_sample":
         play_sample()
         return
@@ -5304,6 +5322,10 @@ def router(params):
 
     if action == "integration_menu":
         list_integration_menu()
+        return
+
+    if action == "integration_content_menu":
+        list_integration_content_menu()
         return
 
     if action == "integration_tools_menu":
