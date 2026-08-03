@@ -66,6 +66,8 @@ MAX_INTEGRATED_SEARCH_ITEMS_PER_ADDON = 160
 MAX_INTEGRATED_SEARCH_TOTAL_ITEMS = 1200
 VALIDATED_TARGETS_SETTING = "external_validated_targets"
 VALIDATED_PROVIDER_SETTING = "provider_validated_items"
+FAILED_TARGETS_SETTING = "external_failed_targets"
+FAILED_PROVIDER_SETTING = "provider_failed_items"
 STREAM_VOTES_SETTING = "external_stream_votes"
 MANUAL_FAVORITES_SETTING = "manual_favorites"
 CUSTOM_INTEGRATED_TARGETS_SETTING = "integrated_custom_targets"
@@ -3189,9 +3191,7 @@ def list_category(provider_id, category):
                 },
             )
 
-        show_integrated_shortcuts = bool(selected_integrated) and (
-            _show_integrated_folder_shortcuts_in_category_views()
-        )
+        show_integrated_shortcuts = bool(selected_integrated)
         if show_integrated_shortcuts:
             found += add_integrated_addon_shortcuts(category)
 
