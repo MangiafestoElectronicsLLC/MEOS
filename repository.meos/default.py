@@ -2808,6 +2808,12 @@ def _is_low_value_integration_reference(addon_id, addon_name=""):
         "metadata",
         "context",
         "provider",
+        "tester",
+        "iptv",
+        "tap",
+        "proxy",
+        "json",
+        "oauth",
     )
     return any(token in haystack for token in blocked_tokens)
 
@@ -3364,7 +3370,7 @@ def list_integration_category_sources(category):
         if _is_low_value_integration_reference(addon_id, addon_name):
             continue
 
-        matches = _resolve_integrated_targets(addon_id, category, addon_name=addon_name)
+        matches = _integration_category_choice_targets(addon_id, category, addon_name=addon_name)
         if not matches:
             continue
 
@@ -3388,8 +3394,18 @@ def list_integration_category_sources(category):
     if not added:
         add_folder_item("No integrated {0} category sources found".format(category_label), {"action": "integration_menu"})
 
-    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
+
+
+def _integration_category_choice_targets(addon_id, category, addon_name=""):
+    category = (category or "").strip().lower()
+    # For Scrubs, always expose deep TMDB/TBMD category paths instead of
+    # collapsing to a single custom-mapped "Top Match" node.
+    if category in ("movies", "tv") and _is_scrubs_addon(addon_id, addon_name):
+        deep = _scrubs_deep_priority_targets(addon_id, category, addon_name=addon_name)
+        if deep:
+            return deep
+    return _resolve_integrated_targets(addon_id, category, addon_name=addon_name)
 
 
 def list_integration_addon_category(addon_id, category, addon_name=""):
@@ -3409,16 +3425,20 @@ def list_integration_addon_category(addon_id, category, addon_name=""):
         back_label="Back to Integrated {0} Sources".format(category_label),
     )
 
-    matches = _resolve_integrated_targets(addon_id, category, addon_name=addon_name)
+    matches = _integration_category_choice_targets(addon_id, category, addon_name=addon_name)
     if not matches:
         add_folder_item("No {0} categories found for this add-on".format(category_label), {"action": "integration_category_sources", "category": category})
         xbmcplugin.endOfDirectory(HANDLE)
         return
 
+    seen_targets = set()
     for match in matches:
         target = (match.get("target") or "").strip()
         if not target:
             continue
+        if target.lower() in seen_targets:
+            continue
+        seen_targets.add(target.lower())
         matched_label = (match.get("matched_label") or "").strip() or "Open"
         art = {
             "thumb": match.get("thumbnail") or DEFAULT_ART["thumb"],
@@ -3441,7 +3461,6 @@ def list_integration_addon_category(addon_id, category, addon_name=""):
                 art=art,
             )
 
-    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(HANDLE)
 
 
@@ -3580,9 +3599,21 @@ def list_integration_addon_content_menu(addon_id, addon_name=""):
     _add_integration_navigation(back_action="integration_menu", back_label="Back to Integration Menu")
 
     for category_label, category in MENU_CATEGORIES:
-        matches = _resolve_integrated_targets(addon_id, category, addon_name=addon_name)
+        matches = _integration_category_choice_targets(addon_id, category, addon_name=addon_name)
         if not matches:
             continue
+        if category in ("movies", "tv"):
+            add_folder_item(
+                "{0}: Browse Categories".format(category_label),
+                {
+                    "action": "integration_addon_category",
+                    "addon_id": addon_id,
+                    "category": category,
+                    "addon_name": addon_name,
+                },
+            )
+            continue
+
         top = matches[0]
         target = (top.get("target") or "").strip()
         if not target:
