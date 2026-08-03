@@ -60,7 +60,7 @@ YEAR_MIN = 1927
 YEAR_MAX = 2026
 MAX_INTEGRATED_SCAN_DEPTH = 6
 MAX_INTEGRATED_ITEMS_PER_ADDON = 800
-MAX_INTEGRATED_TARGET_MATCHES = 8
+MAX_INTEGRATED_TARGET_MATCHES = 20
 MAX_VALIDATED_CACHE_ITEMS = 800
 MAX_INTEGRATED_SEARCH_ITEMS_PER_ADDON = 160
 MAX_INTEGRATED_SEARCH_TOTAL_ITEMS = 1200
@@ -1777,8 +1777,28 @@ def _scrubs_deep_priority_targets(addon_id, category, addon_name=""):
             ["Movie"],
             ["Movies", "TMDB"],
             ["Movies", "TMDB", "In Theaters"],
+            ["Movies", "TMDB", "Now Playing"],
+            ["Movies", "TMDB", "Popular"],
+            ["Movies", "TMDB", "Top Rated"],
+            ["Movies", "TMDB", "Upcoming"],
+            ["Movies", "TMDB", "Trending Daily"],
+            ["Movies", "TMDB", "Trending Weekly"],
+            ["Movies", "TMDB", "Featured"],
+            ["Movies", "TMDB", "Premiere"],
+            ["Movies", "TMDB", "Views"],
+            ["Movies", "TMDB", "Years"],
             ["Movies", "TBMD"],
             ["Movies", "TBMD", "In Theaters"],
+            ["Movies", "TBMD", "Now Playing"],
+            ["Movies", "TBMD", "Popular"],
+            ["Movies", "TBMD", "Top Rated"],
+            ["Movies", "TBMD", "Upcoming"],
+            ["Movies", "TBMD", "Trending Daily"],
+            ["Movies", "TBMD", "Trending Weekly"],
+            ["Movies", "TBMD", "Featured"],
+            ["Movies", "TBMD", "Premiere"],
+            ["Movies", "TBMD", "Views"],
+            ["Movies", "TBMD", "Years"],
             ["1 Click Movies"],
             ["One Click Movies"],
             ["My Movies"],
@@ -2482,6 +2502,7 @@ def _validate_stream_after_play(target="", provider_id="", media_id="", title=""
 def list_root():
     _maybe_auto_integrate_priority_addons()
     add_folder_item("One-Click Live TV", {"action": "list_category", "provider": "all", "category": "live"})
+    add_folder_item("Movies", {"action": "list_category", "provider": "all", "category": "movies"})
     add_folder_item("One-Click Movies", {"action": "list_category", "provider": "all", "category": "movies"})
     add_folder_item("One-Click TV Shows", {"action": "list_category", "provider": "all", "category": "tv"})
     add_folder_item("Cable TV", {"action": "list_category", "provider": "all", "category": "cable"})
@@ -2899,7 +2920,10 @@ def list_category(provider_id, category):
                 },
             )
 
-        if selected_integrated and _show_integrated_folder_shortcuts_in_category_views():
+        show_integrated_shortcuts = bool(selected_integrated) and (
+            category in ("movies", "tv") or _show_integrated_folder_shortcuts_in_category_views()
+        )
+        if show_integrated_shortcuts:
             found += add_integrated_addon_shortcuts(category)
 
         seen = set()
@@ -3600,24 +3624,51 @@ def scan_integrated_folder_action(target, title="", label="", is_folder="true", 
         list_external_browse(return_target, return_title or "Add-on")
         return
 
-    inferred_category = _infer_category_from_text("{0} {1} {2}".format(title, label, target), default="live")
-    mapped = _set_custom_integrated_target(
-        addon_id,
-        inferred_category,
-        target,
-        label=label,
-        is_folder=_to_bool(is_folder, True),
-    )
-
     installed = {item["addon_id"]: item for item in _get_installed_video_addons(include_meos=False, include_disabled=True)}
     row = installed.get(addon_id)
     addon_name = (row or {}).get("name") or addon_id
+    mapped_count = 0
+
+    normalized_target = (target or "").strip().lower().rstrip("/")
+    addon_root = "plugin://{0}".format(addon_id).lower().rstrip("/")
+
+    if normalized_target == addon_root:
+        # Scanning an add-on root should map discoverable category folders, not just one inferred category.
+        for category_label, category_key in MENU_CATEGORIES:
+            matches = _resolve_integrated_targets(addon_id, category_key, addon_name=addon_name)
+            if not matches:
+                continue
+            top = matches[0]
+            mapped_target = (top.get("target") or "").strip()
+            if not mapped_target:
+                continue
+            if _set_custom_integrated_target(
+                addon_id,
+                category_key,
+                mapped_target,
+                label=top.get("matched_label") or category_label,
+                is_folder=bool(top.get("is_folder", True)),
+                thumb=top.get("thumbnail") or "",
+                fanart=top.get("fanart") or "",
+            ):
+                mapped_count += 1
+    else:
+        inferred_category = _infer_category_from_text("{0} {1} {2}".format(title, label, target), default="live")
+        if _set_custom_integrated_target(
+            addon_id,
+            inferred_category,
+            target,
+            label=label,
+            is_folder=_to_bool(is_folder, True),
+        ):
+            mapped_count += 1
+
     refreshed = _refresh_integrated_menu_cache(addon_id, addon_name, addon_row=row)
 
-    if mapped:
+    if mapped_count:
         xbmcgui.Dialog().notification(
             "MEOS",
-            "Mapped folder to {0} and scanned {1} entries".format(inferred_category.title(), refreshed),
+            "Mapped {0} target(s) and scanned {1} entries".format(mapped_count, refreshed),
             xbmcgui.NOTIFICATION_INFO,
             2600,
         )

@@ -14,8 +14,8 @@ $ZipsRoot = Join-Path $Root "zips"
 $AddonsXmlPath = Join-Path $Root "addons.xml"
 $AddonsMd5Path = Join-Path $Root "addons.xml.md5"
 $RepositoryZipConveniencePath = Join-Path $Root "repository.meos.zip"
-$SingleInstallZipPath = Join-Path $Root "MEOS_ADDON.zip"
-$SingleInstallZipModernPath = Join-Path $Root "MEOS_ADDON_K21.zip"
+$SingleInstallZipPath = Join-Path $Root "MEOS_ADDON_K18.zip"
+$SingleInstallZipModernPath = Join-Path $Root "MEOS_ADDON_K20PLUS.zip"
 $KodiInstallDir = Join-Path $Root "KodiInstall"
 
 function Get-NextPatchVersion {
@@ -60,6 +60,15 @@ if (-not (Test-Path $PluginAddonXmlPath)) {
 }
 if (-not (Test-Path $RepositoryAddonXmlPath)) {
     throw "Missing repository addon.xml at $RepositoryAddonXmlPath"
+}
+
+@(
+    (Join-Path $Root "MEOS_ADDON.zip"),
+    (Join-Path $Root "MEOS_ADDON_K21.zip")
+) | ForEach-Object {
+    if (Test-Path $_) {
+        Remove-Item -Path $_ -Force
+    }
 }
 
 [xml]$pluginXml = Get-Content -Path $PluginAddonXmlPath
@@ -241,6 +250,11 @@ foreach ($buildProfile in $profileDefinitions) {
 
     Copy-Item -Path (Join-Path $PluginSourceDir "*") -Destination $pluginStagingDir -Recurse -Force
 
+    Get-ChildItem -Path $pluginStagingDir -Recurse -Directory -Filter "__pycache__" -ErrorAction SilentlyContinue |
+    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    Get-ChildItem -Path $pluginStagingDir -Recurse -File -Include "*.pyc", "*.pyo" -ErrorAction SilentlyContinue |
+    Remove-Item -Force -ErrorAction SilentlyContinue
+
     $stagedAddonXmlPath = Join-Path $pluginStagingDir "addon.xml"
     Set-PluginPythonDependencyVersion -AddonXmlPath $stagedAddonXmlPath -PythonDependencyVersion $buildProfile.PythonDependencyVersion
 
@@ -295,15 +309,23 @@ if (-not (Test-Path $KodiInstallDir)) {
 }
 
 # Keep installer options minimal in KodiInstall.
+Get-ChildItem -Path $KodiInstallDir -Filter "MEOS_ADDON.zip" -File -ErrorAction SilentlyContinue |
+Remove-Item -Force -ErrorAction SilentlyContinue
+Get-ChildItem -Path $KodiInstallDir -Filter "MEOS_ADDON_K21.zip" -File -ErrorAction SilentlyContinue |
+Remove-Item -Force -ErrorAction SilentlyContinue
 Get-ChildItem -Path $KodiInstallDir -Filter "MEOS_ADDON-*.zip" -File -ErrorAction SilentlyContinue |
 Remove-Item -Force -ErrorAction SilentlyContinue
 Get-ChildItem -Path $KodiInstallDir -Filter "MEOS_ADDON_K21-*.zip" -File -ErrorAction SilentlyContinue |
 Remove-Item -Force -ErrorAction SilentlyContinue
+Get-ChildItem -Path $KodiInstallDir -Filter "MEOS_ADDON_K18-*.zip" -File -ErrorAction SilentlyContinue |
+Remove-Item -Force -ErrorAction SilentlyContinue
+Get-ChildItem -Path $KodiInstallDir -Filter "MEOS_ADDON_K20PLUS-*.zip" -File -ErrorAction SilentlyContinue |
+Remove-Item -Force -ErrorAction SilentlyContinue
 Get-ChildItem -Path $KodiInstallDir -Filter "repository.meos-*.zip" -File -ErrorAction SilentlyContinue |
 Remove-Item -Force -ErrorAction SilentlyContinue
 
-Copy-Item -Path $SingleInstallZipPath -Destination (Join-Path $KodiInstallDir "MEOS_ADDON.zip") -Force
-Copy-Item -Path $SingleInstallZipModernPath -Destination (Join-Path $KodiInstallDir "MEOS_ADDON_K21.zip") -Force
+Copy-Item -Path $SingleInstallZipPath -Destination (Join-Path $KodiInstallDir "MEOS_ADDON_K18.zip") -Force
+Copy-Item -Path $SingleInstallZipModernPath -Destination (Join-Path $KodiInstallDir "MEOS_ADDON_K20PLUS.zip") -Force
 Copy-Item -Path $RepositoryZipConveniencePath -Destination (Join-Path $KodiInstallDir "repository.meos.zip") -Force
 
 Write-Host "Build completed"
@@ -317,7 +339,7 @@ else {
 Write-Host "Plugin zip (Kodi 18): $k18PluginZipPath"
 Write-Host "Plugin zip (Kodi 21/22): $k21PluginZipPath"
 Write-Host "Single install zip (Kodi 18): $SingleInstallZipPath"
-Write-Host "Single install zip (Kodi 21/22): $SingleInstallZipModernPath"
+Write-Host "Single install zip (Kodi 20+): $SingleInstallZipModernPath"
 Write-Host "Repository zip: $repositoryZipPath"
 Write-Host "Repository zip (convenience): $RepositoryZipConveniencePath"
 Write-Host "KodiInstall folder: $KodiInstallDir"
