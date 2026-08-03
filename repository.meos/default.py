@@ -2510,6 +2510,8 @@ def add_integrated_category_items(category, seen_title_keys=None):
         row = details["row"]
         if not row:
             continue
+        if _is_low_value_integration_reference(addon_id, row.get("name", "")):
+            continue
 
         start_points = _resolve_integrated_targets(addon_id, category, addon_name=row.get("name", ""))
         for resolved in start_points:
@@ -2786,9 +2788,54 @@ def list_root():
     xbmcplugin.endOfDirectory(HANDLE)
 
 
+def show_quick_update_help():
+    xbmcgui.Dialog().ok(
+        "MEOS Quick Update",
+        "Manual update ZIPs (stable filenames):",
+        "K20+: raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main/MEOS_ADDON_K20PLUS.zip",
+        "K18: raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main/MEOS_ADDON_K18.zip",
+    )
+    list_root()
+
+
+def _is_low_value_integration_reference(addon_id, addon_name=""):
+    haystack = "{0} {1}".format((addon_id or "").lower(), (addon_name or "").lower())
+    blocked_tokens = (
+        "module",
+        "resolver",
+        "scraper",
+        "repository",
+        "metadata",
+        "context",
+        "provider",
+    )
+    return any(token in haystack for token in blocked_tokens)
+
+
+def _hard_redirect_target_for_integration(target, title=""):
+    addon_id = _addon_id_from_target(target)
+    if not addon_id:
+        return ""
+
+    normalized = (target or "").strip().lower().rstrip("/")
+    root_target = "plugin://{0}/".format(addon_id).lower().rstrip("/")
+    if normalized != root_target:
+        return ""
+
+    matches = _resolve_integrated_targets(addon_id, "movies", addon_name=title or addon_id)
+    for match in matches:
+        redirected = (match.get("target") or "").strip()
+        if redirected and redirected.lower().rstrip("/") != normalized:
+            return redirected
+    return ""
+
+
 def list_tools_menu():
     xbmcplugin.setPluginCategory(HANDLE, "MEOS Tools")
     add_folder_item("Installed Add-ons Hub", {"action": "external_addons"})
+    add_action_item("Quick Update ZIP Links (K18/K20+)", {"action": "quick_update_help"})
+    add_action_item("Open YouTube Add-on (if installed)", {"action": "external_native", "target": "plugin://plugin.video.youtube/"})
+    add_folder_item("Browse YouTube Add-on (if installed)", {"action": "external_browse", "target": "plugin://plugin.video.youtube/", "title": "YouTube"})
     add_folder_item("Search All", {"action": "search_all"})
     add_folder_item("Awards", {"action": "awards_menu"})
     add_folder_item("Community Validation Quick Setup", {"action": "community_validation_setup"})
@@ -3372,11 +3419,17 @@ def list_integration_menu():
         details = _integration_reference_details(addon_ref, installed)
         row = details["row"]
         label = details["name"] if details["name"] else addon_ref
+        if _is_low_value_integration_reference(details.get("addon_id") or addon_ref, label):
+            continue
         if row and not row.get("enabled", True):
             label = "[DISABLED] {0}".format(label)
         add_folder_item(
             "Integrated: {0}".format(label),
-            {"action": "integration_cached_menu", "addon_id": details.get("addon_id") or addon_ref},
+            {
+                "action": "integration_addon_content_menu",
+                "addon_id": details.get("addon_id") or addon_ref,
+                "addon_name": label,
+            },
         )
 
     xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
@@ -3401,6 +3454,31 @@ def list_integration_content_menu():
     add_folder_item("Documentaries", {"action": "list_category", "provider": "all", "category": "docs"})
     add_folder_item("Live Channels", {"action": "list_category", "provider": "all", "category": "live"})
     add_folder_item("Sports", {"action": "list_category", "provider": "all", "category": "sports"})
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_integration_addon_content_menu(addon_id, addon_name=""):
+    addon_id = (addon_id or "").strip()
+    if not addon_id:
+        xbmcgui.Dialog().notification("MEOS", "Missing integrated add-on", xbmcgui.NOTIFICATION_WARNING, 2200)
+        list_integration_menu()
+        return
+
+    addon_name = (addon_name or addon_id).strip()
+    xbmcplugin.setPluginCategory(HANDLE, "Integrated: {0}".format(addon_name))
+    _add_integration_navigation(back_action="integration_menu", back_label="Back to Integration Menu")
+
+    for category_label, category in MENU_CATEGORIES:
+        matches = _resolve_integrated_targets(addon_id, category, addon_name=addon_name)
+        if not matches:
+            continue
+        top = matches[0]
+        target = (top.get("target") or "").strip()
+        if not target:
+            continue
+        label = "{0}: {1}".format(category_label, top.get("matched_label") or "Open")
+        add_folder_item(label, {"action": "external_browse", "target": target, "title": addon_name})
+
     xbmcplugin.endOfDirectory(HANDLE)
 
 
@@ -3481,7 +3559,11 @@ def select_all_integrated_addons(include_disabled=False):
         list_integration_menu()
         return
 
-    addon_ids = [row.get("addon_id") for row in rows if row.get("addon_id")]
+    addon_ids = [
+        row.get("addon_id")
+        for row in rows
+        if row.get("addon_id") and not _is_low_value_integration_reference(row.get("addon_id"), row.get("name", ""))
+    ]
     mode_label = "all available" if include_disabled else "enabled"
     _set_integrated_addon_ids(addon_ids)
     _sync_integrated_menu_cache(addon_ids)
@@ -4423,6 +4505,8 @@ def add_integrated_addon_shortcuts(category):
         row = details["row"]
         if not row:
             continue
+        if _is_low_value_integration_reference(addon_id, row.get("name", "")):
+            continue
 
         resolved_rows = _resolve_integrated_targets(addon_id, category, addon_name=row.get("name", ""))
         for resolved in resolved_rows:
@@ -4467,7 +4551,7 @@ def add_integrated_addon_shortcuts(category):
     return added
 
 
-def list_external_browse(target, title="Add-on"):
+def list_external_browse(target, title="Add-on", redirected="false"):
     if not target:
         xbmcgui.Dialog().notification("MEOS", "Missing add-on target", xbmcgui.NOTIFICATION_ERROR, 3000)
         xbmcplugin.endOfDirectory(HANDLE)
@@ -4475,6 +4559,12 @@ def list_external_browse(target, title="Add-on"):
 
     xbmcplugin.setPluginCategory(HANDLE, "Integrated: {0}".format(title or "Add-on"))
     add_folder_item("Return to ME/OS Home", {"action": "home"})
+
+    if not _to_bool(redirected, False):
+        redirected_target = _hard_redirect_target_for_integration(target, title=title)
+        if redirected_target:
+            list_external_browse(redirected_target, title, redirected="true")
+            return
 
     add_action_item(
         "Open Native Add-on Page",
@@ -5301,6 +5391,10 @@ def router(params):
         list_tools_menu()
         return
 
+    if action == "quick_update_help":
+        show_quick_update_help()
+        return
+
     if action == "sport_topic":
         list_sport_topic(params.get("query", "sports"))
         return
@@ -5343,6 +5437,10 @@ def router(params):
 
     if action == "integration_content_menu":
         list_integration_content_menu()
+        return
+
+    if action == "integration_addon_content_menu":
+        list_integration_addon_content_menu(params.get("addon_id", ""), params.get("addon_name", ""))
         return
 
     if action == "integration_tools_menu":
@@ -5516,7 +5614,11 @@ def router(params):
         return
 
     if action == "external_browse":
-        list_external_browse(params.get("target", ""), params.get("title", "Add-on"))
+        list_external_browse(
+            params.get("target", ""),
+            params.get("title", "Add-on"),
+            params.get("redirected", "false"),
+        )
         return
 
     if action == "external_search_prompt":
