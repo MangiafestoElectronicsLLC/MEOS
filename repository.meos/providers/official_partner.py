@@ -126,8 +126,16 @@ CATALOG = [
 
 
 class OfficialPartnerProvider(BaseProvider):
+    """
+    MEOS Demo content provider.
+
+    Provides a curated set of publicly accessible, royalty-free demo streams
+    sourced from Google's sample media bucket and Mux test streams.
+    All items are free and legal to stream.
+    """
+
     id = "official_partner"
-    name = "MEOS"
+    name = "MEOS Demo"
     requires_oauth = False
 
     def start_device_authorization(self):
@@ -136,10 +144,10 @@ class OfficialPartnerProvider(BaseProvider):
             "user_code": "MEOS-DEMO",
         }
 
-    def get_catalog(self, auth_state, category=None, query=None):
+    def get_catalog(self, auth_state, category=None, query=None, year=None, award=None, result=None):
         items = CATALOG
 
-        if category:
+        if category and category != "award":
             items = [item for item in items if item.get("category") == category]
 
         if query:
@@ -152,20 +160,13 @@ class OfficialPartnerProvider(BaseProvider):
         return True, ""
 
     def resolve_playback(self, media_id, auth_state):
-        if auth_state != "connected":
-            return None
-
         selected = next((item for item in CATALOG if item["media_id"] == media_id), None)
         if not selected:
             return None
 
-        # Replace these with official playback endpoints from your licensed provider.
         return {
             "stream_url": selected["stream_url"],
             "title": selected["title"],
             "mime_type": selected.get("mime_type", ""),
             "license_url": "",
-            "license_type": "com.widevine.alpha",
-            "manifest_type": "mpd",
-            "license_headers": "",
         }

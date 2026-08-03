@@ -4651,6 +4651,131 @@ def list_integration_scan_category(addon_id, category):
     xbmcplugin.endOfDirectory(HANDLE)
 
 
+def list_integration_scan_report(addon_id):
+    addon_id = (addon_id or "").strip()
+    if not addon_id:
+        xbmcgui.Dialog().notification("MEOS", "Missing add-on id", xbmcgui.NOTIFICATION_ERROR, 2500)
+        list_integration_menu()
+        return
+
+    report = _scan_integrated_addon_report(addon_id)
+    xbmcplugin.setPluginCategory(HANDLE, "Scan Report: {0}".format(report["addon_name"]))
+
+    status = "installed" if report["installed"] else "reference"
+    if not report["enabled"] and report["installed"]:
+        status = "[DISABLED] " + status
+
+    add_action_item(
+        "Integrate This Add-on",
+        {
+            "action": "integration_add_reference",
+            "reference": report["addon_id"] or addon_id,
+            "return_action": "integration_scan_report",
+            "return_reference": report["addon_id"] or addon_id,
+        },
+    )
+    add_folder_item("Open Native Add-on Page", {"action": "external_native", "target": report["root_target"], "title": report["addon_name"]})
+    add_folder_item("Back to Inspector", {"action": "integration_audit_addon", "addon_id": addon_id})
+
+    add_folder_item(
+        "Summary: {0} | {1} found".format(status, report["total_items"]),
+        {"action": "integration_scan_report", "addon_id": addon_id},
+    )
+
+    for category_report in report["categories"]:
+        preview_count = len(category_report["items"])
+        first_label = category_report["items"][0]["label"] if preview_count else "No matches"
+        label = "[{0}] {1} item(s) - {2}".format(category_report["menu_label"], preview_count, first_label)
+        reason = category_report["items"][0]["match_reason"] if preview_count else "No match reason"
+        add_folder_item(
+            label,
+            {
+                "action": "integration_scan_category",
+                "addon_id": addon_id,
+                "category": category_report["category"],
+            },
+            label2=reason,
+        )
+
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
+def list_integration_scan_category(addon_id, category):
+    addon_id = (addon_id or "").strip()
+    category = (category or "").strip()
+    if not addon_id or not category:
+        xbmcgui.Dialog().notification("MEOS", "Missing scan report details", xbmcgui.NOTIFICATION_ERROR, 2500)
+        list_integration_menu()
+        return
+
+    report = _scan_integrated_addon_category(addon_id, category)
+    xbmcplugin.setPluginCategory(HANDLE, "Scan: {0} / {1}".format(report["addon_name"], report["category_label"]))
+
+    add_action_item(
+        "Integrate This Add-on",
+        {
+            "action": "integration_add_reference",
+            "reference": report["addon_id"] or addon_id,
+            "return_action": "integration_scan_category",
+            "return_reference": report["addon_id"] or addon_id,
+            "return_category": category,
+        },
+    )
+    add_folder_item("Back to Scan Report", {"action": "integration_scan_report", "addon_id": addon_id})
+    add_folder_item("Back to Inspector", {"action": "integration_audit_addon", "addon_id": addon_id})
+
+    if not report["items"]:
+        xbmcgui.Dialog().notification("MEOS", "No matches found for this category", xbmcgui.NOTIFICATION_INFO, 2500)
+        xbmcplugin.endOfDirectory(HANDLE)
+        return
+
+    for item in report["items"]:
+        art = {
+            "thumb": item.get("thumbnail") or DEFAULT_ART["thumb"],
+            "icon": item.get("thumbnail") or DEFAULT_ART["icon"],
+            "fanart": item.get("fanart") or DEFAULT_ART["fanart"],
+        }
+        label = item["label"]
+        reason = item.get("match_reason") or "No match reason"
+        if item.get("is_folder", True):
+            add_folder_item(
+                label,
+                {"action": "external_browse", "target": item["target"], "title": report["addon_name"]},
+                art=art,
+                label2=reason,
+            )
+        else:
+            add_validated_playable_item(
+                label,
+                {"action": "external_play", "target": item["target"]},
+                validated=_is_target_validated(item["target"]),
+                info={"title": label, "genre": report["category_label"]},
+                art=art,
+                label2=reason,
+            )
+
+        add_action_item(
+            "Add to Favorites: {0}".format(label),
+            {
+                "action": "favorite_add",
+                "target": item["target"],
+                "label": "[{0}] {1}".format(report["category_label"], label),
+                "title": report["addon_name"],
+                "is_folder": "true" if item.get("is_folder", True) else "false",
+                "thumb": item.get("thumbnail") or "",
+                "fanart": item.get("fanart") or "",
+                "return_action": "integration_scan_category",
+                "return_reference": report["addon_id"] or addon_id,
+                "return_category": category,
+            },
+            label2=reason,
+        )
+
+    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
+    xbmcplugin.endOfDirectory(HANDLE)
+
+
 def play_external_item(target):
     if not target:
         xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
@@ -4824,6 +4949,45 @@ def remove_custom_integration_target_action(addon_id, category, target, return_a
         xbmcgui.Dialog().notification("MEOS", "Custom integration target not found", xbmcgui.NOTIFICATION_WARNING, 2200)
 
     list_custom_integration_targets(return_addon_id)
+
+
+def add_custom_integrated_addon_prompt():
+    keyboard = xbmc.Keyboard("", "Addon id or plugin:// URL to integrate")
+    keyboard.doModal()
+    if not keyboard.isConfirmed():
+        list_integration_menu()
+        return
+
+    reference = (keyboard.getText() or "").strip()
+    if not reference:
+        xbmcgui.Dialog().notification("MEOS", "Add-on reference is empty", xbmcgui.NOTIFICATION_WARNING, 2500)
+        list_integration_menu()
+        return
+
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
+    details = _integration_reference_details(reference, installed)
+    normalized_reference = details["addon_id"] or reference
+    list_integration_scan_report(normalized_reference)
+
+
+def add_integrated_addon_reference(reference):
+    reference = (reference or "").strip()
+    if not reference:
+        xbmcgui.Dialog().notification("MEOS", "Missing add-on reference", xbmcgui.NOTIFICATION_ERROR, 2500)
+        list_integration_menu()
+        return
+
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
+    details = _integration_reference_details(reference, installed)
+    normalized_reference = details["addon_id"] or reference
+
+    selected = _get_integrated_addon_ids()
+    if normalized_reference not in selected:
+        selected.append(normalized_reference)
+        _set_integrated_addon_ids(selected)
+
+    xbmcgui.Dialog().notification("MEOS", "Add-on added for integration", xbmcgui.NOTIFICATION_INFO, 2200)
+    list_integration_scan_report(normalized_reference)
 
 
 def add_custom_integrated_addon_prompt():
@@ -5460,6 +5624,14 @@ def router(params):
 
     if action == "open_settings":
         open_settings()
+        return
+
+    if action == "credits":
+        list_credits()
+        return
+
+    if action == "noop":
+        xbmcplugin.endOfDirectory(HANDLE)
         return
 
     if action == "provider_auth":
