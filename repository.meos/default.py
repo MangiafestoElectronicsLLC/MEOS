@@ -1035,6 +1035,10 @@ def _get_validated_target_set():
     return set(_get_json_list_setting(VALIDATED_TARGETS_SETTING))
 
 
+def _get_failed_target_set():
+    return set(_get_json_list_setting(FAILED_TARGETS_SETTING))
+
+
 def _canonical_target(target):
     target = (target or "").strip()
     if not target:
@@ -1186,9 +1190,14 @@ def _shared_plugin_target_key(target):
 
 
 def _is_target_validated(target):
+    return _target_validation_status(target) == VALIDATION_STATUS_PASS
+
+
+def _target_validation_status(target):
     if not target:
-        return False
+        return VALIDATION_STATUS_UNVERIFIED
     validated = _get_validated_target_set()
+    failed = _get_failed_target_set()
     for key in _target_validation_keys(target):
         if key in validated:
             return True
@@ -1203,10 +1212,29 @@ def _is_target_validated(target):
 def _mark_target_validated(target):
     if not target:
         return
+    keys = _target_validation_keys(target)
     values = _get_json_list_setting(VALIDATED_TARGETS_SETTING)
-    for key in reversed(_target_validation_keys(target)):
+    failed_values = _get_json_list_setting(FAILED_TARGETS_SETTING)
+    for key in reversed(keys):
         values.insert(0, key)
+    keys_set = set(keys)
+    failed_values = [value for value in failed_values if value not in keys_set]
     _set_json_list_setting(VALIDATED_TARGETS_SETTING, values)
+    _set_json_list_setting(FAILED_TARGETS_SETTING, failed_values)
+
+
+def _mark_target_failed(target):
+    if not target:
+        return
+    keys = _target_validation_keys(target)
+    values = _get_json_list_setting(FAILED_TARGETS_SETTING)
+    validated_values = _get_json_list_setting(VALIDATED_TARGETS_SETTING)
+    for key in reversed(keys):
+        values.insert(0, key)
+    keys_set = set(keys)
+    validated_values = [value for value in validated_values if value not in keys_set]
+    _set_json_list_setting(FAILED_TARGETS_SETTING, values)
+    _set_json_list_setting(VALIDATED_TARGETS_SETTING, validated_values)
 
 
 def _provider_validation_key(provider_id, media_id):
@@ -1214,6 +1242,10 @@ def _provider_validation_key(provider_id, media_id):
 
 
 def _is_provider_validated(provider_id, media_id):
+    return _provider_validation_status(provider_id, media_id) == VALIDATION_STATUS_PASS
+
+
+def _provider_validation_status(provider_id, media_id):
     key = _provider_validation_key(provider_id, media_id)
     if not provider_id or not media_id:
         return False
@@ -1230,8 +1262,23 @@ def _mark_provider_validated(provider_id, media_id):
     if not provider_id or not media_id:
         return
     values = _get_json_list_setting(VALIDATED_PROVIDER_SETTING)
+    failed_values = _get_json_list_setting(FAILED_PROVIDER_SETTING)
     values.insert(0, key)
+    failed_values = [value for value in failed_values if value != key]
     _set_json_list_setting(VALIDATED_PROVIDER_SETTING, values)
+    _set_json_list_setting(FAILED_PROVIDER_SETTING, failed_values)
+
+
+def _mark_provider_failed(provider_id, media_id):
+    key = _provider_validation_key(provider_id, media_id)
+    if not provider_id or not media_id:
+        return
+    values = _get_json_list_setting(FAILED_PROVIDER_SETTING)
+    validated_values = _get_json_list_setting(VALIDATED_PROVIDER_SETTING)
+    values.insert(0, key)
+    validated_values = [value for value in validated_values if value != key]
+    _set_json_list_setting(FAILED_PROVIDER_SETTING, values)
+    _set_json_list_setting(VALIDATED_PROVIDER_SETTING, validated_values)
 
 
 def _validated_only_enabled():
@@ -1543,19 +1590,46 @@ def _show_integrated_folder_shortcuts_in_category_views():
 
 
 def _format_validated_label(label, validated):
-    if not validated:
-        return label
+    return _format_validation_label(label, VALIDATION_STATUS_PASS if validated else VALIDATION_STATUS_UNVERIFIED)
+
+
+def _format_validation_label(label, status):
     label = label or ""
-    marker = _validated_marker_for_runtime()
-    if label.startswith(marker):
-        return label
-    if label.startswith(VALIDATED_MARKER_UNICODE):
-        return label
-    if label.startswith(VALIDATED_MARKER_FALLBACK):
-        return label
-    if label.startswith(VALIDATED_MARKER_LEGACY):
-        return label
-    return "{0}{1}".format(marker, label)
+    for marker in ALL_VALIDATION_MARKERS:
+        if label.startswith(marker):
+            label = label[len(marker):]
+            break
+
+    if status == VALIDATION_STATUS_PASS:
+        return "{0}{1}".format(_validated_marker_for_runtime(), label)
+    if status == VALIDATION_STATUS_FAIL:
+        return "{0}{1}".format(FAILED_MARKER, label)
+    return label
+
+
+def _validation_status_label(status):
+    if status == VALIDATION_STATUS_PASS:
+        return "VALIDATED"
+    if status == VALIDATION_STATUS_FAIL:
+        return "FAILED"
+    return "UNVERIFIED"
+
+
+def _validation_plotoutline(status):
+    if status == VALIDATION_STATUS_PASS:
+        return "Validated working stream"
+    if status == VALIDATION_STATUS_FAIL:
+        return "Validation failed - stream needs fixing"
+    return "Not validated yet"
+
+
+def _normalize_validation_status(validated=False, status=None):
+    """Normalize backward-compatible boolean and new status-style validation inputs."""
+    if status in (VALIDATION_STATUS_PASS, VALIDATION_STATUS_FAIL, VALIDATION_STATUS_UNVERIFIED):
+        return status
+    if validated:
+        return VALIDATION_STATUS_PASS
+    return VALIDATION_STATUS_UNVERIFIED
 
 
 def _format_custom_mapped_label(label, custom_mapped=False):
@@ -2460,7 +2534,7 @@ def add_integrated_category_items(category, seen_title_keys=None):
                 add_validated_playable_item(
                     label,
                     {"action": "external_play", "target": target},
-                    validated=is_validated,
+                    status=validation_status,
                     info={"title": title, "genre": category.title()},
                     art=art,
                     context_items=_scan_context_items_for_target(
@@ -3110,11 +3184,11 @@ def list_category(provider_id, category):
                 seen.add(key)
                 if title_key:
                     seen_titles.add(title_key)
-                label = _format_validated_label("[{0}] {1}".format(provider.name, item["title"]), is_validated)
+                label = _format_validation_label("[{0}] {1}".format(provider.name, item["title"]), validation_status)
                 add_validated_playable_item(
                     label,
                     {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
-                    validated=is_validated,
+                    status=validation_status,
                     info={"title": item["title"], "genre": item.get("genre", "")},
                 )
                 add_vote_actions(
@@ -3163,9 +3237,9 @@ def list_category(provider_id, category):
         if not _stream_visible_by_filter(validated=is_validated, vote=vote):
             continue
         add_validated_playable_item(
-            _format_validated_label(item["title"], is_validated),
+            _format_validation_label(item["title"], validation_status),
             {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
-            validated=is_validated,
+            status=validation_status,
             info={"title": item["title"], "genre": item.get("genre", "")},
         )
         add_vote_actions(
@@ -3586,7 +3660,7 @@ def list_integration_addon_audit(addon_id):
                 add_validated_playable_item(
                     label,
                     {"action": "external_play", "target": target},
-                    validated=_is_target_validated(target),
+                    status=_target_validation_status(target),
                     info={"title": label, "genre": category_label},
                     art=art,
                 )
@@ -3956,7 +4030,7 @@ def list_manual_favorites():
             add_validated_playable_item(
                 "[Playable] {0}".format(label),
                 {"action": "external_play", "target": target},
-                validated=_is_target_validated(target),
+                status=_target_validation_status(target),
                 info={"title": label},
                 art=art,
             )
@@ -4058,9 +4132,9 @@ def list_favorite_add_from_integrated_addon(addon_id):
                 )
             else:
                 add_validated_playable_item(
-                    "Play: {0}".format(_format_validated_label(label, _is_target_validated(target))),
+                    "Play: {0}".format(_format_validation_label(label, _target_validation_status(target))),
                     {"action": "external_play", "target": target},
-                    validated=_is_target_validated(target),
+                    status=_target_validation_status(target),
                     info={"title": label, "genre": category_label},
                     art=art,
                 )
@@ -4408,8 +4482,8 @@ def list_external_browse(target, title="Add-on"):
             continue
 
         label = entry.get("label") or entry.get("title") or file_path
-        is_validated = _is_target_validated(file_path)
-        label = _format_validated_label(label, is_validated)
+        validation_status = _target_validation_status(file_path)
+        label = _format_validation_label(label, validation_status)
         art = {
             "thumb": entry.get("thumbnail") or DEFAULT_ART["thumb"],
             "icon": entry.get("thumbnail") or DEFAULT_ART["icon"],
@@ -4504,7 +4578,7 @@ def list_external_browse(target, title="Add-on"):
             add_validated_playable_item(
                 label,
                 {"action": "external_play", "target": file_path},
-                validated=is_validated,
+                status=validation_status,
                 info={"title": label},
                 art=art,
                 context_items=_scan_context_items_for_target(
@@ -5285,18 +5359,21 @@ def open_settings():
 def play_provider_item(provider_id, media_id):
     provider = PROVIDERS.get(provider_id)
     if not provider:
+        _mark_provider_failed(provider_id, media_id)
         xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
         return
 
     auth_state = get_auth_state(provider.id)
     entitled, reason = provider.check_entitlement(media_id, auth_state)
     if not entitled:
+        _mark_provider_failed(provider.id, media_id)
         xbmcgui.Dialog().notification("MEOS", reason, xbmcgui.NOTIFICATION_WARNING, 3500)
         xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
         return
 
     playback = provider.resolve_playback(media_id, auth_state)
     if not playback or not playback.get("stream_url"):
+        _mark_provider_failed(provider.id, media_id)
         xbmcgui.Dialog().notification("MEOS", "Provider playback not configured", xbmcgui.NOTIFICATION_ERROR, 3500)
         xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
         return
