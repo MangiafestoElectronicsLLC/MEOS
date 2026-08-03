@@ -78,6 +78,18 @@ VALIDATED_MARKER_LEGACY = "[COLOR limegreen][B]v[/B][/COLOR] "
 CUSTOM_MAPPED_MARKER = "[COLOR gold][B]Mapped[/B][/COLOR] "
 VOTE_MARKER_UP = "[COLOR limegreen][B]👍[/B][/COLOR] "
 VOTE_MARKER_DOWN = "[COLOR red][B]👎[/B][/COLOR] "
+FAILED_MARKER = VALIDATED_MARKER_REJECTED
+VALIDATION_STATUS_PASS = "pass"
+VALIDATION_STATUS_FAIL = "fail"
+VALIDATION_STATUS_UNVERIFIED = "unverified"
+ALL_VALIDATION_MARKERS = (
+    VALIDATED_MARKER_UNICODE,
+    VALIDATED_MARKER_REJECTED,
+    VALIDATED_MARKER_FALLBACK,
+    VALIDATED_MARKER_LEGACY,
+    VOTE_MARKER_UP,
+    VOTE_MARKER_DOWN,
+)
 NON_CONTENT_PLUGIN_ACTIONS = {
     "vote_stream",
     "favorite_add",
@@ -1200,13 +1212,18 @@ def _target_validation_status(target):
     failed = _get_failed_target_set()
     for key in _target_validation_keys(target):
         if key in validated:
-            return True
+            return VALIDATION_STATUS_PASS
+        if key in failed:
+            return VALIDATION_STATUS_FAIL
 
     # Cross-device sync: treat a remote "up" vote as validated.
     if _get_stream_vote(target=target) == "up":
         _mark_target_validated(target)
-        return True
-    return False
+        return VALIDATION_STATUS_PASS
+    if _get_stream_vote(target=target) == "down":
+        _mark_target_failed(target)
+        return VALIDATION_STATUS_FAIL
+    return VALIDATION_STATUS_UNVERIFIED
 
 
 def _mark_target_validated(target):
@@ -1248,13 +1265,18 @@ def _is_provider_validated(provider_id, media_id):
 def _provider_validation_status(provider_id, media_id):
     key = _provider_validation_key(provider_id, media_id)
     if not provider_id or not media_id:
-        return False
+        return VALIDATION_STATUS_UNVERIFIED
     if key in set(_get_json_list_setting(VALIDATED_PROVIDER_SETTING)):
-        return True
+        return VALIDATION_STATUS_PASS
+    if key in set(_get_json_list_setting(FAILED_PROVIDER_SETTING)):
+        return VALIDATION_STATUS_FAIL
     if _get_stream_vote(provider_id=provider_id, media_id=media_id) == "up":
         _mark_provider_validated(provider_id, media_id)
-        return True
-    return False
+        return VALIDATION_STATUS_PASS
+    if _get_stream_vote(provider_id=provider_id, media_id=media_id) == "down":
+        _mark_provider_failed(provider_id, media_id)
+        return VALIDATION_STATUS_FAIL
+    return VALIDATION_STATUS_UNVERIFIED
 
 
 def _mark_provider_validated(provider_id, media_id):
@@ -2534,7 +2556,7 @@ def add_integrated_category_items(category, seen_title_keys=None):
                 add_validated_playable_item(
                     label,
                     {"action": "external_play", "target": target},
-                    status=validation_status,
+                    status=_target_validation_status(target),
                     info={"title": title, "genre": category.title()},
                     art=art,
                     context_items=_scan_context_items_for_target(
@@ -2549,7 +2571,7 @@ def add_integrated_category_items(category, seen_title_keys=None):
     return total_added
 
 
-def add_folder_item(label, query, art=None, context_items=None):
+def add_folder_item(label, query, art=None, context_items=None, label2=""):
     item = xbmcgui.ListItem(label=label)
     if label2:
         item.setLabel2(label2)
@@ -2559,7 +2581,7 @@ def add_folder_item(label, query, art=None, context_items=None):
     xbmcplugin.addDirectoryItem(HANDLE, build_url(query), item, isFolder=True)
 
 
-def add_action_item(label, query, art=None, context_items=None):
+def add_action_item(label, query, art=None, context_items=None, label2=""):
     item = xbmcgui.ListItem(label=label)
     if label2:
         item.setLabel2(label2)
@@ -2581,13 +2603,20 @@ def add_playable_item(label, query, info=None, art=None, label2="", context_item
     xbmcplugin.addDirectoryItem(HANDLE, build_url(query), item, isFolder=False)
 
 
-def add_validated_playable_item(label, query, validated=False, info=None, art=None, context_items=None):
+def add_validated_playable_item(label, query, validated=False, status=None, info=None, art=None, context_items=None, label2=""):
     query = query or {}
+    validation_status = _normalize_validation_status(validated=validated, status=status)
     vote = _get_stream_vote(
         target=query.get("target", ""),
         provider_id=query.get("provider", ""),
         media_id=query.get("media_id", ""),
     )
+    if validation_status == VALIDATION_STATUS_FAIL and not vote:
+        vote = "down"
+    if validation_status == VALIDATION_STATUS_PASS and not vote:
+        vote = "up"
+
+    validated = validation_status == VALIDATION_STATUS_PASS
     label = _strip_status_prefixes(label)
     marker = _stream_status_marker(validated=validated, vote=vote)
     if marker:
@@ -2603,7 +2632,7 @@ def add_validated_playable_item(label, query, validated=False, info=None, art=No
         query,
         info=video_info,
         art=art,
-        label2=_stream_status_label(validated=validated, vote=vote).upper(),
+        label2=label2 or _stream_status_label(validated=validated, vote=vote).upper(),
         context_items=context_items,
     )
 
@@ -3161,7 +3190,7 @@ def list_category(provider_id, category):
             )
 
         show_integrated_shortcuts = bool(selected_integrated) and (
-            category in ("movies", "tv") or _show_integrated_folder_shortcuts_in_category_views()
+            _show_integrated_folder_shortcuts_in_category_views()
         )
         if show_integrated_shortcuts:
             found += add_integrated_addon_shortcuts(category)
@@ -3184,6 +3213,7 @@ def list_category(provider_id, category):
                 seen.add(key)
                 if title_key:
                     seen_titles.add(title_key)
+                validation_status = _provider_validation_status(provider.id, item.get("media_id", ""))
                 label = _format_validation_label("[{0}] {1}".format(provider.name, item["title"]), validation_status)
                 add_validated_playable_item(
                     label,
@@ -3236,6 +3266,7 @@ def list_category(provider_id, category):
         vote = _get_stream_vote(provider_id=provider.id, media_id=item.get("media_id", ""))
         if not _stream_visible_by_filter(validated=is_validated, vote=vote):
             continue
+        validation_status = _provider_validation_status(provider.id, item.get("media_id", ""))
         add_validated_playable_item(
             _format_validation_label(item["title"], validation_status),
             {"action": "provider_play", "provider": provider.id, "media_id": item["media_id"]},
@@ -3322,12 +3353,11 @@ def list_integration_menu():
     xbmcplugin.setPluginCategory(HANDLE, "Integrate Other Add-ons")
     selected = _get_integrated_addon_ids()
 
-    add_folder_item("Select Installed Add-ons", {"action": "integration_picker"})
-    add_folder_item("Manual Add-on Scan", {"action": "integration_custom_prompt"})
-    add_folder_item("Integrate All ({0})".format(_integration_mode_label()), {"action": "integration_select_all"})
-    add_action_item("Rebuild Integrations + Favorites", {"action": "integration_rebuild_all"})
-    add_folder_item("Custom Integration Targets", {"action": "integration_custom_targets"})
-    add_folder_item("Browse Integrated Cache", {"action": "integration_cached_menu"})
+    add_folder_item("1) Select Integrated Add-ons", {"action": "integration_picker"})
+    add_folder_item("2) Integrate All ({0})".format(_integration_mode_label()), {"action": "integration_select_all"})
+    add_action_item("3) Rebuild/Rescan Everything", {"action": "integration_rebuild_all"})
+    add_folder_item("4) Browse Integrated Content", {"action": "integration_cached_menu"})
+    add_folder_item("5) Add Favorites from Integrated", {"action": "favorite_add_integrated_menu"})
     add_folder_item("Advanced Integration Tools", {"action": "integration_tools_menu"})
 
     if not selected:
@@ -3353,6 +3383,9 @@ def list_integration_menu():
 
 def list_integration_tools_menu():
     xbmcplugin.setPluginCategory(HANDLE, "Integration Tools")
+    add_folder_item("Manual Add-on Scan", {"action": "integration_custom_prompt"})
+    add_folder_item("Custom Integration Targets", {"action": "integration_custom_targets"})
+    add_folder_item("Browse Integrated Cache", {"action": "integration_cached_menu"})
     add_folder_item("Auto-Build Favorites from Top Matches", {"action": "favorites_autobuild"})
     add_folder_item("Integration Inspector", {"action": "integration_inspector"})
     add_folder_item("Clear Integrated Add-ons", {"action": "integration_clear"})
@@ -3575,6 +3608,7 @@ def list_integration_inspector():
     installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
     for addon_ref in selected:
         details = _integration_reference_details(addon_ref, installed)
+        addon_id = details["addon_id"]
         row = details["row"]
         addon_name = details["name"] if details["name"] else addon_ref
         if row and not row.get("enabled", True):
@@ -3586,10 +3620,6 @@ def list_integration_inspector():
         add_folder_item(
             "Manual Browse & Search: {0}".format(addon_name),
             {"action": "external_browse", "target": "plugin://{0}/".format(addon_id), "title": addon_name},
-        )
-        add_action_item(
-            "Scan This Add-on Now: {0}".format(addon_name),
-            {"action": "integration_scan_addon", "addon_id": addon_id},
         )
         add_action_item(
             "Scan This Add-on Now: {0}".format(addon_name),
@@ -4193,6 +4223,8 @@ def add_manual_favorite_from_action(
     return_target="",
     return_title="",
     return_addon_id="",
+    return_reference="",
+    return_category="",
     return_query="",
 ):
     added = _add_manual_favorite(
@@ -4358,6 +4390,7 @@ def add_integrated_addon_shortcuts(category):
 
     for addon_ref in selected:
         details = _integration_reference_details(addon_ref, installed)
+        addon_id = details["addon_id"]
         row = details["row"]
         if not row:
             continue
@@ -4725,131 +4758,6 @@ def list_integration_scan_category(addon_id, category):
     xbmcplugin.endOfDirectory(HANDLE)
 
 
-def list_integration_scan_report(addon_id):
-    addon_id = (addon_id or "").strip()
-    if not addon_id:
-        xbmcgui.Dialog().notification("MEOS", "Missing add-on id", xbmcgui.NOTIFICATION_ERROR, 2500)
-        list_integration_menu()
-        return
-
-    report = _scan_integrated_addon_report(addon_id)
-    xbmcplugin.setPluginCategory(HANDLE, "Scan Report: {0}".format(report["addon_name"]))
-
-    status = "installed" if report["installed"] else "reference"
-    if not report["enabled"] and report["installed"]:
-        status = "[DISABLED] " + status
-
-    add_action_item(
-        "Integrate This Add-on",
-        {
-            "action": "integration_add_reference",
-            "reference": report["addon_id"] or addon_id,
-            "return_action": "integration_scan_report",
-            "return_reference": report["addon_id"] or addon_id,
-        },
-    )
-    add_folder_item("Open Native Add-on Page", {"action": "external_native", "target": report["root_target"], "title": report["addon_name"]})
-    add_folder_item("Back to Inspector", {"action": "integration_audit_addon", "addon_id": addon_id})
-
-    add_folder_item(
-        "Summary: {0} | {1} found".format(status, report["total_items"]),
-        {"action": "integration_scan_report", "addon_id": addon_id},
-    )
-
-    for category_report in report["categories"]:
-        preview_count = len(category_report["items"])
-        first_label = category_report["items"][0]["label"] if preview_count else "No matches"
-        label = "[{0}] {1} item(s) - {2}".format(category_report["menu_label"], preview_count, first_label)
-        reason = category_report["items"][0]["match_reason"] if preview_count else "No match reason"
-        add_folder_item(
-            label,
-            {
-                "action": "integration_scan_category",
-                "addon_id": addon_id,
-                "category": category_report["category"],
-            },
-            label2=reason,
-        )
-
-    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
-    xbmcplugin.endOfDirectory(HANDLE)
-
-
-def list_integration_scan_category(addon_id, category):
-    addon_id = (addon_id or "").strip()
-    category = (category or "").strip()
-    if not addon_id or not category:
-        xbmcgui.Dialog().notification("MEOS", "Missing scan report details", xbmcgui.NOTIFICATION_ERROR, 2500)
-        list_integration_menu()
-        return
-
-    report = _scan_integrated_addon_category(addon_id, category)
-    xbmcplugin.setPluginCategory(HANDLE, "Scan: {0} / {1}".format(report["addon_name"], report["category_label"]))
-
-    add_action_item(
-        "Integrate This Add-on",
-        {
-            "action": "integration_add_reference",
-            "reference": report["addon_id"] or addon_id,
-            "return_action": "integration_scan_category",
-            "return_reference": report["addon_id"] or addon_id,
-            "return_category": category,
-        },
-    )
-    add_folder_item("Back to Scan Report", {"action": "integration_scan_report", "addon_id": addon_id})
-    add_folder_item("Back to Inspector", {"action": "integration_audit_addon", "addon_id": addon_id})
-
-    if not report["items"]:
-        xbmcgui.Dialog().notification("MEOS", "No matches found for this category", xbmcgui.NOTIFICATION_INFO, 2500)
-        xbmcplugin.endOfDirectory(HANDLE)
-        return
-
-    for item in report["items"]:
-        art = {
-            "thumb": item.get("thumbnail") or DEFAULT_ART["thumb"],
-            "icon": item.get("thumbnail") or DEFAULT_ART["icon"],
-            "fanart": item.get("fanart") or DEFAULT_ART["fanart"],
-        }
-        label = item["label"]
-        reason = item.get("match_reason") or "No match reason"
-        if item.get("is_folder", True):
-            add_folder_item(
-                label,
-                {"action": "external_browse", "target": item["target"], "title": report["addon_name"]},
-                art=art,
-                label2=reason,
-            )
-        else:
-            add_validated_playable_item(
-                label,
-                {"action": "external_play", "target": item["target"]},
-                validated=_is_target_validated(item["target"]),
-                info={"title": label, "genre": report["category_label"]},
-                art=art,
-                label2=reason,
-            )
-
-        add_action_item(
-            "Add to Favorites: {0}".format(label),
-            {
-                "action": "favorite_add",
-                "target": item["target"],
-                "label": "[{0}] {1}".format(report["category_label"], label),
-                "title": report["addon_name"],
-                "is_folder": "true" if item.get("is_folder", True) else "false",
-                "thumb": item.get("thumbnail") or "",
-                "fanart": item.get("fanart") or "",
-                "return_action": "integration_scan_category",
-                "return_reference": report["addon_id"] or addon_id,
-                "return_category": category,
-            },
-            label2=reason,
-        )
-
-    xbmcplugin.addSortMethod(HANDLE, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
-    xbmcplugin.endOfDirectory(HANDLE)
-
-
 def play_external_item(target):
     if not target:
         xbmcplugin.setResolvedUrl(HANDLE, False, xbmcgui.ListItem())
@@ -5023,45 +4931,6 @@ def remove_custom_integration_target_action(addon_id, category, target, return_a
         xbmcgui.Dialog().notification("MEOS", "Custom integration target not found", xbmcgui.NOTIFICATION_WARNING, 2200)
 
     list_custom_integration_targets(return_addon_id)
-
-
-def add_custom_integrated_addon_prompt():
-    keyboard = xbmc.Keyboard("", "Addon id or plugin:// URL to integrate")
-    keyboard.doModal()
-    if not keyboard.isConfirmed():
-        list_integration_menu()
-        return
-
-    reference = (keyboard.getText() or "").strip()
-    if not reference:
-        xbmcgui.Dialog().notification("MEOS", "Add-on reference is empty", xbmcgui.NOTIFICATION_WARNING, 2500)
-        list_integration_menu()
-        return
-
-    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
-    details = _integration_reference_details(reference, installed)
-    normalized_reference = details["addon_id"] or reference
-    list_integration_scan_report(normalized_reference)
-
-
-def add_integrated_addon_reference(reference):
-    reference = (reference or "").strip()
-    if not reference:
-        xbmcgui.Dialog().notification("MEOS", "Missing add-on reference", xbmcgui.NOTIFICATION_ERROR, 2500)
-        list_integration_menu()
-        return
-
-    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
-    details = _integration_reference_details(reference, installed)
-    normalized_reference = details["addon_id"] or reference
-
-    selected = _get_integrated_addon_ids()
-    if normalized_reference not in selected:
-        selected.append(normalized_reference)
-        _set_integrated_addon_ids(selected)
-
-    xbmcgui.Dialog().notification("MEOS", "Add-on added for integration", xbmcgui.NOTIFICATION_INFO, 2200)
-    list_integration_scan_report(normalized_reference)
 
 
 def add_custom_integrated_addon_prompt():
@@ -5614,6 +5483,8 @@ def router(params):
             return_target=params.get("return_target", ""),
             return_title=params.get("return_title", ""),
             return_addon_id=params.get("return_addon_id", ""),
+            return_reference=params.get("return_reference", ""),
+            return_category=params.get("return_category", ""),
             return_query=params.get("return_query", ""),
         )
         return
