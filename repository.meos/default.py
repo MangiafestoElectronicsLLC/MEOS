@@ -2836,6 +2836,35 @@ def _hard_redirect_target_for_integration(target, title=""):
     return ""
 
 
+def _auto_map_integrated_addon_targets(addon_id, addon_name=""):
+    addon_id = (addon_id or "").strip()
+    if not addon_id:
+        return 0
+
+    mapped = 0
+    category_list = [key for (_, key) in MENU_CATEGORIES]
+    for category in category_list:
+        matches = _resolve_integrated_targets(addon_id, category, addon_name=addon_name or addon_id)
+        if not matches:
+            continue
+        top = matches[0]
+        target = (top.get("target") or "").strip()
+        if not target:
+            continue
+        if _set_custom_integrated_target(
+            addon_id,
+            category,
+            target,
+            label=top.get("matched_label") or category.title(),
+            is_folder=bool(top.get("is_folder", True)),
+            thumb=top.get("thumbnail") or "",
+            fanart=top.get("fanart") or "",
+        ):
+            mapped += 1
+
+    return mapped
+
+
 def list_tools_menu():
     xbmcplugin.setPluginCategory(HANDLE, "MEOS Tools")
     add_folder_item("Installed Add-ons Hub", {"action": "external_addons"})
@@ -3431,6 +3460,36 @@ def list_integration_addon_category(addon_id, category, addon_name=""):
         xbmcplugin.endOfDirectory(HANDLE)
         return
 
+    # Scrubs-specific UX: surface first-level category folders (e.g., Explore TMDb)
+    # so users can drill into TMDb/TV categories naturally instead of a single Top Match.
+    if _is_scrubs_addon(addon_id, addon_name) and category in ("movies", "tv"):
+        base_target = (matches[0].get("target") or "").strip()
+        if base_target:
+            entries = _browse_directory_entries(base_target)
+            if entries:
+                for entry in entries:
+                    file_path = (entry.get("file") or "").strip()
+                    if not file_path:
+                        continue
+                    label = (entry.get("label") or entry.get("title") or file_path).strip()
+                    art = {
+                        "thumb": entry.get("thumbnail") or DEFAULT_ART["thumb"],
+                        "icon": entry.get("thumbnail") or DEFAULT_ART["icon"],
+                        "fanart": entry.get("fanart") or DEFAULT_ART["fanart"],
+                    }
+                    if entry.get("filetype") == "directory":
+                        add_folder_item(label, {"action": "external_browse", "target": file_path, "title": addon_name}, art=art)
+                    else:
+                        add_validated_playable_item(
+                            label,
+                            {"action": "external_play", "target": file_path},
+                            status=_target_validation_status(file_path),
+                            info={"title": label, "genre": category_label},
+                            art=art,
+                        )
+                xbmcplugin.endOfDirectory(HANDLE)
+                return
+
     seen_targets = set()
     for match in matches:
         target = (match.get("target") or "").strip()
@@ -3681,11 +3740,16 @@ def toggle_integrated_addon(addon_id):
         return
 
     selected = _get_integrated_addon_ids()
+    addon_name = addon_id
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=True)
+    if addon_id in installed:
+        addon_name = installed[addon_id].get("name") or addon_id
     if addon_id in selected:
         selected = [value for value in selected if value != addon_id]
         notice = "Removed integrated add-on"
     else:
         selected.append(addon_id)
+        _auto_map_integrated_addon_targets(addon_id, addon_name=addon_name)
         notice = "Added integrated add-on"
 
     _set_integrated_addon_ids(selected)
@@ -3706,6 +3770,13 @@ def select_all_integrated_addons(include_disabled=False):
         for row in rows
         if row.get("addon_id") and not _is_low_value_integration_reference(row.get("addon_id"), row.get("name", ""))
     ]
+    for row in rows:
+        addon_id = row.get("addon_id") or ""
+        if not addon_id:
+            continue
+        if addon_id not in addon_ids:
+            continue
+        _auto_map_integrated_addon_targets(addon_id, addon_name=row.get("name", "") or addon_id)
     mode_label = "all available" if include_disabled else "enabled"
     _set_integrated_addon_ids(addon_ids)
     _sync_integrated_menu_cache(addon_ids)
