@@ -2403,7 +2403,7 @@ def _resolve_integrated_targets(addon_id, category, addon_name=""):
     return [{"target": root_target, "is_folder": True, "matched_label": "", "thumbnail": "", "fanart": ""}]
 
 
-def _browse_directory_entries(target):
+def _browse_directory_entries(target, include_root_fallback=True):
     target = (target or "").strip()
     if not target:
         return []
@@ -2429,7 +2429,12 @@ def _browse_directory_entries(target):
         if not path.endswith("/"):
             _push_target(urlunparse((parsed.scheme, parsed.netloc, path + "/", parsed.params, parsed.query, parsed.fragment)))
 
-        _push_target(urlunparse((parsed.scheme, parsed.netloc, "/", "", "", "")))
+        # Root-directory fallback helps resolve malformed folder URLs, but it must
+        # never be used for a plain leaf-vs-folder browseability check below, or
+        # every playable item would look like a folder just because the addon
+        # root itself is browseable.
+        if include_root_fallback:
+            _push_target(urlunparse((parsed.scheme, parsed.netloc, "/", "", "", "")))
 
     request_profiles = [
         {"media": "files"},
@@ -2487,7 +2492,7 @@ def _target_is_browseable_directory(target):
         BROWSABLE_TARGET_CACHE[target] = False
         return False
 
-    is_browseable = bool(_browse_directory_entries(target))
+    is_browseable = bool(_browse_directory_entries(target, include_root_fallback=False))
     BROWSABLE_TARGET_CACHE[target] = is_browseable
     return is_browseable
 
