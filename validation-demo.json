@@ -1,0 +1,156 @@
+[
+  {
+    "provider": "official_partner",
+    "media_id": "movie_big_buck_bunny",
+    "title": "Big Buck Bunny",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "movie_his_girl_friday",
+    "title": "His Girl Friday (1940)",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/his_girl_friday/his_girl_friday.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "movie_reefer_madness",
+    "title": "Reefer Madness (1938)",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/reefer_madness1938/reefer_madness1938.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "tv_google_blender_archive",
+    "title": "Big Buck Bunny (Internet Archive Mirror)",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/BigBuckBunny_328/BigBuckBunny_512kb.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "tv_elephants_dream_archive",
+    "title": "Elephants Dream (Internet Archive Mirror)",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/ElephantsDream/ed_1024_512kb.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "tv_chaplin_floorwalker",
+    "title": "Charlie Chaplin: The Floorwalker (1916)",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/CC_1916_05_15_TheFloorwalker/CC_1916_05_15_TheFloorwalker_512kb.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "cable_test_channel",
+    "title": "MEOS Cable Test Channel",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "cable_patriotic_popeye",
+    "title": "Patriotic Popeye (1957)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/popeye_patriotic_popeye/popeye_patriotic_popeye_512kb.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "ppv_test_event",
+    "title": "MEOS PPV Test Event",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://test-streams.mux.dev/test_001/stream.m3u8"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "docs_duck_and_cover",
+    "title": "Duck and Cover (1951)",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/DuckandC1951/DuckandC1951.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "docs_nazi_concentration_camps",
+    "title": "Nazi Concentration Camps (1945)",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nazi_concentration_camps/nazi_concentration_camps.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "sports_test_feed",
+    "title": "MEOS Sports Test Feed",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://test-streams.mux.dev/dai-discontinuity-deltatre/manifest.m3u8"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "sports_tears_of_steel_trailer",
+    "title": "Sports Showcase Clip",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://test-streams.mux.dev/pts_shift/master.m3u8"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "live_test_channel",
+    "title": "MEOS Live Test Channel",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://test-streams.mux.dev/test_001/stream.m3u8"
+  }
+]

@@ -151,6 +151,34 @@ CATEGORY_HINTS = {
     "sports": ["sport", "sports", "nfl", "nba", "mlb", "ufc", "mma", "boxing", "wwe", "ppv", "pay per view"],
     "award": ["award", "awards", "oscar", "emmy", "winner", "nominee"],
 }
+MOVIE_TEMPLATE_ROOTS = [["Movies"], ["Movies", "Movies"], ["Movie"]]
+TV_TEMPLATE_ROOTS = [["TV Shows"], ["TV Shows", "TV Shows"], ["TV"]]
+TMDB_TEMPLATE_NAMES = ["TMDB", "TBMD", "TMBD"]
+MOVIE_TMDB_TEMPLATE_SUFFIXES = [
+    "In Theaters", "Now Playing", "Popular", "Top Rated", "Upcoming",
+    "Trending Daily", "Trending Weekly", "Featured", "Premiere", "Views", "Years",
+]
+TV_TMDB_TEMPLATE_SUFFIXES = [
+    "TV Categories", "Airing Today", "On The Air", "Popular", "Top Rated",
+    "Trending Daily", "Trending Weekly", "Genres", "Networks", "Years",
+]
+
+
+def _tmdb_template_paths(roots, suffixes):
+    # Several third-party addons share this Movies/Movies -> TMDB/TBMD -> subcategory template.
+    paths = []
+    for root in roots:
+        for tmdb_name in TMDB_TEMPLATE_NAMES:
+            base = root + [tmdb_name]
+            paths.append(base)
+            for suffix in suffixes:
+                paths.append(base + [suffix])
+    return paths
+
+
+MOVIE_TMDB_TEMPLATE_PATHS = _tmdb_template_paths(MOVIE_TEMPLATE_ROOTS, MOVIE_TMDB_TEMPLATE_SUFFIXES)
+TV_TMDB_TEMPLATE_PATHS = _tmdb_template_paths(TV_TEMPLATE_ROOTS, TV_TMDB_TEMPLATE_SUFFIXES)
+
 ADDON_CATEGORY_RULES = [
     {
         "name": "scrubs",
@@ -195,6 +223,29 @@ ADDON_CATEGORY_RULES = [
         "name": "red gratis",
         "id_contains": ["redgratis", "red.gratis", "plugin.video.red", "plugin.video.redgratis", "plugin.video.red.gratis"],
         "label_contains": ["red gratis", "redgratis", "red"],
+        "paths": {
+            "movies": [
+                ["Peliculas"],
+                ["Películas"],
+                ["Movies"],
+                ["Cine"],
+                ["Estrenos"],
+                ["Peliculas", "Estrenos"],
+                ["Boxsets"],
+            ] + MOVIE_TMDB_TEMPLATE_PATHS,
+            "tv": [
+                ["Series"],
+                ["Series", "Novelas"],
+                ["Novelas"],
+                ["TV Shows"],
+                ["TV"],
+                ["Episodios"],
+            ] + TV_TMDB_TEMPLATE_PATHS,
+            "cable": [["Canales"], ["Canales", "En Vivo"], ["TV En Vivo"], ["En Vivo"], ["Channels"]],
+            "live": [["TV En Vivo"], ["En Vivo"], ["Canales"], ["Canales", "En Vivo"], ["Live TV"]],
+            "sports": [["Deportes"], ["Deportes", "En Vivo"], ["Sports"]],
+            "docs": [["Documentales"], ["Documentaries"]],
+        },
         "categories": {
             "movies": ["peliculas", "pelis", "movies", "cine", "estrenos", "boxsets"],
             "tv": ["series", "tv", "tv shows", "novelas", "episodios"],
@@ -252,8 +303,8 @@ ADDON_CATEGORY_RULES = [
         "id_contains": ["ghost", "plugin.video.ghost", "plugin.video.theghost", "plugin.video.the.ghost"],
         "label_contains": ["ghost", "the ghost"],
         "paths": {
-            "movies": [["Movies"], ["Free", "Movies"], ["Free", "New Movies"], ["New Movies"]],
-            "tv": [["TV Shows"], ["Shows"], ["Series"]],
+            "movies": [["Movies"], ["Free", "Movies"], ["Free", "New Movies"], ["New Movies"]] + MOVIE_TMDB_TEMPLATE_PATHS,
+            "tv": [["TV Shows"], ["Shows"], ["Series"]] + TV_TMDB_TEMPLATE_PATHS,
             "cable": [["Live TV"], ["Channels"]],
             "live": [["Live TV"], ["Channels"]],
             "sports": [["Sports"], ["Sports Zone"], ["Sports Zones"]],
@@ -4288,6 +4339,16 @@ def _auto_integrate_priority_specs():
             "name": "The Loop",
             "tokens": ["theloop", "plugin.video.theloop", "plugin.video.loop", "the loop"],
             "bootstrap_categories": ["movies", "tv", "live", "cable", "sports"],
+        },
+        {
+            "name": "Red Gratis",
+            "tokens": ["redgratis", "red.gratis", "plugin.video.red", "plugin.video.redgratis", "plugin.video.red.gratis"],
+            "bootstrap_categories": ["movies", "tv", "live", "cable", "sports", "docs"],
+        },
+        {
+            "name": "The Ghost",
+            "tokens": ["ghost", "plugin.video.ghost", "plugin.video.theghost", "plugin.video.the.ghost", "the ghost"],
+            "bootstrap_categories": ["movies", "tv", "live", "cable", "sports", "docs"],
         },
     ]
 

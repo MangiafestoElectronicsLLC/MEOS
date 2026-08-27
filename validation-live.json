@@ -1,0 +1,2909 @@
+[
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::00s-replay",
+    "title": "00s Replay",
+    "categories": [
+      "movies",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/00s-replay/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::70s-cinema",
+    "title": "70s Cinema",
+    "categories": [
+      "movies",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/70s-cinema/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::80s-rewind",
+    "title": "80s Rewind",
+    "categories": [
+      "movies",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/80s-rewind/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::90s-throwback",
+    "title": "90s Throwback",
+    "categories": [
+      "movies",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/90s-throwback/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::bet-cinema",
+    "title": "BET Cinema",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/bet-cinema/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::bet-comedy-movies",
+    "title": "BET Comedy Movies",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/bet-comedy-movies/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::bet-visionaries",
+    "title": "BET Visionaries",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/bet-visionaries/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::classic-movies-channel",
+    "title": "Classic Movies Channel",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/classic-movies-channel/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::el-rey-rebel",
+    "title": "El Rey Rebel",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/el-rey-rebel/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::flicks-of-fury",
+    "title": "Flicks of Fury",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/flicks-of-fury/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::moviesphere-ptv1",
+    "title": "MovieSphere by Lionsgate",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/moviesphere-ptv1/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::paramount-movie-channel",
+    "title": "Paramount Movie Channel",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/paramount-movie-channel/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pluto-tv-action",
+    "title": "Pluto TV Action",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pluto-tv-action/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pluto-tv-comedy",
+    "title": "Pluto TV Comedy",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pluto-tv-comedy/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pluto-tv-crime-movies",
+    "title": "Pluto TV Crime Movies",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pluto-tv-crime-movies/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pluto-tv-cult-films",
+    "title": "Pluto TV Cult Films",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pluto-tv-cult-films/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pluto-tv-drama",
+    "title": "Pluto TV Drama",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pluto-tv-drama/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pluto-tv-fantastic",
+    "title": "Pluto TV Fantastic",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pluto-tv-fantastic/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pluto-tv-franchise-favorites",
+    "title": "Pluto TV Franchise Favorites",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pluto-tv-franchise-favorites/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pluto-tv-horror",
+    "title": "Pluto TV Horror",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pluto-tv-horror/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pluto-tv-icons",
+    "title": "Pluto TV Icons",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pluto-tv-icons/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pluto-tv-reaction",
+    "title": "Pluto TV Reaction",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pluto-tv-reaction/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pluto-tv-romance",
+    "title": "Pluto TV Romance",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pluto-tv-romance/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pluto-tv-spotlight",
+    "title": "Pluto TV Spotlight",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pluto-tv-spotlight/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pluto-tv-staff-picks",
+    "title": "Pluto TV Staff Picks",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pluto-tv-staff-picks/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::all-reality-we-tv",
+    "title": "All Reality WE tv",
+    "categories": [
+      "tv",
+      "cable",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/all-reality-we-tv/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::always-funny",
+    "title": "Always Funny",
+    "categories": [
+      "tv",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/always-funny/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::americas-funniest-home-videos-holiday-edition",
+    "title": "America's Funniest Home Videos",
+    "categories": [
+      "tv",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/americas-funniest-home-videos-holiday-edition/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::americas-next-top-model-ptv2",
+    "title": "America's Next Top Model",
+    "categories": [
+      "tv",
+      "cable",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/americas-next-top-model-ptv2/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::ancient-aliens",
+    "title": "Ancient Aliens",
+    "categories": [
+      "tv",
+      "cable",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/ancient-aliens/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::andromeda-ptv2",
+    "title": "Andromeda",
+    "categories": [
+      "tv",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/andromeda-ptv2/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::bad-girls-club",
+    "title": "Bad Girls Club",
+    "categories": [
+      "tv",
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/bad-girls-club/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::bar-rescue",
+    "title": "Bar Rescue",
+    "categories": [
+      "tv",
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/bar-rescue/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::battlestar-galactica",
+    "title": "Battlestar Galactica",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/battlestar-galactica/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::bet-classics",
+    "title": "BET Classics",
+    "categories": [
+      "tv",
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/bet-classics/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::bet-throwbacks",
+    "title": "BET Throwbacks",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/bet-throwbacks/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::bet-x-tyler-perry-comedy",
+    "title": "BET x Tyler Perry Comedy",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/bet-x-tyler-perry-comedy/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::bet-x-tyler-perry-drama",
+    "title": "BET x Tyler Perry Drama",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/bet-x-tyler-perry-drama/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::beverly-hillbillies-ptv1",
+    "title": "Beverly Hillbillies",
+    "categories": [
+      "tv",
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/beverly-hillbillies-ptv1/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::90210",
+    "title": "Beverly Hills 90210",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/90210/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::big-brother",
+    "title": "Big Brother",
+    "categories": [
+      "tv",
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/big-brother/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::black-family-sitcoms",
+    "title": "Black Family Sitcoms",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/black-family-sitcoms/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::black-ink-crew",
+    "title": "Black Ink Crew",
+    "categories": [
+      "tv",
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/black-ink-crew/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::blue-bloods-ptv1",
+    "title": "Blue Bloods",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/blue-bloods-ptv1/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::bravo-vault",
+    "title": "Bravo Vault",
+    "categories": [
+      "tv",
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/bravo-vault/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::britbox-mysteries",
+    "title": "BritBox Mysteries",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/britbox-mysteries/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::car-chase",
+    "title": "Car Chase",
+    "categories": [
+      "tv",
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/car-chase/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::charmed",
+    "title": "Charmed",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/charmed/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cheaters",
+    "title": "Cheaters",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cheaters/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cheers-ptv1",
+    "title": "Cheers",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cheers-ptv1/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::50-cent-action",
+    "title": "50 Cent Action",
+    "categories": [
+      "cable",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/50-cent-action/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::abc-news-live",
+    "title": "ABC News Live",
+    "categories": [
+      "cable",
+      "docs",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/abc-news-live/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::allblk-gems",
+    "title": "ALLBLK Gems",
+    "categories": [
+      "cable",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/allblk-gems/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::americas-voice",
+    "title": "America's Voice News",
+    "categories": [
+      "cable",
+      "docs",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/americas-voice/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::bbc-news",
+    "title": "BBC News",
+    "categories": [
+      "cable",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/bbc-news/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::bet-pluto-tv",
+    "title": "BET Pluto TV",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/bet-pluto-tv/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::blaze-live",
+    "title": "Blaze Live",
+    "categories": [
+      "cable",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/blaze-live/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::bloomberg-tv",
+    "title": "Bloomberg TV+",
+    "categories": [
+      "cable",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/bloomberg-tv/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::boston-25",
+    "title": "Boston 25",
+    "categories": [
+      "cable",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/boston-25/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::bounce-xl",
+    "title": "Bounce XL",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/bounce-xl/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news",
+    "title": "CBS News 24/7",
+    "categories": [
+      "cable",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news-baltimore",
+    "title": "CBS News Baltimore",
+    "categories": [
+      "cable",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news-baltimore/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news-bay-area",
+    "title": "CBS News Bay Area",
+    "categories": [
+      "cable",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news-bay-area/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news-boston",
+    "title": "CBS News Boston",
+    "categories": [
+      "cable",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news-boston/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::awsn",
+    "title": "AWSN",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/awsn/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::bellator-mma",
+    "title": "Bellator MMA",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/bellator-mma/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-sports-hq",
+    "title": "CBS Sports HQ",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-sports-hq/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::dazn-ringside",
+    "title": "DAZN Ringside",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/dazn-ringside/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::discovery-turbo-tv",
+    "title": "Discovery Turbo TV",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/discovery-turbo-tv/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::fox-sports",
+    "title": "FOX Sports",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/fox-sports/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::golazo-network",
+    "title": "Golazo Network",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/golazo-network/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::golfpass",
+    "title": "GolfPass",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/golfpass/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::mlb",
+    "title": "MLB",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/mlb/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::monster-jam",
+    "title": "Monster Jam",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/monster-jam/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::nbc-sports-now",
+    "title": "NBC Sports NOW",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/nbc-sports-now/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::nfl-channel",
+    "title": "NFL Channel",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/nfl-channel/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pbr-ridepass",
+    "title": "PBR RidePass",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pbr-ridepass/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pfl",
+    "title": "PFL MMA",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pfl/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pga-tour",
+    "title": "PGA TOUR",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pga-tour/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::pokergo",
+    "title": "PokerGO",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/pokergo/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::powernation-ptv1",
+    "title": "POWERNATION",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/powernation-ptv1/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::swerve-womens-sports",
+    "title": "Swerve Women\u2019s Sports",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/swerve-womens-sports/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::tennischannel-2",
+    "title": "TennisChannel 2",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/tennischannel-2/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::the-nba-channel",
+    "title": "The NBA Channel",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/the-nba-channel/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::tna-wrestling",
+    "title": "TNA Wrestling",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/tna-wrestling/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::top-rank-classics",
+    "title": "Top Rank Classics",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/top-rank-classics/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::uefa-champions-league",
+    "title": "UEFA Champions League",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/uefa-champions-league/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::ufc",
+    "title": "UFC",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/ufc/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::womens-sports-network-ptv1",
+    "title": "Women's Sports Network",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/womens-sports-network-ptv1/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::60-minutes",
+    "title": "60 Minutes",
+    "categories": [
+      "docs",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/60-minutes/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::bbc-earth",
+    "title": "BBC Earth",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/bbc-earth/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news-boston-ptv1",
+    "title": "CBS News Boston",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news-boston-ptv1/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news-chicago",
+    "title": "CBS News Chicago",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news-chicago/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news-colorado",
+    "title": "CBS News Colorado",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news-colorado/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news-detroit-ptv1",
+    "title": "CBS News Detroit",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news-detroit-ptv1/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news-los-angeles",
+    "title": "CBS News Los Angeles",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news-los-angeles/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news-los-angeles-2",
+    "title": "CBS News Los Angeles",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news-los-angeles-2/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news-miami",
+    "title": "CBS News Miami",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news-miami/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news-minnesota",
+    "title": "CBS News Minnesota",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news-minnesota/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news-new-york",
+    "title": "CBS News New York",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news-new-york/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news-new-york-2",
+    "title": "CBS News New York",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news-new-york-2/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news-philadelphia-ptv1",
+    "title": "CBS News Philadelphia",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news-philadelphia-ptv1/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news-philadelphia-ptv2",
+    "title": "CBS News Philadelphia",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news-philadelphia-ptv2/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::cbs-news-pittsburgh",
+    "title": "CBS News Pittsburgh",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/cbs-news-pittsburgh/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::48-hours",
+    "title": "48 Hours",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/48-hours/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::90s-kids-tv",
+    "title": "90's Kids",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/90s-kids-tv/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::90s-kids-tv-2",
+    "title": "90s Kids TV 2",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/90s-kids-tv-2/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::crime-360-by-aande",
+    "title": "A&E Crime 360",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/crime-360-by-aande/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::acapulco-shore-ptv1",
+    "title": "Acapulco Shore",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/acapulco-shore-ptv1/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::americas-test-kitchen",
+    "title": "America's Test Kitchen",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/americas-test-kitchen/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::american-crimes",
+    "title": "American Crimes",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/american-crimes/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::anime-x-hidive",
+    "title": "ANIME x HIDIVE",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/anime-x-hidive/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::antiques-road-trip",
+    "title": "Antiques Road Trip",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/antiques-road-trip/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "pluto_tv",
+    "media_id": "pluto::antiques-roadshow-uk",
+    "title": "Antiques Roadshow UK",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/antiques-roadshow-uk/master.m3u8?deviceDNT=1&deviceId=meos&deviceType=web&deviceMake=Chrome&deviceModel=web&deviceVersion=114.0&appName=plutotv&appVersion=5.8.1-lts&deviceLat=40.7128&deviceLon=-74.0060&deviceCountry=US&deviceZip=10001&deviceDMA=501&serverSideAds=false&includeExtendedEvents=false&jwt=undefined&content-type=application/x-mpegURL|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-5fd115bab7ef8d002dcf181d",
+    "title": "24 Hour Free Movies \u2014 Plex",
+    "categories": [
+      "movies",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-5fd115bab7ef8d002dcf181d.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-66be944f8711311880995280",
+    "title": "Action Hollywood Movies \u2014 Plex",
+    "categories": [
+      "movies",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-66be944f8711311880995280.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-66a2c1370b91165254efdb3c",
+    "title": "At the Movies \u2014 Plex",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-66a2c1370b91165254efdb3c.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-64e6e2f04a5e9b4cedc6d52b",
+    "title": "Cine de Horror \u2014 Plex",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-64e6e2f04a5e9b4cedc6d52b.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::79eb3a43680e5a9f9689fee074502a3b",
+    "title": "Cine Romantico \u2014 The Roku Channel",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-79eb3a43680e5a9f9689fee074502a3b.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-69d93cda8061ebfbca58c326",
+    "title": "Classic Cinema \u2014 Plex",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-69d93cda8061ebfbca58c326.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::d0c6ac240cb8529992ee3340e5b7f102",
+    "title": "Ebony \u2014 The Roku Channel",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-d0c6ac240cb8529992ee3340e5b7f102.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::31d5929928835b90af7bee669e6dd217",
+    "title": "El Rey Rebel \u2014 The Roku Channel",
+    "categories": [
+      "movies",
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-31d5929928835b90af7bee669e6dd217.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::15cc44e50d8453e18f21ea37713319c5",
+    "title": "Electric Now \u2014 The Roku Channel",
+    "categories": [
+      "movies",
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-15cc44e50d8453e18f21ea37713319c5.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::b484db42f3d31b6dc2f604d453c694a0",
+    "title": "Fairground AI Creator TV \u2014 The Roku Channel",
+    "categories": [
+      "movies",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-b484db42f3d31b6dc2f604d453c694a0.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::f53e794f65b781ff1a0d37843c704827",
+    "title": "FILMEX Acci\u00f3n \u2014 The Roku Channel",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-f53e794f65b781ff1a0d37843c704827.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::50cd4d6c632d5172834eb5b77fa395c6",
+    "title": "FILMEX Cl\u00e1sico \u2014 The Roku Channel",
+    "categories": [
+      "movies",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-50cd4d6c632d5172834eb5b77fa395c6.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::8b2c97d22c7fed4d9d302a1796d5e009",
+    "title": "FILMEX Comedia \u2014 The Roku Channel",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-8b2c97d22c7fed4d9d302a1796d5e009.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::1e2a4ec82eb65f729ad7484337c0bcd4",
+    "title": "FILMEX \u2014 The Roku Channel",
+    "categories": [
+      "movies",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-1e2a4ec82eb65f729ad7484337c0bcd4.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-66ea0504c24d95b51b7cd189",
+    "title": "FilmRise Action \u2014 Plex",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-66ea0504c24d95b51b7cd189.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-6449369eb3ff17382cae5819",
+    "title": "FilmRise Anime \u2014 Plex",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-6449369eb3ff17382cae5819.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::b602b0edb0cd58a5a5be2b7554166c07",
+    "title": "FilmRise Autopista al Cielo \u2014 The Roku Channel",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-b602b0edb0cd58a5a5be2b7554166c07.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-69332d894b745570462f3cc4",
+    "title": "FilmRise Black TV \u2014 Plex",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-69332d894b745570462f3cc4.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::885d5897052b53709a83c4947174cd09",
+    "title": "FilmRise Black TV \u2014 The Roku Channel",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-885d5897052b53709a83c4947174cd09.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-6449369eb3ff17382cae5808",
+    "title": "FilmRise British TV \u2014 Plex",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-6449369eb3ff17382cae5808.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::dead0e7a46da533c94c61c8710ef3418",
+    "title": "FilmRise British TV \u2014 The Roku Channel",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-dead0e7a46da533c94c61c8710ef3418.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-66ea07049502c5778b828d3f",
+    "title": "FilmRise Classic TV \u2014 Plex",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-66ea07049502c5778b828d3f.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::e2e10d08139b56aba73a448f5555b6fd",
+    "title": "FilmRise Classic TV \u2014 The Roku Channel",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-e2e10d08139b56aba73a448f5555b6fd.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-68db6a852be6c4ceb7947b9a",
+    "title": "FilmRise Comedy \u2014 Plex",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-68db6a852be6c4ceb7947b9a.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-6449369eb3ff17382cae5802",
+    "title": "FilmRise Concursos de Cocina \u2014 Plex",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-6449369eb3ff17382cae5802.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-65fca98c60dc164e8f272332",
+    "title": "80's Sitcom Flashback \u2014 Plex",
+    "categories": [
+      "tv",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-65fca98c60dc164e8f272332.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-63504925a97bd70eaef54f01",
+    "title": "ACL Cornhole TV \u2014 Plex",
+    "categories": [
+      "tv",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-63504925a97bd70eaef54f01.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-6848269efd17cd629e5df2e9",
+    "title": "Acorn TV Mysteries \u2014 Plex",
+    "categories": [
+      "tv",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-6848269efd17cd629e5df2e9.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::fb8579bf16248ce630f42f129ed2e8d5",
+    "title": "Acorn TV Mysteries \u2014 The Roku Channel",
+    "categories": [
+      "tv",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-fb8579bf16248ce630f42f129ed2e8d5.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-69d6d88b1790acff6189dea5",
+    "title": "AddictaTV \u2014 Plex",
+    "categories": [
+      "tv",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-69d6d88b1790acff6189dea5.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-60e737a4ebef9d002c4d0a0c",
+    "title": "AfroLandTV \u2014 Plex",
+    "categories": [
+      "tv",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-60e737a4ebef9d002c4d0a0c.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-5fc705ff2f220e002d5e6bec",
+    "title": "All Reality We TV \u2014 Plex",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-5fc705ff2f220e002d5e6bec.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-60de0520281b17002cd1d4c4",
+    "title": "All Weddings We TV \u2014 Plex",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-60de0520281b17002cd1d4c4.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::86c08261fc015a58866210bea63eb8f4",
+    "title": "Always Funny Videos \u2014 The Roku Channel",
+    "categories": [
+      "tv",
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-86c08261fc015a58866210bea63eb8f4.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-6838eb6a38304666c89d4e3d",
+    "title": "Amasian TV \u2014 Plex",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-6838eb6a38304666c89d4e3d.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-5fc705e2a2236e002d69f36d",
+    "title": "AMC Thrillers \u2014 Plex",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-5fc705e2a2236e002d69f36d.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::0213939bd8264ea1d75d5aaa54b5995e",
+    "title": "AMP \u2014 The Roku Channel",
+    "categories": [
+      "tv",
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-0213939bd8264ea1d75d5aaa54b5995e.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-686452b8fbd6d9b449de2be3",
+    "title": "Anime 24/7 \u2014 Plex",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-686452b8fbd6d9b449de2be3.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-63dea56a2a2abb171ff6dadf",
+    "title": "ANIME x HIDIVE \u2014 Plex",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-63dea56a2a2abb171ff6dadf.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-685f27cca7111a932d28f1ae",
+    "title": "Asian Drama \u2014 Plex",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-685f27cca7111a932d28f1ae.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::04be54c79d1f55d0909e684f64f9fb57",
+    "title": "Azteca Deportes Network LITE 3 \u2014 The Roku Channel",
+    "categories": [
+      "tv",
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-04be54c79d1f55d0909e684f64f9fb57.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::5e709cfe55d955ec899903cde681a5a4",
+    "title": "Azteca Internacional \u2014 The Roku Channel",
+    "categories": [
+      "tv",
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-5e709cfe55d955ec899903cde681a5a4.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::46eb1feb60da2bc45bee66f313b564de",
+    "title": "Azteca Noticias \u2014 The Roku Channel",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-46eb1feb60da2bc45bee66f313b564de.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-60d4eddeb2fdec002c141137",
+    "title": "BABY SHARK TV \u2014 Plex",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-60d4eddeb2fdec002c141137.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::40d73ba5be775428a377908b02033b4c",
+    "title": "BABY SHARK TV \u2014 The Roku Channel",
+    "categories": [
+      "tv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-40d73ba5be775428a377908b02033b4c.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::9210a8fbeab66e9d1ce20c187804ee7d",
+    "title": "Bassmaster \u2014 The Roku Channel",
+    "categories": [
+      "tv",
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-9210a8fbeab66e9d1ce20c187804ee7d.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-65622fb65dbccec83a87b643",
+    "title": "BBC Comedy \u2014 Plex",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-65622fb65dbccec83a87b643.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-65622ac05dbccec83a87b641",
+    "title": "BBC Sci-Fi \u2014 Plex",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-65622ac05dbccec83a87b641.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::6d4ae9d9d0df5122a0811cff961b24b2",
+    "title": "Best of Dr. Phil \u2014 The Roku Channel",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-6d4ae9d9d0df5122a0811cff961b24b2.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-66635c20ca7b22f4c3a2d73f",
+    "title": "BET x Tyler Perry Comedy \u2014 Plex",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-66635c20ca7b22f4c3a2d73f.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-6151d74593dbf246f0843f01",
+    "title": "AccuWeather NOW \u2014 Plex",
+    "categories": [
+      "cable",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-6151d74593dbf246f0843f01.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::37b2f13bddcce8f6a01a34fb69215d4b",
+    "title": "Aphmau \u2014 The Roku Channel",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-37b2f13bddcce8f6a01a34fb69215d4b.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::ec2faed50af3503e934f0c342a7952fe",
+    "title": "Arizona's Family \u2014 The Roku Channel",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-ec2faed50af3503e934f0c342a7952fe.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-632270e3e67cf9cd9011fce1",
+    "title": "At Home with Family Handyman \u2014 Plex",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-632270e3e67cf9cd9011fce1.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::1672824c4fd55e5dbfcb57f147910270",
+    "title": "Atlanta News First \u2014 The Roku Channel",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-1672824c4fd55e5dbfcb57f147910270.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-6a4af875410e0eea561f76af",
+    "title": "Azteca Deportes Network \u2014 Plex",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-6a4af875410e0eea561f76af.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::ab47c5037be851e6a929a4d09daafeac",
+    "title": "Baywatch \u2014 The Roku Channel",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-ab47c5037be851e6a929a4d09daafeac.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-646fab0e43d6d6838db81a6a",
+    "title": "BBC News (North America) \u2014 Plex",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-646fab0e43d6d6838db81a6a.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::0b4814b9a5e53029e2b9aba64ddc1df0",
+    "title": "Billiard TV \u2014 The Roku Channel",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-0b4814b9a5e53029e2b9aba64ddc1df0.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::83d43dc731781826c0e004c1fa879a5f",
+    "title": "Braxton Family Values \u2014 The Roku Channel",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-83d43dc731781826c0e004c1fa879a5f.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-64c91830ea7db2f52688c52c",
+    "title": "CBC News \u2014 Plex",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-64c91830ea7db2f52688c52c.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::8db0f9f4abf6542ba95f97a545f98513",
+    "title": "CBC News \u2014 The Roku Channel",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-8db0f9f4abf6542ba95f97a545f98513.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-6571f43a1d2aae780d597196",
+    "title": "CBS News 24/7 \u2014 Plex",
+    "categories": [
+      "cable"
+    ],
+    "ok": false,
+    "detail": "HLS manifest has no renditions",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-6571f43a1d2aae780d597196.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::307cbde3d30957828ff68b3b979d6958",
+    "title": "Channel 3 Eyewitness News \u2014 The Roku Channel",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-307cbde3d30957828ff68b3b979d6958.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::d0d9af56b7735c318b66afe21089d028",
+    "title": "Cleveland 19 News Plus \u2014 The Roku Channel",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-d0d9af56b7735c318b66afe21089d028.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::390053bfbc6858999cb0d6354b57d938",
+    "title": "Confess by Nosey \u2014 The Roku Channel",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-390053bfbc6858999cb0d6354b57d938.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::5976983fa00953dab911a0ebea932943",
+    "title": "DraftKings \u2014 The Roku Channel",
+    "categories": [
+      "cable",
+      "docs",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-5976983fa00953dab911a0ebea932943.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-60089d97f682a3002c34829b",
+    "title": "Estrella News \u2014 Plex",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-60089d97f682a3002c34829b.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::0af429c36c6b517e8df2025e809b3964",
+    "title": "Estrella News \u2014 The Roku Channel",
+    "categories": [
+      "cable",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-0af429c36c6b517e8df2025e809b3964.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::735c2b7253c551ae9f07b07ea5278b75",
+    "title": "Canela.TV Deportes \u2014 The Roku Channel",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-735c2b7253c551ae9f07b07ea5278b75.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::ac0caef9123a35df3b884b139340a597",
+    "title": "CW Presents WWE NXT \u2014 The Roku Channel",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-ac0caef9123a35df3b884b139340a597.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-606605549dbfca002d2ae877",
+    "title": "Fight Network \u2014 Plex",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-606605549dbfca002d2ae877.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::b4273871759a5631bd536d2214f175e5",
+    "title": "Fubo Sports Network \u2014 The Roku Channel",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-b4273871759a5631bd536d2214f175e5.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::10b859e5e8a1e710680c11dfdfb85c11",
+    "title": "FUEL TV \u2014 The Roku Channel",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-10b859e5e8a1e710680c11dfdfb85c11.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-63f914bffe2c3d32e1a7929f",
+    "title": "GLORY Kickboxing \u2014 Plex",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-63f914bffe2c3d32e1a7929f.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-69d93d6e8061ebfbca58c328",
+    "title": "HBO Boxing \u2014 Plex",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-69d93d6e8061ebfbca58c328.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-687e47c33f6f86f29359b2c7",
+    "title": "Hong Kong Fight Club \u2014 Plex",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-687e47c33f6f86f29359b2c7.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::f9c0d48b540a55dcb98b04d2cc8abf25",
+    "title": "LiveNOW from FOX \u2014 The Roku Channel",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-f9c0d48b540a55dcb98b04d2cc8abf25.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::a361d429db9e46665be277da42af89a4",
+    "title": "Monster Jam \u2014 The Roku Channel",
+    "categories": [
+      "ppv",
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-a361d429db9e46665be277da42af89a4.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::6abe7dcc96d5d834853c8d1c93d97230",
+    "title": "News 12 New York \u2014 The Roku Channel",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-6abe7dcc96d5d834853c8d1c93d97230.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::be0ab85669d41bc5f60de22bace4ac5a",
+    "title": "Nosey Daytime Talk \u2014 The Roku Channel",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-be0ab85669d41bc5f60de22bace4ac5a.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-643f0ecd76de2b4015ae6c01",
+    "title": "PFL MMA \u2014 Plex",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-643f0ecd76de2b4015ae6c01.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::e46ac8cd0299b4c5f1403d999a432561",
+    "title": "PFL MMA \u2014 The Roku Channel",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-e46ac8cd0299b4c5f1403d999a432561.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::5f9c59c52f0ad475d90a33fdfd14d651",
+    "title": "Ryz Sports Network \u2014 The Roku Channel",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-5f9c59c52f0ad475d90a33fdfd14d651.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::8c48bcf59acd57779977b83a41fac919",
+    "title": "Swerve Combat \u2014 The Roku Channel",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-8c48bcf59acd57779977b83a41fac919.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-606605549dbfca002d2ae873",
+    "title": "TNA Wrestling Channel \u2014 Plex",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-606605549dbfca002d2ae873.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::6d8659091f745b8b864f438f06c56fae",
+    "title": "TNA Wrestling Channel \u2014 The Roku Channel",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-6d8659091f745b8b864f438f06c56fae.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::4ecf313b40975382b983c183bf7d86f0",
+    "title": "Unsolved Mysteries \u2014 The Roku Channel",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-4ecf313b40975382b983c183bf7d86f0.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::cc04d77fd589a818cd036c850b6be867",
+    "title": "Venevisi\u00f3n Internacional \u2014 The Roku Channel",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-cc04d77fd589a818cd036c850b6be867.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::302d8d86738c0ab83d0ca3a5e2df3492",
+    "title": "Xena \u2014 The Roku Channel",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-302d8d86738c0ab83d0ca3a5e2df3492.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-5f74cf7effbe690040689f41",
+    "title": "A&E Crime 360 \u2014 Plex",
+    "categories": [
+      "docs",
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-5f74cf7effbe690040689f41.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-6467891c73e5e029428f0e16",
+    "title": "American Crimes \u2014 Plex",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-6467891c73e5e029428f0e16.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-63c1ec0e0aa23f984207af82",
+    "title": "Ax Men by History \u2014 Plex",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-63c1ec0e0aa23f984207af82.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::f862a66d14ccfdde7ba6a14ef412d033",
+    "title": "Classic Car Auctions by History \u2014 The Roku Channel",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-f862a66d14ccfdde7ba6a14ef412d033.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-64224b7a7e28069f56b5d894",
+    "title": "Crime & Justice \u2014 Plex",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-64224b7a7e28069f56b5d894.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-68c98e7460586565cc56baab",
+    "title": "Crime Beat TV \u2014 Plex",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-68c98e7460586565cc56baab.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-6615360a8423b8d7e61a099c",
+    "title": "Crime Scene TV \u2014 Plex",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-6615360a8423b8d7e61a099c.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-66a2bfe594b6a49cb5054d75",
+    "title": "Crime Scenes \u2014 Plex",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-66a2bfe594b6a49cb5054d75.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-63c97b45187b3c9f3581fdfb",
+    "title": "Crime ThrillHer \u2014 Plex",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-63c97b45187b3c9f3581fdfb.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-63c97410187b3c9f3581fdf4",
+    "title": "Crimes Cults Killers \u2014 Plex",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-63c97410187b3c9f3581fdf4.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-63c9724c5feb7b9655cb1950",
+    "title": "Deal Zone Presented By History \u2014 Plex",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-63c9724c5feb7b9655cb1950.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-62f42e6cad0081c6ef405723",
+    "title": "Documentary+ \u2014 Plex",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-62f42e6cad0081c6ef405723.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::0a4f2ecbb9d3f127aa5fc5f31be22842",
+    "title": "EarthDay 365 \u2014 The Roku Channel",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-0a4f2ecbb9d3f127aa5fc5f31be22842.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::62945e18ab825bfd8b4995d9bd14917b",
+    "title": "FilmRise Forensic Files \u2014 The Roku Channel",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-62945e18ab825bfd8b4995d9bd14917b.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-646e489b58898bf3be94b325",
+    "title": "FilmRise True Crime \u2014 Plex",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-646e489b58898bf3be94b325.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::ebb810a8868251f18ac64056834c749a",
+    "title": "FilmRise True Crime \u2014 The Roku Channel",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-ebb810a8868251f18ac64056834c749a.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::9fc6583c28985e15b3f05b46f5d77957",
+    "title": "FreeTV Acci\u00f3n \u2014 The Roku Channel",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-9fc6583c28985e15b3f05b46f5d77957.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::beb2be3222295798a8828458bea458ba",
+    "title": "FreeTV Estelar \u2014 The Roku Channel",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-beb2be3222295798a8828458bea458ba.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::0b8a86b44ef0780c3b3226a63be07e0f",
+    "title": "Highway Thru Hell \u2014 The Roku Channel",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-0b8a86b44ef0780c3b3226a63be07e0f.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-635c5c6ac3585aefbd236576",
+    "title": "History & Warfare \u2014 Plex",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-635c5c6ac3585aefbd236576.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-5f74cf83ffbe690040689f50",
+    "title": "History Hit \u2014 Plex",
+    "categories": [
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-5f74cf83ffbe690040689f50.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-64a8903d273b89c4e7396553",
+    "title": "beIN Sports Xtra en Espa\u00f1ol \u2014 Plex",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-64a8903d273b89c4e7396553.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-60a53634126de9002e694bc4",
+    "title": "beIN SPORTS XTRA \u2014 Plex",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-60a53634126de9002e694bc4.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::b238edf1869657abb47970bc9b7bfce1",
+    "title": "CHGO Sports \u2014 The Roku Channel",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-b238edf1869657abb47970bc9b7bfce1.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-680ad9f73f3c406c06d7392b",
+    "title": "Cowboy+ Sports \u2014 Plex",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-680ad9f73f3c406c06d7392b.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-621674f168c966be92737ce6",
+    "title": "El Conflicto TV \u2014 Plex",
+    "categories": [
+      "sports"
+    ],
+    "ok": false,
+    "detail": "HTTP 400",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-621674f168c966be92737ce6.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-659f04ef27ae392d2e204695",
+    "title": "FOX Sports \u2014 Plex",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-659f04ef27ae392d2e204695.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::0fc01f1136055d89bae495ba92eff445",
+    "title": "FOX Sports \u2014 The Roku Channel",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-0fc01f1136055d89bae495ba92eff445.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-605a309dc5acdc002c7a20aa",
+    "title": "FTF Sports \u2014 Plex",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-605a309dc5acdc002c7a20aa.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-5fc705f68aba71002d8b7b37",
+    "title": "Fubo Sports Network \u2014 Plex",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-5fc705f68aba71002d8b7b37.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-5fc706038aba71002d8b7c8e",
+    "title": "GolfPass \u2014 Plex",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-5fc706038aba71002d8b7c8e.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-631a212e82b744e0309aa56e",
+    "title": "HBCUGO SPORTS \u2014 Plex",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-631a212e82b744e0309aa56e.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::83c29cbe7b659482a0e9160ff7e4e058",
+    "title": "In Depth with Graham Bensinger \u2014 The Roku Channel",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-83c29cbe7b659482a0e9160ff7e4e058.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::3e3a190fdc49eb3b256dc2b5bb30bc5b",
+    "title": "Jesser \u2014 The Roku Channel",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-3e3a190fdc49eb3b256dc2b5bb30bc5b.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::0b285303dd2fbf7a851db13ce53d5d1f",
+    "title": "Local Now Las Vegas \u2014 The Roku Channel",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-0b285303dd2fbf7a851db13ce53d5d1f.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::52c137ae3cdc50768ad7ea3cdaf0f2f4",
+    "title": "LOL Network \u2014 The Roku Channel",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-52c137ae3cdc50768ad7ea3cdaf0f2f4.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::43623368b9c3704a5ea138fbaac14735",
+    "title": "Lucha Plus \u2014 The Roku Channel",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-43623368b9c3704a5ea138fbaac14735.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-63eecb32ac23d1ee072087cb",
+    "title": "123GO! \u2014 Plex",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-63eecb32ac23d1ee072087cb.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-66f6b947515e742745f5ca34",
+    "title": "21 Jump Street \u2014 Plex",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-66f6b947515e742745f5ca34.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-6745dca72832b870acf53220",
+    "title": "365BLK [FAST] \u2014 Plex",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-6745dca72832b870acf53220.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-64149a3c238e21f260e7844c",
+    "title": "4UV \u2014 Plex",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-64149a3c238e21f260e7844c.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-63894c1965b848bf2c8a7800",
+    "title": "5-Minute Crafts \u2014 Plex",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-63894c1965b848bf2c8a7800.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-6827b9579beea89c38b6df55",
+    "title": "50 Cent Action \u2014 Plex",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-6827b9579beea89c38b6df55.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-6674b595f04cf4bb9233c914",
+    "title": "A Touch of Frost \u2014 Plex",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-6674b595f04cf4bb9233c914.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-6a024c8e981d28c38fb16f21",
+    "title": "A&E Alaska State Troopers \u2014 Plex",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-6a024c8e981d28c38fb16f21.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::2fc3353cd214be87e4959643805a4d08",
+    "title": "A&E Alaska State Troopers \u2014 The Roku Channel",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-2fc3353cd214be87e4959643805a4d08.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-698a79b4c2d4abeac5f2ce1f",
+    "title": "A&E Live PD Greatest Shifts \u2014 Plex",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-698a79b4c2d4abeac5f2ce1f.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::62e84238f51a6b78c3883fbfdfb0cdb0",
+    "title": "A&E Live PD Greatest Shifts \u2014 The Roku Channel",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-62e84238f51a6b78c3883fbfdfb0cdb0.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::rok::50b18dea9c5c51568c1343fcd3d88ec9",
+    "title": "ABC7 Sarasota \u2014 The Roku Channel",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/rok-50b18dea9c5c51568c1343fcd3d88ec9.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-5f8ee3727c75fa002d9e47c1",
+    "title": "ACCDN \u2014 Plex",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-5f8ee3727c75fa002d9e47c1.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-6a4afa08410e0eea561f76b1",
+    "title": "ADN NOTICIAS \u2014 Plex",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-6a4afa08410e0eea561f76b1.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  },
+  {
+    "provider": "fast_channels",
+    "media_id": "fast::plex::6a1610bebdf296985fd95603-62d1ecc8e44d39da220722aa",
+    "title": "ALF \u2014 Plex",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://jmp2.uk/plex-6a1610bebdf296985fd95603-62d1ecc8e44d39da220722aa.m3u8|User-Agent=Mozilla%2F5.0+%28Windows+NT+10.0%3B+Win64%3B+x64%29+AppleWebKit%2F537.36+%28KHTML%2C+like+Gecko%29+Chrome%2F120.0.0.0+Safari%2F537.36"
+  }
+]

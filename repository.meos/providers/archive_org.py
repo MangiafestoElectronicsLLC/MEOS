@@ -226,22 +226,44 @@ def _best_video_file(files):
     """Pick the most playback-compatible video file from Archive.org metadata."""
     mp4_h264 = []
     mp4_any = []
-    ogv = []
+    other = []
     for f in files:
         name = f.get("name", "")
         fmt = (f.get("format") or "").lower()
-        if name.lower().endswith(".mp4"):
+        lowered = name.lower()
+        if lowered.endswith(".mp4"):
             if "h.264" in fmt or "mpeg4" in fmt or "mp4" in fmt:
                 mp4_h264.append(name)
             else:
                 mp4_any.append(name)
-        elif name.lower().endswith(".ogv"):
-            ogv.append(name)
+        elif lowered.endswith((".m4v", ".mkv", ".webm", ".avi", ".mov", ".mpg", ".mpeg", ".ogv")):
+            other.append(name)
 
-    for candidates in (mp4_h264, mp4_any, ogv):
+    for candidates in (mp4_h264, mp4_any, other):
         if candidates:
             return candidates[0]
     return None
+
+
+_MIME_BY_EXT = {
+    ".mp4": "video/mp4",
+    ".m4v": "video/mp4",
+    ".mkv": "video/x-matroska",
+    ".webm": "video/webm",
+    ".avi": "video/x-msvideo",
+    ".mov": "video/quicktime",
+    ".mpg": "video/mpeg",
+    ".mpeg": "video/mpeg",
+    ".ogv": "video/ogg",
+}
+
+
+def _mime_for(name):
+    lowered = (name or "").lower()
+    for ext, mime in _MIME_BY_EXT.items():
+        if lowered.endswith(ext):
+            return mime
+    return ""
 
 
 def _resolve_stream_url(identifier):
@@ -252,8 +274,7 @@ def _resolve_stream_url(identifier):
     chosen = _best_video_file(files)
     if not chosen:
         return None, ""
-    mime = "video/mp4" if chosen.lower().endswith(".mp4") else "video/ogg"
-    return _DL_URL.format(identifier, quote(chosen, safe=".-_~()")), mime
+    return _DL_URL.format(identifier, quote(chosen, safe=".-_~()")), _mime_for(chosen)
 
 
 class ArchiveOrgProvider(BaseProvider):

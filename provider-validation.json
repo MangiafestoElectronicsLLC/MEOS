@@ -1,0 +1,1742 @@
+[
+  {
+    "provider": "official_partner",
+    "media_id": "movie_big_buck_bunny",
+    "title": "Big Buck Bunny",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "movie_elephants_dream",
+    "title": "Elephants Dream",
+    "categories": [
+      "movies"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "movie_sintel",
+    "title": "Sintel",
+    "categories": [
+      "movies"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "movie_tears_of_steel",
+    "title": "Tears of Steel",
+    "categories": [
+      "movies"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "movie_subaru_outback_short",
+    "title": "Subaru Outback On Street and Dirt",
+    "categories": [
+      "movies"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "movie_volkswagen_gti_review",
+    "title": "Volkswagen GTI Review",
+    "categories": [
+      "movies"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "movie_what_car_for_a_grand",
+    "title": "What Car Can You Get For A Grand?",
+    "categories": [
+      "movies"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "tv_for_bigger_blazes",
+    "title": "For Bigger Blazes",
+    "categories": [
+      "tv"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "tv_for_bigger_escape",
+    "title": "For Bigger Escape",
+    "categories": [
+      "tv"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "tv_for_bigger_fun",
+    "title": "For Bigger Fun",
+    "categories": [
+      "tv"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "tv_for_bigger_meltdowns",
+    "title": "For Bigger Meltdowns",
+    "categories": [
+      "tv"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "tv_for_bigger_joyrides",
+    "title": "For Bigger Joyrides",
+    "categories": [
+      "tv"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "tv_google_blender_archive",
+    "title": "Big Buck Bunny (Internet Archive Mirror)",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/BigBuckBunny_328/BigBuckBunny_512kb.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "tv_elephants_dream_archive",
+    "title": "Elephants Dream (Internet Archive Mirror)",
+    "categories": [
+      "tv"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/ElephantsDream/ed_1024_512kb.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "cable_test_channel",
+    "title": "MEOS Cable Test Channel",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "cable_for_bigger_escape",
+    "title": "Cable Demo: For Bigger Escapes",
+    "categories": [
+      "cable"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "cable_for_bigger_fun",
+    "title": "Cable Demo: For Bigger Fun",
+    "categories": [
+      "cable"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "ppv_test_event",
+    "title": "MEOS PPV Test Event",
+    "categories": [
+      "ppv"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://test-streams.mux.dev/test_001/stream.m3u8"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "ppv_showcase_automotive",
+    "title": "PPV Showcase: Performance Auto",
+    "categories": [
+      "ppv"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "ppv_showcase_stunts",
+    "title": "PPV Showcase: Stunt Highlight",
+    "categories": [
+      "ppv"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "docs_we_are_going_on_bullrun",
+    "title": "We Are Going On Bullrun",
+    "categories": [
+      "docs"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "docs_for_bigger_escape",
+    "title": "For Bigger Escapes",
+    "categories": [
+      "docs"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "docs_for_bigger_joyrides",
+    "title": "For Bigger Joyrides",
+    "categories": [
+      "docs"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "docs_for_bigger_meltdowns",
+    "title": "For Bigger Meltdowns",
+    "categories": [
+      "docs"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "sports_test_feed",
+    "title": "MEOS Sports Test Feed",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://test-streams.mux.dev/dai-discontinuity-deltatre/manifest.m3u8"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "sports_tears_of_steel_trailer",
+    "title": "Sports Showcase Clip",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://test-streams.mux.dev/pts_shift/master.m3u8"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "sports_subaru_clip",
+    "title": "Subaru Off-Road Showcase",
+    "categories": [
+      "sports"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "sports_gti_clip",
+    "title": "GTI Driving Showcase",
+    "categories": [
+      "sports"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4"
+  },
+  {
+    "provider": "official_partner",
+    "media_id": "live_test_channel",
+    "title": "MEOS Live Test Channel",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://test-streams.mux.dev/test_001/stream.m3u8"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::AboutBan1935",
+    "title": "About Bananas (1935)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/AboutBan1935/AboutBan1935.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Doctorin1946",
+    "title": "Doctor in Industry (Part I) (1946)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Doctorin1946/Doctorin1946.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::HealthYo1953",
+    "title": "Health: Your Posture (1953)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/HealthYo1953/HealthYo1953.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::FromtheG1954",
+    "title": "From the Ground Up (1954)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/FromtheG1954/FromtheG1954.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Sleepfor1950",
+    "title": "Sleep for Health (1950)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Sleepfor1950/Sleepfor1950.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::JoanAvoi1947",
+    "title": "Joan Avoids a Cold (1947)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/JoanAvoi1947/JoanAvoi1947.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::EatforHe1954",
+    "title": "Eat for Health (1954)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/EatforHe1954/EatforHe1954.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::breath_takers_2",
+    "title": "Breath-Takers, 2",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/breath_takers_2/breath_takers_2.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::babies_and_breadwinners_2",
+    "title": "Babies and Breadwinners (Part II)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/babies_and_breadwinners_2/babies_and_breadwinners_2.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::right_to_health_1",
+    "title": "Right to Health, A (Part I)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/right_to_health_1/right_to_health_1.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Automoti1940",
+    "title": "Automotive Service (1940)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Automoti1940/Automoti1940.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Careofth1949",
+    "title": "Care of the Skin (1949)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Careofth1949/Careofth1949.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Sniffles1955",
+    "title": "Sniffles and Sneezes (1955)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Sniffles1955/Sniffles1955.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::ParkCons1938",
+    "title": "Park Conscious (1938)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/ParkCons1938/ParkCons1938.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Personal1950",
+    "title": "Personal Hygiene (Part I) (1950)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Personal1950/Personal1950.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::gov.ntis.ava18185vnb1",
+    "title": "Fred and the Voice of Food Safety: How to Avoid Food-Borne Illness",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/gov.ntis.ava18185vnb1/gov.ntis.ava18185vnb1_512kb.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::122Eyes1950",
+    "title": "122 Eyes (1950)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/122Eyes1950/122Eyes1950.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Usingthe1947",
+    "title": "Using the Bank (1947)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Usingthe1947/Usingthe1947.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::bacteria_friend_and_foe",
+    "title": "Bacteria: Friend and Foe",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/bacteria_friend_and_foe/bacteria_friend_and_foe.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::HaveITol1958",
+    "title": "Have I Told You Lately That I Love You? (1958)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/HaveITol1958/HaveITol1958.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::gov.ntis.ava17487vnb1",
+    "title": "FDA Approved - The Slide Show",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/gov.ntis.ava17487vnb1/gov.ntis.ava17487vnb1_512kb.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::CaseofSp1940",
+    "title": "Case of Spring Fever, A (1940)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/CaseofSp1940/CaseofSp1940.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::SpotNews1937",
+    "title": "Spot News (1937)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/SpotNews1937/SpotNews1937.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::GoodEati1951",
+    "title": "Good Eating Habits (1951)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": false,
+    "detail": "HTTP 500",
+    "url": "https://archive.org/download/GoodEati1951/GoodEati1951.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::WartimeN1943",
+    "title": "Wartime Nutrition (1943)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/WartimeN1943/WartimeN1943.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::DuckandC1951",
+    "title": "Duck and Cover (1951)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/DuckandC1951/DuckandC1951.ia.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Achievem1955",
+    "title": "Achievement USA (1955)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Achievem1955/Achievem1955.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::always_on_call",
+    "title": "Always On Call",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/always_on_call/always_on_call.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::HowtoGoP1954",
+    "title": "How to Go Places (1954)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/HowtoGoP1954/HowtoGoP1954.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::GeneralH1928",
+    "title": "General Health Habits (1928)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/GeneralH1928/GeneralH1928.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Experime1940",
+    "title": "Experiments in the Revival of Organisms (1940)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Experime1940/Experime1940.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Preventi1940",
+    "title": "Preventing the Spread of Disease (1940)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Preventi1940/Preventi1940.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::SanFrancisco1955CinemascopeFilm",
+    "title": "San Francisco (1955 Cinemascope film)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/SanFrancisco1955CinemascopeFilm/SanFrancisco.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::TimeSave1936",
+    "title": "Time Savers for House Makers (1936)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/TimeSave1936/TimeSave1936.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Exercise1949",
+    "title": "Exercise and Health (1949)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Exercise1949/Exercise1949.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::hindenberg_explodes",
+    "title": "Hindenburg Explodes (1937)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/hindenberg_explodes/hindenberg_explodes.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::PrivateL1947",
+    "title": "Private Life of a Cat (1947)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/PrivateL1947/PrivateL1947.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::MakeMine1948",
+    "title": "Make Mine Freedom (1948)",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/MakeMine1948/MakeMine1948.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::0872_Angels_Flight_05_32_34_00",
+    "title": "Angels Flight",
+    "categories": [
+      "movies",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/0872_Angels_Flight_05_32_34_00/0872_Angels_Flight_05_32_34_00.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Japanese1943",
+    "title": "Japanese Relocation (1943)",
+    "categories": [
+      "movies"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Japanese1943/Japanese1943.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::MSFC-0601215",
+    "title": "Video- Demonstration of Laminar Flow in a Liquid Onboard the International Space Station (ISS) (2003)",
+    "categories": [
+      "cable",
+      "ppv",
+      "docs"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/MSFC-0601215/0601215.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::NasaSciFiles-TheScientificMethod",
+    "title": "NASA SCI Files - The Scientific Method (2001)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/NasaSciFiles-TheScientificMethod/NASAWF-TheScientificMethod.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Apollo1116mmOnboardFilm",
+    "title": "APOLLO 11 16MM ONBOARD FILM (1969)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Apollo1116mmOnboardFilm/apollo11_6_1.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::NasaSciFiles-ReproductionMigrationAndBasicNeeds",
+    "title": "NASA SCI Files - Reproduction, Migration and Basic Needs (2005)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/NasaSciFiles-ReproductionMigrationAndBasicNeeds/NASASF-ReproductionMigrationAndBasicNeeds.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::NasaKsnn-SpaceFlightPhysicalChanges",
+    "title": "NASA KSNN - Space Flight Physical Changes (2001)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/NasaKsnn-SpaceFlightPhysicalChanges/NASAKSN-SpaceFlightPhysicalChanges.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::NasaSciFiles-BodySystems",
+    "title": "NASA SCI Files - Body Systems (2003)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/NasaSciFiles-BodySystems/NASASF-BodySystems.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::top_image",
+    "title": "NASA eClips Screetshot (2008)",
+    "categories": [
+      "cable"
+    ],
+    "ok": false,
+    "detail": "no stream url"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::NasaSciFiles-CellsTissuesOrgansAndSystems",
+    "title": "NASA SCI Files - Cells, Tissues, Organs, and Systems (2003)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/NasaSciFiles-CellsTissuesOrgansAndSystems/NASASF-CellsTissuesOrgansAndSystems.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_022709",
+    "title": "Nasa eClips Video (2009)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_022709/NASA_Launchpad_Flight_Test_Articles.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::NASA-Ultra-High-Definition",
+    "title": "NASA Ultra High Definition",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/NASA-Ultra-High-Definition/47%20Hatch%20opening.ia.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_022309",
+    "title": "Nasa eClips Video Series (2009)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_022309/LP_Ares_1X_OC.ia.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_120808",
+    "title": "Nasa eClips Video Series",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_120808/LP-3_Hot_Topics.ia.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_081009",
+    "title": "Our World: Arecibo - The Largest Radio Telescope on Earth (2009)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_081009/OW42_Subrip.ia.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_12302008",
+    "title": "Nasa Eclips (2008)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_12302008/NASA_360_program6_HD.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_02022009",
+    "title": "Nasa eClips 02022009 (2009)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_02022009/LIDAR.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_051309",
+    "title": "Nasa eClips Video Series 05:14:2009 (2009)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_051309/LP19Dynamic.ia.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_110209",
+    "title": "Space Operations (2009)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_110209/LP37_Finding_ET.ia.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_100909",
+    "title": "NASA eClips Video (2009)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_100909/NASA35_Launchpad_SSMEs.ia.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_040709",
+    "title": "Nasa eClips Videos (2009)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_040709/Fermi2_SD.ia.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_01162009",
+    "title": "NASA eClips",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_01162009/NASA_360_6.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Nasa_eClips_video",
+    "title": "Nasa eClips Video (2008)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Nasa_eClips_video/OW-ATHLETE_oc.ia.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_052609",
+    "title": "Ourworld: Fluid Shift and Our World: Investigating Mars with the Phoenix Lander (2009)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_052609/LP20Observatories.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::NASA_360_program1_HD",
+    "title": "NASA 360 Episode 1 (2008)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/NASA_360_program1_HD/NASA_360_program1_HD.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_01222009",
+    "title": "NASA eClips",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_01222009/NASA_360_program_7_HD.ia.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::NASA_360_program2_HD",
+    "title": "NASA 360 Episode 2 (2008)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/NASA_360_program2_HD/NASA_360_program2_HD.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::NASA_360_12_HD",
+    "title": "NASA 360: NASA in Your Home",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/NASA_360_12_HD/NASA_360_12_HD.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::NASA_360_program3_HD",
+    "title": "NASA 360 Episode 3 (2008)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/NASA_360_program3_HD/NASA_360_program3_HD.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_360",
+    "title": "NASA eClips Video Series 360 (2008)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_360/NASA_360_program1_HD_512kb.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_060809",
+    "title": "NASA eClips (2009)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_060809/NASA_360_program_10_HD.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Apollo15And1616mmOnboardFilm",
+    "title": "APOLLO 15 16MM ONBOARD FILM (1971)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Apollo15And1616mmOnboardFilm/apollo15_10_1.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_032709",
+    "title": "NASA eClips",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_032709/OW_ATRAIN_oc_ff_512kb.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_052809",
+    "title": "Nasa eClips Videos (2009)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_052809/OW21Chandra.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::NasaWhyFiles-HistoryOfElectricity",
+    "title": "NASA Why? Files - History of Electricity (2002)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/NasaWhyFiles-HistoryOfElectricity/NASAWF-HistoryOfElectricity.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::NASA_360_program6_HD",
+    "title": "NASA 360 Episode 6",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/NASA_360_program6_HD/NASA_360_program6_HD.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_073109",
+    "title": "Nasa eClips Video Series",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_073109/OW28_Stardust_clean.ia.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_02062009",
+    "title": "Nasa eClips (2009)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_02062009/NASA_Launchpad_Aurora.ia.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::nasa_eclips_082109",
+    "title": "NASA eClips Video Series (2009)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/nasa_eclips_082109/31NASA_Launchpad_Apollo_40th.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::OurWorldGravityInSpace",
+    "title": "Our World: Gravity in Space (2010)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/OurWorldGravityInSpace/OW48GravityOC.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::OurWorldHoneybees_686",
+    "title": "Our World: Honeybees",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/OurWorldHoneybees_686/Ow39honeybeesClean.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::GMT137_08_26_Jack-Fischer_88789J_Nanoracks-137_DP014401.MXF",
+    "title": "GMT137_08_26_Jack-Fischer_88789J_Nanoracks-137_DP014401.MXF (2017)",
+    "categories": [
+      "cable"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/GMT137_08_26_Jack-Fischer_88789J_Nanoracks-137_DP014401.MXF/GMT137_08_26_Jack-Fischer_88789J_Nanoracks-137_DP014401.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::GoldenYe1960",
+    "title": "Golden Years, The (1960)",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/GoldenYe1960/GoldenYe1960.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Makingof1946",
+    "title": "Making of a Shooter (1946)",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Makingof1946/Makingof1946.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::Magicint1955",
+    "title": "Magic in the Air (1955) (1955)",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/Magicint1955/Magicint1955.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::StuntCom1918",
+    "title": "[Stunt Compilation] (1918)",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/StuntCom1918/StuntCom1918.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::LetsGoBo1955",
+    "title": "Let's Go Bowling (Part I) (1955)",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/LetsGoBo1955/LetsGoBo1955.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::OaklandW1950",
+    "title": "[Oakland Women\u0092s Rowing Club] (1950)",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/OaklandW1950/OaklandW1950.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::OaklandO1918",
+    "title": "[Oakland Oaks Baseball Season Opens] (1918)",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/OaklandO1918/OaklandO1918.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::LetsGoBo1955_2",
+    "title": "Let's Go Bowling (Part II) (1955)",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/LetsGoBo1955_2/LetsGoBo1955_2.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::RenoRode1950",
+    "title": "[Reno Rodeo] (1950)",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/RenoRode1950/RenoRode1950.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::AmateurS1950",
+    "title": "[Amateur Skating Champs] (1950)",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/AmateurS1950/AmateurS1950.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::WillieSh1950",
+    "title": "[Willie Shoemaker at Golden Gate Fields] (1950)",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/WillieSh1950/WillieSh1950.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::201372_News_Footage_1954_Can_2",
+    "title": "[News Footage 1954 (Can 2)]",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/201372_News_Footage_1954_Can_2/201372_News_Footage_1954_Can_2_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::0151GoldenYearsThe17392204",
+    "title": "Golden Years, The (1960)",
+    "categories": [
+      "sports"
+    ],
+    "ok": false,
+    "detail": "HTTP 500",
+    "url": "https://archive.org/download/0151GoldenYearsThe17392204/0151_Golden_Years_The_17_39_22_04.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::AmosAlon1950",
+    "title": "[Amos Alonzo Stagg Honored on 95th Birthday] (1950)",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/AmosAlon1950/AmosAlon1950.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::201670_Television_Commercials_Jingles_and_Songs",
+    "title": "Television Commercials: Jingles and Songs",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/201670_Television_Commercials_Jingles_and_Songs/201670_Television_Commercials_Jingles_and_Songs_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::201217_Duer_Collection_004039",
+    "title": "Home Movie: David Duer Collection: 004039",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/201217_Duer_Collection_004039/201217_Duer_Collection_004039_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::201063_Home_Movie_003796",
+    "title": "Home Movie: 003796",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/201063_Home_Movie_003796/201063_Home_Movie_003796_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::201043_Home_Movie_003787",
+    "title": "Home Movie: 003787",
+    "categories": [
+      "sports"
+    ],
+    "ok": false,
+    "detail": "HTTP 500",
+    "url": "https://archive.org/download/201043_Home_Movie_003787/201043_Home_Movie_003787_001_master.intros_H.264.ia.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::202167_Home_Movie_000079",
+    "title": "Home Movie: 000079",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/202167_Home_Movie_000079/202167_Home_Movie_000079_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::201785_Anderson-Nelson_Collection_001213",
+    "title": "Home Movie: Anderson-Nelson Collection: 001213",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/201785_Anderson-Nelson_Collection_001213/201785_Anderson-Nelson_Collection_001213_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::200948_Home_Movie_003390",
+    "title": "Home Movie: 003390",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/200948_Home_Movie_003390/200948_Home_Movie_003390_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::201569_News_Footage_1954_Can_7",
+    "title": "News Footage 1954: Can 7",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/201569_News_Footage_1954_Can_7/201569_News_Footage_1954_Can_7_master.intros.hevc.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::200504_First_Color_Newsreel",
+    "title": "First Color Newsreel",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/200504_First_Color_Newsreel/200504_First_Color_Newsreel_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::0935ASportsCalendar1926",
+    "title": "A Sports Calendar (1924)",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/0935ASportsCalendar1926/0935_A_Sports_Calendar_1926.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::202310_Deutschlandspiegel_1960",
+    "title": "Deutschlandspiegel, 1960",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/202310_Deutschlandspiegel_1960/202310_Deutschlandspiegel_1960_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::203957_Home_Movie_012684",
+    "title": "Home Movie: 012684",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/203957_Home_Movie_012684/203957_Home_Movie_012684_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::201571_Vista_People_of_All_Kinds",
+    "title": "Vista Color Stock Shots: People of All Kinds",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/201571_Vista_People_of_All_Kinds/201571_Vista_People_of_All_Kinds_master.intros.hevc.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::201041_Home_Movie_003785",
+    "title": "Home Movie: 003785",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/201041_Home_Movie_003785/201041_Home_Movie_003785_master.intros_H.264.ia.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::203979_Hirota_Collection_071161",
+    "title": "Home Movie: Hirota Collection: 071161",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/203979_Hirota_Collection_071161/203979_Hirota_Collection_071161_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::204507_Home_Movie_000266",
+    "title": "Home Movie: 000266",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/204507_Home_Movie_000266/204507_Home_Movie_000266_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::200478_000475",
+    "title": "Home Movie: 000475",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/200478_000475/200478_000475_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::4063_Gould_Can_5376_Mayor_Rolph_throws_out_first_ball",
+    "title": "[Gould Can 5376: Mayor Rolph throws out first ball]",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/4063_Gould_Can_5376_Mayor_Rolph_throws_out_first_ball/4063_Gould_Can_5376_Mayor_Rolph_throws_out_first_ball.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::202255_The_El_Paso_Story",
+    "title": "The El Paso Story (1966)",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/202255_The_El_Paso_Story/202255_The_El_Paso_Story_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::200626_Wild_Beauty_R5",
+    "title": "Wild Beauty R5 (1927)",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/200626_Wild_Beauty_R5/200626_Wild_Beauty_R5_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::201498_Ceylon_Collection_004098",
+    "title": "Home Movie: Ceylon Collection: 004098",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/201498_Ceylon_Collection_004098/201498_Ceylon_Collection_004098_master.intros.hevc.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::200952_Robinson_Collection_003745",
+    "title": "Home Movie: Keith Robinson Collection: 003745",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/200952_Robinson_Collection_003745/200952_Robinson_Collection_003745_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::201067_Home_Movie_003800",
+    "title": "Home Movie: 003800",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/201067_Home_Movie_003800/201067_Home_Movie_003800_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::201950_Home_Movie_000916",
+    "title": "Home Movie: 000916",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/201950_Home_Movie_000916/201950_Home_Movie_000916_master.intros.hevc.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::200946_Home_Movie_003388",
+    "title": "Home Movie: 003388",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/200946_Home_Movie_003388/200946_Home_Movie_003388_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed::201160_Knowlton_Collection_004402",
+    "title": "Home Movie: Knowlton Collection: 004402",
+    "categories": [
+      "sports"
+    ],
+    "ok": true,
+    "detail": "HTTP 206",
+    "url": "https://archive.org/download/201160_Knowlton_Collection_004402/201160_Knowlton_Collection_004402_master.intros.mp4"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed_live::nasa_public",
+    "title": "NASA TV Public Channel (Live)",
+    "categories": [
+      "live"
+    ],
+    "ok": true,
+    "detail": "HTTP 200",
+    "url": "https://ntv1.akamaized.net/hls/live/2014075/NASA-NTV1-HLS/master.m3u8"
+  },
+  {
+    "provider": "public_feeds",
+    "media_id": "pubfeed_live::nasa_media",
+    "title": "NASA TV Media Channel (Live)",
+    "categories": [
+      "live"
+    ],
+    "ok": false,
+    "detail": "HTTP 403",
+    "url": "https://ntv2.akamaized.net/hls/live/2014075/NASA-NTV2-HLS/master.m3u8"
+  }
+]

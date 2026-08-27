@@ -15,7 +15,7 @@
     <setting id="validated_marker_override" type="enum" label="Status marker style" values="Auto (by Kodi version)|Unicode Check|OK Fallback|Legacy v" default="0" />
     <setting id="integration_select_mode" type="enum" label="Integrate all mode" values="Enabled only|All available" default="0" />
     <setting id="integrate_all_auto_build_favorites" type="bool" label="Integrate all: auto-build favorites from top matches" default="false" />
-    <setting id="auto_integrate_priority_addons" type="bool" label="Auto-integrate Scrubs V2 and The Loop" default="true" />
+    <setting id="auto_integrate_priority_addons" type="bool" label="Auto-integrate Scrubs V2, The Loop, Red Gratis, The Ghost" default="true" />
     <setting id="auto_integrate_priority_build_favorites" type="bool" label="Auto-integrate: add top favorites" default="true" />
     <setting id="external_validated_targets" type="text" label="Validated stream targets (internal)" default="" visible="false" />
     <setting id="external_failed_targets" type="text" label="Failed stream targets (internal)" default="" visible="false" />

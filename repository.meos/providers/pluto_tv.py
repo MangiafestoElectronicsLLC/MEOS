@@ -24,16 +24,16 @@ except ImportError:
 from .base import BaseProvider
 
 
+_UA = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+)
+
 _CHANNELS_URLS = [
     "https://api.pluto.tv/v2/channels",
     "https://api.pluto.tv/v2/channels?deviceType=web",
     "https://api.pluto.tv/v2/channels?deviceType=web&deviceMake=Chrome&deviceModel=web",
 ]
-_VOD_URL = (
-    "https://api.pluto.tv/v3/vod/categories"
-    "?includeItems=true&deviceType=web"
-)
-
 # Map MEOS UI category → Pluto TV genre keywords (case-insensitive substring match)
 _LIVE_GENRE_MAP = {
     "live": None,          # all channels
@@ -51,7 +51,8 @@ def _fetch_json(url):
         req = Request(
             url,
             headers={
-                "User-Agent": "Mozilla/5.0 (compatible; MEOS-Kodi/1.0)",
+                # Pluto's API and CDN return 403 for non-browser user agents.
+                "User-Agent": _UA,
                 "Accept": "application/json",
             },
         )
@@ -109,98 +110,6 @@ def _load_channels():
     return []
 
 
-def _iter_vod_categories(payload):
-    if isinstance(payload, list):
-        return payload
-    if not isinstance(payload, dict):
-        return []
-    for key in ("categories", "data", "items"):
-        value = payload.get(key)
-        if isinstance(value, list):
-            return value
-    return []
-
-
-def _vod_stream(item):
-    stitched = item.get("stitched") or {}
-    urls = stitched.get("urls") or []
-    for u in urls:
-        if (u.get("type") or "").lower() == "hls" and u.get("url"):
-            return u.get("url")
-    for u in urls:
-        if u.get("url"):
-            return u.get("url")
-    return ""
-
-
-def _vod_matches(item, category, query, category_name=""):
-    name = (item.get("name") or item.get("title") or "").lower()
-    genre = (item.get("genre") or "").lower()
-    media_type = (item.get("type") or "").lower()
-    cat = (category_name or "").lower()
-    summary = (item.get("summary") or item.get("description") or "").lower()
-    haystack = "{} {} {} {} {}".format(name, genre, media_type, cat, summary)
-
-    if query and _norm(query) not in _norm(haystack):
-        return False
-
-    if not category or category == "live":
-        return True
-    if category == "movies":
-        return media_type == "movie" or "movie" in cat
-    if category == "tv":
-        return media_type in ("series", "episode", "show") or "series" in cat or "tv" in cat
-    if category == "cable":
-        return any(k in haystack for k in ["cable", "network", "tv", "news", "entertainment", "family"])
-    if category == "ppv":
-        return any(k in haystack for k in ["ppv", "fight", "boxing", "mma", "wrestling", "event", "sports"])
-    if category == "docs":
-        return "document" in haystack or "history" in haystack or "science" in haystack
-    if category == "sports":
-        return any(k in haystack for k in ["sport", "nfl", "nba", "nhl", "mlb", "ufc", "mma", "boxing", "racing"])
-    return True
-
-
-def _load_vod_items(category=None, query=None):
-    payload = _fetch_json(_VOD_URL)
-    if not payload:
-        return []
-
-    categories = _iter_vod_categories(payload)
-    results = []
-    for cat in categories:
-        category_name = (cat.get("name") or cat.get("title") or "") if isinstance(cat, dict) else ""
-        items = cat.get("items") if isinstance(cat, dict) else []
-        if not isinstance(items, list):
-            continue
-        for item in items:
-            if not isinstance(item, dict):
-                continue
-            item_id = str(item.get("_id") or item.get("id") or "")
-            title = (item.get("name") or item.get("title") or "").strip()
-            if not item_id or not title:
-                continue
-            if not _vod_matches(item, category, query, category_name=category_name):
-                continue
-            stream_url = _vod_stream(item)
-            if not stream_url:
-                continue
-            genre = (item.get("genre") or category_name or "VOD").strip()
-            results.append(
-                {
-                    "media_id": "plutovod::" + item_id,
-                    "title": title,
-                    "genre": genre,
-                    "stream_url": stream_url,
-                }
-            )
-
-    dedup = {}
-    for row in results:
-        dedup[row["media_id"]] = row
-    return list(dedup.values())
-
-
 def _best_stream(channel):
     urls = channel.get("stitcherUrls") or []
     if urls:
@@ -224,7 +133,7 @@ def _best_stream(channel):
 
 class PlutoTvProvider(BaseProvider):
     """
-    Pluto TV — free, legal, ad-supported channels and on-demand content.
+    Pluto TV — free, legal, ad-supported live channels.
     No account or authentication required.
     """
 
@@ -233,12 +142,8 @@ class PlutoTvProvider(BaseProvider):
     requires_oauth = False
 
     def get_catalog(self, auth_state, category=None, query=None, year=None, award=None, result=None):
-        vod = []
-        if category in ("movies", "tv", "docs", "sports", "cable", "ppv") or query:
-            vod = _load_vod_items(category=category, query=query)
-
         channels = _load_channels()
-        if not channels and not vod:
+        if not channels:
             return []
 
         results = []
@@ -271,41 +176,12 @@ class PlutoTvProvider(BaseProvider):
 
         results.sort(key=lambda x: x["title"].lower())
 
-        live_rows = [{"media_id": r["media_id"], "title": r["title"], "genre": r["genre"]} for r in results]
-        vod_rows = [{"media_id": r["media_id"], "title": r["title"], "genre": r["genre"]} for r in vod]
-
-        # For user search and sports, merge VOD and live channels to maximize legal matches.
-        if query or category == "sports":
-            merged = {}
-            for row in vod_rows + live_rows:
-                merged[row["media_id"]] = row
-            final_rows = list(merged.values())
-            final_rows.sort(key=lambda x: x["title"].lower())
-            return final_rows[:400]
-
-        if category in ("movies", "tv", "docs") and vod_rows:
-            vod_rows.sort(key=lambda x: x["title"].lower())
-            return vod_rows[:300]
-
-        return live_rows
+        return [{"media_id": r["media_id"], "title": r["title"], "genre": r["genre"]} for r in results]
 
     def check_entitlement(self, media_id, auth_state):
         return True, ""
 
     def resolve_playback(self, media_id, auth_state):
-        if media_id.startswith("plutovod::"):
-            item_id = media_id[len("plutovod::"):]
-            items = _load_vod_items()
-            selected = next((i for i in items if i["media_id"] == "plutovod::" + item_id), None)
-            if not selected:
-                return None
-            return {
-                "stream_url": selected["stream_url"],
-                "title": selected["title"],
-                "mime_type": "application/vnd.apple.mpegurl",
-                "license_url": "",
-            }
-
         if not media_id.startswith("pluto::"):
             return None
 
@@ -331,7 +207,7 @@ class PlutoTvProvider(BaseProvider):
             return None
 
         return {
-            "stream_url": stream_url,
+            "stream_url": stream_url + "|User-Agent=" + quote_plus(_UA),
             "title": _channel_name(ch) or channel_id,
             "mime_type": "application/vnd.apple.mpegurl",
             "license_url": "",
