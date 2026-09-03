@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<settings>
+  <category label="General">
+    <setting id="theme" type="enum" label="UI Theme" values="Default|Dark|Light" default="0" />
+    <setting id="items_per_page" type="enum" label="Items per page" values="25|50|100|200" default="1" />
+    <setting id="cache_ttl_minutes" type="enum" label="Metadata/stream cache lifetime" values="15 minutes|60 minutes|240 minutes|1440 minutes" default="1" />
+  </category>
+  <category label="Categories">
+    <setting id="cat_movies_enabled" type="bool" label="Show Movies" default="true" />
+    <setting id="cat_tvshows_enabled" type="bool" label="Show TV Shows" default="true" />
+    <setting id="cat_networks_enabled" type="bool" label="Show Networks" default="true" />
+    <setting id="cat_sports_enabled" type="bool" label="Show Sports" default="true" />
+    <setting id="cat_ppv_enabled" type="bool" label="Show PPV" default="true" />
+    <setting id="cat_livetv_enabled" type="bool" label="Show Live TV / Cable" default="true" />
+  </category>
+  <category label="Integrations">
+    <setting id="integration_scrubsv2_enabled" type="bool" label="Enable Scrubs V2" default="true" />
+    <setting id="integration_theloop_enabled" type="bool" label="Enable The Loop" default="true" />
+    <setting id="integration_ghost_enabled" type="bool" label="Enable Ghost" default="true" />
+    <setting id="integration_thecrew_enabled" type="bool" label="Enable The Crew" default="true" />
+    <setting id="custom_integrations_json" type="text" label="Custom integrations (internal, use in-addon menu)" default="" visible="false" />
+  </category>
+  <category label="Scrapers">
+    <setting id="scraper_tmdb_enabled" type="bool" label="Enable TMDB metadata" default="true" />
+    <setting id="scraper_tmdb_api_key" type="text" label="TMDB API Key" default="" option="hidden" />
+    <setting id="scraper_tmdb_api_base" type="text" label="TMDB API base URL" default="https://api.themoviedb.org/3" />
+    <setting id="scraper_archiveorg_enabled" type="bool" label="Enable archive.org free public-domain streams" default="true" />
+    <setting id="scraper_archiveorg_api_base" type="text" label="archive.org API base URL" default="https://archive.org" />
+    <setting id="custom_scrapers_json" type="text" label="Custom scrapers (internal, use in-addon menu)" default="" visible="false" />
+  </category>
+  <category label="Import / Export">
+    <setting id="io_export_folder" type="text" label="Export folder (special:// path or local path)" default="special://temp/meoshub_exports" />
+  </category>
+  <category label="Advanced">
+    <setting id="favorites_json" type="text" label="Favorites (internal)" default="" visible="false" />
+    <setting id="integration_listing_cache_json" type="text" label="Integration listing cache (internal)" default="" visible="false" />
+  </category>
+</settings>

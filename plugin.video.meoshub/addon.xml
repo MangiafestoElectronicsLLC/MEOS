@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.meoshub" name="MEOS Hub" version="1.0.0" provider-name="MEOS">
+  <extension point="xbmc.python.pluginsource" library="default.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en_GB">Unified content hub for free/legal video, metadata and installed Kodi add-ons</summary>
+    <description lang="en_GB">MEOS Hub is a single Kodi add-on that brings together free legal content sources, metadata scrapers (e.g. TMDB, archive.org) and your existing installed Kodi add-ons (Scrubs V2, The Loop, Ghost, The Crew and any add-on you choose) into one browsable, searchable interface. MEOS Hub never copies or bundles third-party add-on code: it only routes into add-ons that are already installed on your device via standard Kodi plugin navigation.</description>
+    <platform>all</platform>
+    <license>MIT</license>
+    <author>MEOS</author>
+    <assets>
+      <icon>resources/icon.png</icon>
+      <fanart>resources/fanart.jpg</fanart>
+    </assets>
+    <disclaimer>MEOS Hub only aggregates and routes to free/legal content and add-ons already installed by the user. Use responsibly and in accordance with your local laws.</disclaimer>
+  </extension>
+  <requires>
+    <import addon="xbmc.python" version="3.0.0" />
+  </requires>
+</addon>
