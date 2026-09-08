@@ -328,6 +328,50 @@ Copy-Item -Path $SingleInstallZipPath -Destination (Join-Path $KodiInstallDir "M
 Copy-Item -Path $SingleInstallZipModernPath -Destination (Join-Path $KodiInstallDir "MEOS_ADDON_K20PLUS.zip") -Force
 Copy-Item -Path $RepositoryZipConveniencePath -Destination (Join-Path $KodiInstallDir "repository.meos.zip") -Force
 
+function Write-DocsIndex {
+    param(
+        [Parameter(Mandatory = $true)] [string]$Root,
+        [Parameter(Mandatory = $true)] [string]$RepositoryVersion
+    )
+
+    $baseRaw = "https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main"
+    $docsDir = Join-Path $Root "docs"
+    if (-not (Test-Path $docsDir)) {
+        New-Item -ItemType Directory -Path $docsDir | Out-Null
+    }
+
+    # GitHub Pages hosts this so Kodi File Manager can browse a real directory
+    # listing; raw.githubusercontent.com only serves individual files.
+    $links = @(
+        @{ Name = "repository.meos.zip (install this first)"; Href = "$baseRaw/repository.meos.zip" },
+        @{ Name = "MEOS_ADDON_K18.zip (Kodi 18 direct install)"; Href = "$baseRaw/MEOS_ADDON_K18.zip" },
+        @{ Name = "MEOS_ADDON_K20PLUS.zip (Kodi 19+/Firestick direct install)"; Href = "$baseRaw/MEOS_ADDON_K20PLUS.zip" }
+    )
+
+    $listItems = ($links | ForEach-Object { "    <li><a href=`"$($_.Href)`">$($_.Name)</a></li>" }) -join [Environment]::NewLine
+
+    $html = @"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>MEOS Kodi Repository - v$RepositoryVersion</title>
+</head>
+<body>
+<h1>MEOS Kodi Repository (v$RepositoryVersion)</h1>
+<p>Add this page as a source in Kodi File Manager, then use Install from zip file.</p>
+<ul>
+$listItems
+</ul>
+</body>
+</html>
+"@
+
+    [System.IO.File]::WriteAllText((Join-Path $docsDir "index.html"), $html, (New-Object System.Text.UTF8Encoding($false)))
+}
+
+Write-DocsIndex -Root $Root -RepositoryVersion $repositoryVersion
+
 Write-Host "Build completed"
 if (-not $NoAutoBump) {
     Write-Host "Plugin version: $($pluginBump.OldVersion) -> $($pluginBump.NewVersion)"

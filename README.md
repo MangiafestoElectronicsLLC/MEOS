@@ -2,30 +2,25 @@
 
 MEOS is a Kodi repository plus a companion video add-on with a clean install path for Firestick and other Kodi devices.
 
-## Install
+## Install (any Kodi device, not just this PC)
 
-Use the direct ZIP links instead of the GitHub page URL.
+1. Recommended: browse straight from Kodi using the GitHub Pages index
+- In Kodi: Settings -> File manager -> Add source -> enter `https://mangiafestoelectronicsllc.github.io/MEOS/`.
+- Add-ons -> Install from zip file -> pick that source -> choose `repository.meos.zip` (installs the repo, which then auto-updates itself and MEOS from `addons.xml`).
+- If GitHub Pages is not enabled for this repo yet, enable it once: repo Settings -> Pages -> Deploy from branch -> `main` / `/docs`.
 
-1. Recommended repository install (all devices)
-- Download `repository.meos.zip` directly from GitHub Releases or the raw file URL.
-- Copy it to the Firestick or another device Kodi can browse.
-- In Kodi: Add-ons -> Install from zip file -> choose `repository.meos.zip`.
-- Then open Install from repository -> MEOS Repository -> install MEOS.
+2. Why plain raw GitHub URLs don't work as a Kodi source
+- `raw.githubusercontent.com` serves individual files but has no browsable directory listing, so Kodi File Manager shows "Couldn't retrieve directory information" if you add it directly as a source.
+- `docs/index.html` (served via GitHub Pages) is a real browsable page with direct links to the zips, which fixes this for every device, not just a PC that can download files manually.
+- The ZIP files themselves were never broken; only the directory-browsing step needed a real listing page.
 
-2. Why Kodi File Manager shows "Unable to connect"
-- `raw.githubusercontent.com` serves files, but does not provide browsable directory listings.
-- Kodi File Manager expects a directory index when you add a web source.
-- A direct `.zip` URL is a file, not a directory source, so Kodi still warns that it cannot retrieve directory information.
-- If you paste a raw GitHub URL as a source, Kodi commonly shows "Couldn't retrieve directory information".
-- This does not mean your repository ZIP is broken. The ZIP URLs are valid; the source browsing method is the issue.
+3. Manual transfer fallback (no network browsing on the device)
+- Download `repository.meos.zip` (or `MEOS_ADDON_K18.zip` / `MEOS_ADDON_K20PLUS.zip` for a single-file plugin-only install) from GitHub on any PC/phone.
+- Copy it to the device via USB/cloud storage, then Install from zip file locally.
 
-3. Firestick / Kodi 21 direct install
-- Download `MEOS_ADDON_K21.zip` from the repository.
-- Copy it to the device.
-- In Kodi, choose Install from zip file and select `MEOS_ADDON_K21.zip`.
-
-4. Older Kodi builds
-- Use `MEOS_ADDON.zip` or install the repository first and let Kodi resolve the correct package.
+4. Kodi version guidance
+- Kodi 19+ / Firestick: `MEOS_ADDON_K20PLUS.zip` or the repository install above.
+- Kodi 18.x: `MEOS_ADDON_K18.zip`.
 
 ## What’s Included
 
