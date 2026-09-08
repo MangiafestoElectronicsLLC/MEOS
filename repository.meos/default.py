@@ -61,6 +61,7 @@ YEAR_MAX = 2026
 MAX_INTEGRATED_SCAN_DEPTH = 6
 MAX_INTEGRATED_ITEMS_PER_ADDON = 800
 MAX_INTEGRATED_TARGET_MATCHES = 20
+MAX_INTEGRATED_SHORTCUTS_PER_ADDON = 3
 MAX_VALIDATED_CACHE_ITEMS = 800
 MAX_INTEGRATED_SEARCH_ITEMS_PER_ADDON = 160
 MAX_INTEGRATED_SEARCH_TOTAL_ITEMS = 1200
@@ -369,6 +370,16 @@ def _setting_bool(setting_id, default=False):
     if not value:
         return default
     return value in ("true", "1", "yes", "on")
+
+
+def _setting_int(setting_id, default=0):
+    value = (ADDON.getSetting(setting_id) or "").strip()
+    if not value:
+        return default
+    try:
+        return int(float(value))
+    except Exception:
+        return default
 
 
 def _remote_validation_enabled():
@@ -1768,6 +1779,13 @@ def _show_integrated_folder_shortcuts_in_category_views():
     return _setting_bool("show_integrated_folder_shortcuts_in_category_views", False)
 
 
+def _integrated_inline_item_cap():
+    # Per-addon cap for items flattened directly into a MEOS category page; keeps
+    # one chatty add-on from burying every other add-on's content in the list.
+    value = _setting_int("integrated_inline_item_cap", 40)
+    return value if value > 0 else 40
+
+
 def _format_validated_label(label, validated):
     return _format_validation_label(label, VALIDATION_STATUS_PASS if validated else VALIDATION_STATUS_UNVERIFIED)
 
@@ -2744,27 +2762,10 @@ def _search_integrated_playables(target, query, max_depth=6, max_items=120):
     return results
 
 
-def add_integrated_category_items(category, seen_title_keys=None):
-    selected = _get_integrated_addon_ids()
-    if not selected:
-        return 0
+def _integrated_addon_entry_source(addon_id, row, category):
+    start_points = _resolve_integrated_targets(addon_id, category, addon_name=row.get("name", ""))
 
-    if seen_title_keys is None:
-        seen_title_keys = set()
-
-    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=False)
-    total_added = 0
-
-    for addon_ref in selected:
-        details = _integration_reference_details(addon_ref, installed)
-        addon_id = details["addon_id"]
-        row = details["row"]
-        if not row:
-            continue
-        if _is_low_value_integration_reference(addon_id, row.get("name", "")):
-            continue
-
-        start_points = _resolve_integrated_targets(addon_id, category, addon_name=row.get("name", ""))
+    def _generate():
         for resolved in start_points:
             start_target = resolved.get("target") or "plugin://{0}/".format(addon_id)
             source_is_custom = bool(resolved.get("custom_mapped", False))
@@ -2779,51 +2780,164 @@ def add_integrated_category_items(category, seen_title_keys=None):
                 playable_entries = [{"file": start_target, "label": resolved.get("matched_label") or row["name"]}]
 
             for entry in playable_entries:
-                target = entry.get("file") or ""
-                if not target:
-                    continue
+                yield source_is_custom, entry
 
-                title = entry.get("label") or entry.get("title") or target
-                if _is_integration_bridge_title(title):
-                    continue
-                title_key = _title_key(title)
-                if title_key:
-                    dedupe_key = "{0}:{1}".format(addon_id, title_key)
-                else:
-                    dedupe_key = "{0}:{1}".format(addon_id, target.lower())
-                if dedupe_key and dedupe_key in seen_title_keys:
-                    continue
+    return _generate()
 
-                is_validated, vote = _integrated_target_status(target, is_folder=False)
-                if not _stream_visible_by_filter(validated=is_validated, vote=vote):
-                    continue
 
-                if dedupe_key:
-                    seen_title_keys.add(dedupe_key)
+def _sport_topic_keywords(query):
+    words = [word for word in _normalize_label(query).split() if word]
+    # "sports" alone matches everything, so prefer the more specific topic words
+    # (e.g. "nfl", "hockey") when available and only fall back to it otherwise.
+    specific = [word for word in words if word != "sports"]
+    return specific or words
 
-                label = _format_validated_label("[Integrated {0}] {1}".format(row["name"], title), is_validated)
-                label = _format_custom_mapped_label(label, source_is_custom)
-                art = {
-                    "thumb": entry.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["thumb"],
-                    "icon": entry.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["icon"],
-                    "fanart": entry.get("fanart") or row.get("fanart") or DEFAULT_ART["fanart"],
-                }
-                add_validated_playable_item(
-                    label,
-                    {"action": "external_play", "target": target},
-                    status=_target_validation_status(target),
-                    info={"title": title, "genre": category.title()},
-                    art=art,
-                    context_items=_scan_context_items_for_target(
-                        target,
-                        title=row.get("name", ""),
-                        label=title,
-                        is_folder=False,
-                    ),
-                )
-                total_added += 1
 
-    return total_added
+def _iter_integrated_sport_topic_items(query, per_addon_cap=None):
+    selected = _get_integrated_addon_ids()
+    if not selected:
+        return
+
+    keywords = _sport_topic_keywords(query)
+    if not keywords:
+        return
+
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=False)
+    per_addon_cap = per_addon_cap or _integrated_inline_item_cap()
+
+    for addon_ref in selected:
+        details = _integration_reference_details(addon_ref, installed)
+        addon_id = details["addon_id"]
+        row = details["row"]
+        if not row:
+            continue
+        if _is_low_value_integration_reference(addon_id, row.get("name", "")):
+            continue
+
+        added = 0
+        for _source_is_custom, entry in _integrated_addon_entry_source(addon_id, row, "sports"):
+            if added >= per_addon_cap:
+                break
+            title = entry.get("label") or entry.get("title") or entry.get("file") or ""
+            if not title:
+                continue
+            score, _reasons = _keyword_match_details(title, keywords)
+            if score <= 0:
+                continue
+            added += 1
+            yield row, entry
+
+
+def add_integrated_category_items(category, seen_title_keys=None, offset=0):
+    selected = _get_integrated_addon_ids()
+    if not selected:
+        return 0, None
+
+    if seen_title_keys is None:
+        seen_title_keys = set()
+
+    installed = _get_installed_video_addon_map(include_meos=False, include_disabled=False)
+    per_addon_cap = _integrated_inline_item_cap()
+    offset = max(0, int(offset or 0))
+    total_added = 0
+
+    sources = []
+    for addon_ref in selected:
+        details = _integration_reference_details(addon_ref, installed)
+        addon_id = details["addon_id"]
+        row = details["row"]
+        if not row:
+            continue
+        if _is_low_value_integration_reference(addon_id, row.get("name", "")):
+            continue
+        sources.append(
+            {
+                "addon_id": addon_id,
+                "row": row,
+                "root_target": details["root_target"] or "plugin://{0}/".format(addon_id),
+                "gen": _integrated_addon_entry_source(addon_id, row, category),
+                "skipped": 0,
+                "added": 0,
+                "has_more": False,
+            }
+        )
+
+    # Round-robin across add-ons so one chatty add-on can't bury every other
+    # add-on's content under hundreds of its own items before the user sees it.
+    # Each page only shows per_addon_cap items per add-on; "offset" resumes a
+    # later page from where the previous page's cap cut off, so every item in
+    # a fully-mapped add-on section remains reachable across pages.
+    active = list(sources)
+    while active:
+        still_active = []
+        for source in active:
+            if source["added"] >= per_addon_cap:
+                source["has_more"] = True
+                continue
+
+            try:
+                source_is_custom, entry = next(source["gen"])
+            except StopIteration:
+                continue
+
+            target = entry.get("file") or ""
+            if not target:
+                still_active.append(source)
+                continue
+
+            title = entry.get("label") or entry.get("title") or target
+            if _is_integration_bridge_title(title):
+                still_active.append(source)
+                continue
+
+            addon_id = source["addon_id"]
+            row = source["row"]
+            title_key = _title_key(title)
+            dedupe_key = "{0}:{1}".format(addon_id, title_key) if title_key else "{0}:{1}".format(addon_id, target.lower())
+            if dedupe_key in seen_title_keys:
+                still_active.append(source)
+                continue
+
+            is_validated, vote = _integrated_target_status(target, is_folder=False)
+            if not _stream_visible_by_filter(validated=is_validated, vote=vote):
+                still_active.append(source)
+                continue
+
+            if source["skipped"] < offset:
+                source["skipped"] += 1
+                still_active.append(source)
+                continue
+
+            seen_title_keys.add(dedupe_key)
+
+            label = _format_validated_label("[Integrated {0}] {1}".format(row["name"], title), is_validated)
+            label = _format_custom_mapped_label(label, source_is_custom)
+            art = {
+                "thumb": entry.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["thumb"],
+                "icon": entry.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["icon"],
+                "fanart": entry.get("fanart") or row.get("fanart") or DEFAULT_ART["fanart"],
+            }
+            add_validated_playable_item(
+                label,
+                {"action": "external_play", "target": target},
+                status=_target_validation_status(target),
+                info={"title": title, "genre": category.title()},
+                art=art,
+                context_items=_scan_context_items_for_target(
+                    target,
+                    title=row.get("name", ""),
+                    label=title,
+                    is_folder=False,
+                ),
+            )
+            total_added += 1
+            source["added"] += 1
+            still_active.append(source)
+
+        active = still_active
+
+    next_offset = (offset + per_addon_cap) if any(source["has_more"] for source in sources) else None
+    return total_added, next_offset
 
 
 def add_folder_item(label, query, art=None, context_items=None, label2=""):
@@ -3336,6 +3450,7 @@ def list_sports_menu():
 def list_sport_topic(query):
     xbmcplugin.setPluginCategory(HANDLE, "Sports: {}".format(query))
     seen = set()
+    seen_title_keys = set()
     found = 0
     for provider in sorted(PROVIDERS.values(), key=lambda p: p.name.lower()):
         auth_state = get_auth_state(provider.id)
@@ -3363,6 +3478,44 @@ def list_sport_topic(query):
                 {"return_query": query},
             )
             found += 1
+
+    for row, entry in _iter_integrated_sport_topic_items(query):
+        target = (entry.get("file") or "").strip()
+        if not target:
+            continue
+        title = entry.get("label") or entry.get("title") or target
+        if _is_integration_bridge_title(title):
+            continue
+        title_key = _title_key(title)
+        dedupe_key = "{0}:{1}".format(row.get("name", ""), title_key) if title_key else "{0}:{1}".format(row.get("name", ""), target.lower())
+        if dedupe_key in seen_title_keys:
+            continue
+        seen_title_keys.add(dedupe_key)
+
+        is_validated, vote = _integrated_target_status(target, is_folder=False)
+        if not _stream_visible_by_filter(validated=is_validated, vote=vote):
+            continue
+
+        label = _format_validated_label("[Integrated {0}] {1}".format(row.get("name", ""), title), is_validated)
+        art = {
+            "thumb": entry.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["thumb"],
+            "icon": entry.get("thumbnail") or row.get("thumbnail") or DEFAULT_ART["icon"],
+            "fanart": entry.get("fanart") or row.get("fanart") or DEFAULT_ART["fanart"],
+        }
+        add_validated_playable_item(
+            label,
+            {"action": "external_play", "target": target},
+            status=_target_validation_status(target),
+            info={"title": title, "genre": "Sports"},
+            art=art,
+            context_items=_scan_context_items_for_target(
+                target,
+                title=row.get("name", ""),
+                label=title,
+                is_folder=False,
+            ),
+        )
+        found += 1
 
     if not found:
         xbmcgui.Dialog().notification("MEOS", "No legal sports streams found for this filter", xbmcgui.NOTIFICATION_INFO, 3000)
@@ -3500,11 +3653,12 @@ def list_provider_catalog(provider_id):
     xbmcplugin.endOfDirectory(HANDLE)
 
 
-def list_category(provider_id, category):
+def list_category(provider_id, category, integrated_offset=0):
     if provider_id == "all":
         seen_titles = set()
         found = 0
         selected_integrated = _get_integrated_addon_ids()
+        integrated_offset = max(0, int(integrated_offset or 0))
 
         add_action_item(
             "Legend: 👍 Working | 👎 Non-working | No icon Unverified",
@@ -3574,8 +3728,20 @@ def list_category(provider_id, category):
                 )
                 found += 1
 
-        integrated_added = add_integrated_category_items(category)
+        integrated_added, integrated_next_offset = add_integrated_category_items(category, offset=integrated_offset)
         found += integrated_added
+
+        if integrated_next_offset is not None:
+            add_folder_item(
+                "Show More Integrated {0}...".format(category.title()),
+                {
+                    "action": "list_category",
+                    "provider": provider_id,
+                    "category": category,
+                    "integrated_offset": integrated_next_offset,
+                },
+            )
+            found += 1
 
         if not found:
             xbmcgui.Dialog().notification("MEOS", "No items in this category", xbmcgui.NOTIFICATION_INFO, 2500)
@@ -5240,7 +5406,7 @@ def add_integrated_addon_shortcuts(category):
             continue
 
         resolved_rows = _resolve_integrated_targets(addon_id, category, addon_name=row.get("name", ""))
-        for resolved in resolved_rows:
+        for resolved in resolved_rows[:MAX_INTEGRATED_SHORTCUTS_PER_ADDON]:
             target = (resolved.get("target") or "").strip()
             if not target:
                 continue
@@ -6120,7 +6286,11 @@ def router(params):
         return
 
     if action == "list_category":
-        list_category(params.get("provider", ""), params.get("category", ""))
+        list_category(
+            params.get("provider", ""),
+            params.get("category", ""),
+            integrated_offset=params.get("integrated_offset", "0"),
+        )
         return
 
     if action == "sports_menu":
