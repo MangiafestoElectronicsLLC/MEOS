@@ -29,7 +29,7 @@ from .base import BaseProvider
 _SEARCH_URL = "https://archive.org/advancedsearch.php"
 _META_URL = "https://archive.org/metadata/{}"
 _DL_URL = "https://archive.org/download/{}/{}"
-_ROWS = 80
+_ROWS = 160
 
 _LIVE_CATALOG = [
     {
@@ -37,12 +37,6 @@ _LIVE_CATALOG = [
         "title": "NASA TV Public Channel (Live)",
         "genre": "Public Media / Live",
         "stream_url": "https://ntv1.akamaized.net/hls/live/2014075/NASA-NTV1-HLS/master.m3u8",
-    },
-    {
-        "media_id": "pubfeed_live::nasa_media",
-        "title": "NASA TV Media Channel (Live)",
-        "genre": "Public Media / Live",
-        "stream_url": "https://ntv2.akamaized.net/hls/live/2014075/NASA-NTV2-HLS/master.m3u8",
     },
 ]
 
@@ -52,16 +46,23 @@ _COLLECTION_QUERIES = {
         "(collection:nasa OR collection:c-span OR collection:prelinger "
         "OR collection:usgovfilms OR collection:pbs) AND mediatype:movies"
     ),
-    "movies": "(collection:prelinger OR collection:usgovfilms) AND mediatype:movies",
-    "tv": "(collection:c-span OR collection:pbs) AND mediatype:movies",
-    "cable": "(collection:c-span OR collection:pbs OR collection:nasa) AND mediatype:movies",
+    "movies": (
+        "(collection:feature_films OR collection:prelinger "
+        "OR collection:usgovfilms) AND mediatype:movies"
+    ),
+    "tv": "(collection:classic_tv OR collection:c-span OR collection:pbs) AND mediatype:movies",
+    "cable": (
+        "(collection:classic_tv OR collection:c-span OR collection:pbs "
+        "OR collection:nasa) AND mediatype:movies"
+    ),
     "sports": "(collection:usgovfilms OR collection:prelinger) AND subject:sports AND mediatype:movies",
 }
 
 _DEFAULT_QUERY = _COLLECTION_QUERIES["docs"]
 _SCOPE = (
     "(collection:nasa OR collection:c-span OR collection:prelinger "
-    "OR collection:usgovfilms OR collection:pbs)"
+    "OR collection:usgovfilms OR collection:pbs OR collection:feature_films "
+    "OR collection:classic_tv)"
 )
 
 
@@ -89,11 +90,11 @@ def _search(query):
 
     rows = []
     for doc in data.get("response", {}).get("docs") or []:
-        identifier = (doc.get("identifier") or "").strip()
+        identifier = _metadata_text(doc.get("identifier")).strip()
         if not identifier:
             continue
-        title = (doc.get("title") or identifier).strip()
-        year = doc.get("year") or ""
+        title = _metadata_text(doc.get("title") or identifier).strip()
+        year = _metadata_text(doc.get("year"))
         collection = doc.get("collection")
         if isinstance(collection, list):
             collection = collection[0] if collection else ""
@@ -103,6 +104,12 @@ def _search(query):
             "genre": str(collection or "Public Media").replace("_", " ").title(),
         })
     return rows
+
+
+def _metadata_text(value):
+    if isinstance(value, list):
+        value = value[0] if value else ""
+    return str(value or "")
 
 
 _PLAYABLE_EXTS = (".mp4", ".m4v", ".mkv", ".webm", ".avi", ".mov", ".mpg", ".mpeg", ".ogv")

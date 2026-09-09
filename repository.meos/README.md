@@ -43,6 +43,7 @@ For fast troubleshooting on different devices, MEOS includes two category-view c
 - `Show integrated folder shortcuts in category views` restores legacy integrated folder shortcut rows in category pages when enabled (default is off for cleaner content-first views).
 
 Validated/non-working markers are now applied once per playable row to avoid duplicate status prefixes on some Kodi skins.
+Provider rows receive a green check when their resolved stream passed the bundled release validation manifest. Run `python scripts/validate_providers.py` from the repository root before packaging to refresh that manifest; failed probes are excluded. Playback results and user votes can still replace a bundled result when a stream later changes.
 
 ## Community Validation API
 

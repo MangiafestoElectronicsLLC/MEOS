@@ -4,6 +4,7 @@ import json
 import time
 import hashlib
 import hmac
+import os
 
 import xbmc
 import xbmcaddon
@@ -140,6 +141,7 @@ AUTO_INTEGRATION_LAST_CHECK_SETTING = "auto_integration_last_check"
 AUTO_INTEGRATION_CHECK_INTERVAL_SECONDS = 300
 REMOTE_VOTE_CACHE = {}
 BROWSABLE_TARGET_CACHE = {}
+BUNDLED_PROVIDER_VALIDATION = None
 SCRUBS_CLEANUP_SETTING = "scrubs_cleanup_revision"
 SCRUBS_CLEANUP_REVISION = "1"
 CATEGORY_HINTS = {
@@ -1426,6 +1428,23 @@ def _provider_validation_key(provider_id, media_id):
     return "{0}::{1}".format(provider_id or "", media_id or "")
 
 
+def _get_bundled_provider_validation():
+    global BUNDLED_PROVIDER_VALIDATION
+    if BUNDLED_PROVIDER_VALIDATION is not None:
+        return BUNDLED_PROVIDER_VALIDATION
+
+    BUNDLED_PROVIDER_VALIDATION = set()
+    manifest_path = os.path.join(os.path.dirname(__file__), "resources", "provider-validation.json")
+    try:
+        with open(manifest_path, "r") as handle:
+            payload = json.load(handle)
+        values = payload.get("validated", []) if isinstance(payload, dict) else []
+        BUNDLED_PROVIDER_VALIDATION = set(str(value) for value in values if value)
+    except Exception as exc:
+        xbmc.log("MEOS bundled validation unavailable: {0}".format(exc), xbmc.LOGWARNING)
+    return BUNDLED_PROVIDER_VALIDATION
+
+
 def _is_provider_validated(provider_id, media_id):
     return _provider_validation_status(provider_id, media_id) == VALIDATION_STATUS_PASS
 
@@ -1444,6 +1463,8 @@ def _provider_validation_status(provider_id, media_id):
     if _get_stream_vote(provider_id=provider_id, media_id=media_id) == "down":
         _mark_provider_failed(provider_id, media_id)
         return VALIDATION_STATUS_FAIL
+    if key in _get_bundled_provider_validation():
+        return VALIDATION_STATUS_PASS
     return VALIDATION_STATUS_UNVERIFIED
 
 

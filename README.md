@@ -4,15 +4,15 @@ MEOS is a Kodi repository plus a companion video add-on with a clean install pat
 
 ## Install (any Kodi device, not just this PC)
 
-1. Recommended: browse straight from Kodi using the GitHub Pages index
+1. Recommended: browse straight from Kodi using the GitHub Pages install source
 - In Kodi: Settings -> File manager -> Add source -> enter `https://mangiafestoelectronicsllc.github.io/MEOS/`.
 - Add-ons -> Install from zip file -> pick that source -> choose `repository.meos.zip` (installs the repo, which then auto-updates itself and MEOS from `addons.xml`).
-- If GitHub Pages is not enabled for this repo yet, enable it once: repo Settings -> Pages -> Deploy from branch -> `main` / `/docs`.
+- If the source is empty or returns "Couldn't retrieve directory information", GitHub Pages is not enabled or is serving an older branch. In the GitHub repo, open Settings -> Pages and select `Deploy from a branch`, branch `main`, folder `/docs`.
 
 2. Why plain raw GitHub URLs don't work as a Kodi source
 - `raw.githubusercontent.com` serves individual files but has no browsable directory listing, so Kodi File Manager shows "Couldn't retrieve directory information" if you add it directly as a source.
-- `docs/index.html` (served via GitHub Pages) is a real browsable page with direct links to the zips, which fixes this for every device, not just a PC that can download files manually.
-- The ZIP files themselves were never broken; only the directory-browsing step needed a real listing page.
+- The GitHub Pages source contains the ZIP files and an index with relative links, so Kodi does not need to browse raw GitHub.
+- Do not use the GitHub repository page or `https://github.com/MangiafestoElectronicsLLC/MEOS.git` as a Kodi source.
 
 3. Manual transfer fallback (no network browsing on the device)
 - Download `repository.meos.zip` (or `MEOS_ADDON_K18.zip` / `MEOS_ADDON_K20PLUS.zip` for a single-file plugin-only install) from GitHub on any PC/phone.

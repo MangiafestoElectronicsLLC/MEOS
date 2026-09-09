@@ -368,19 +368,19 @@ function Write-DocsIndex {
         [Parameter(Mandatory = $true)] [string]$RepositoryVersion
     )
 
-    $baseRaw = "https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main"
     $docsDir = Join-Path $Root "docs"
     if (-not (Test-Path $docsDir)) {
         New-Item -ItemType Directory -Path $docsDir | Out-Null
     }
 
-    # GitHub Pages hosts this so Kodi File Manager can browse a real directory
-    # listing; raw.githubusercontent.com only serves individual files.
+    Copy-Item -Path $RepositoryZipConveniencePath -Destination (Join-Path $docsDir "repository.meos.zip") -Force
+    Copy-Item -Path $SingleInstallZipPath -Destination (Join-Path $docsDir "MEOS_ADDON_K18.zip") -Force
+    Copy-Item -Path $SingleInstallZipModernPath -Destination (Join-Path $docsDir "MEOS_ADDON_K20PLUS.zip") -Force
+
     $links = @(
-        @{ Name = "repository.meos.zip (install this first)"; Href = "$baseRaw/repository.meos.zip" },
-        @{ Name = "plugin.video.meoshub-$hubVersion.zip (all-in-one MEOS Hub)"; Href = "$baseRaw/zips/plugin.video.meoshub/plugin.video.meoshub-$hubVersion.zip" },
-        @{ Name = "MEOS_ADDON_K18.zip (Kodi 18 direct install)"; Href = "$baseRaw/MEOS_ADDON_K18.zip" },
-        @{ Name = "MEOS_ADDON_K20PLUS.zip (Kodi 19+/Firestick direct install)"; Href = "$baseRaw/MEOS_ADDON_K20PLUS.zip" }
+        @{ Name = "repository.meos.zip (install this first)"; Href = "repository.meos.zip" },
+        @{ Name = "MEOS_ADDON_K18.zip (Kodi 18 direct install)"; Href = "MEOS_ADDON_K18.zip" },
+        @{ Name = "MEOS_ADDON_K20PLUS.zip (Kodi 19+/Firestick direct install)"; Href = "MEOS_ADDON_K20PLUS.zip" }
     )
 
     $listItems = ($links | ForEach-Object { "    <li><a href=`"$($_.Href)`">$($_.Name)</a></li>" }) -join [Environment]::NewLine
@@ -394,7 +394,7 @@ function Write-DocsIndex {
 </head>
 <body>
 <h1>MEOS Kodi Repository (v$RepositoryVersion)</h1>
-<p>Add this page as a source in Kodi File Manager, then use Install from zip file.</p>
+<p>Add this URL as a Kodi File Manager source, then use Install from zip file.</p>
 <ul>
 $listItems
 </ul>

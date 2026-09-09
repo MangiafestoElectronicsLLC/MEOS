@@ -16,6 +16,7 @@ import os
 import sys
 import time
 import types
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 
 try:
@@ -178,6 +179,11 @@ def main():
     parser.add_argument("--provider", action="append", help="only test these provider ids")
     parser.add_argument("--workers", type=int, default=5)
     parser.add_argument("--out", default=os.path.join(REPO_ROOT, "provider-validation.json"))
+    parser.add_argument(
+        "--seed-out",
+        default=os.path.join(ADDON_DIR, "resources", "provider-validation.json"),
+        help="compact successful-probe manifest bundled with the add-on",
+    )
     args = parser.parse_args()
 
     _install_kodi_stubs()
@@ -211,6 +217,29 @@ def main():
 
     with open(args.out, "w") as handle:
         json.dump(all_results, handle, indent=2)
+
+    validated = set(
+        "{}::{}".format(row["provider"], row["media_id"])
+        for row in all_results
+        if row.get("ok") and not row.get("skipped")
+    )
+    if args.provider and os.path.exists(args.seed_out):
+        try:
+            with open(args.seed_out, "r") as handle:
+                existing_seed = json.load(handle)
+            tested_prefixes = tuple("{}::".format(provider_id) for provider_id in args.provider)
+            validated.update(
+                key for key in existing_seed.get("validated", [])
+                if not key.startswith(tested_prefixes)
+            )
+        except Exception:
+            pass
+    seed_payload = {
+        "generated_at": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "validated": sorted(validated),
+    }
+    with open(args.seed_out, "w") as handle:
+        json.dump(seed_payload, handle, indent=2, sort_keys=True)
 
     failures = [r for r in all_results if not r["ok"]]
     return 1 if failures else 0
