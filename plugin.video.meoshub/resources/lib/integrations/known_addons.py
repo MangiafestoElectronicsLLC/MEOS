@@ -105,6 +105,20 @@ BUILTIN_INTEGRATIONS = [
             'networks': NETWORK_PATHS,
         },
     },
+    {
+        'key': 'youtube',
+        'label': 'YouTube',
+        'addon_id_guess': 'plugin.video.youtube',
+        'keywords': ['youtube', 'you tube'],
+        'category_paths': {
+            'movies': [['Movies'], ['Playlists'], ['Popular right now']],
+            'tvshows': [['Shows'], ['Subscriptions'], ['Playlists']],
+            'sports': [['Sports'], ['Search']],
+            'ppv': [['Live'], ['Search']],
+            'livetv': [['Live'], ['Search']],
+            'networks': [['Channels'], ['Subscriptions'], ['Playlists']],
+        },
+    },
 ]
 
 # Settings id (bool) that toggles each built-in integration on/off.
@@ -113,4 +127,5 @@ BUILTIN_TOGGLE_SETTING = {
     'theloop': 'integration_theloop_enabled',
     'ghost': 'integration_ghost_enabled',
     'thecrew': 'integration_thecrew_enabled',
+    'youtube': 'integration_youtube_enabled',
 }

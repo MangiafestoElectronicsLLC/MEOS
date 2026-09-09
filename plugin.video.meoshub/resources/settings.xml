@@ -18,6 +18,7 @@
     <setting id="integration_theloop_enabled" type="bool" label="Enable The Loop" default="true" />
     <setting id="integration_ghost_enabled" type="bool" label="Enable Ghost" default="true" />
     <setting id="integration_thecrew_enabled" type="bool" label="Enable The Crew" default="true" />
+    <setting id="integration_youtube_enabled" type="bool" label="Enable YouTube" default="true" />
     <setting id="custom_integrations_json" type="text" label="Custom integrations (internal, use in-addon menu)" default="" visible="false" />
   </category>
   <category label="Scrapers">

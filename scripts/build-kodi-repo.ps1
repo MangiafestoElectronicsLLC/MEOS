@@ -9,6 +9,8 @@ $ErrorActionPreference = "Stop"
 $Root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $PluginSourceDir = Join-Path $Root "repository.meos"
 $PluginAddonXmlPath = Join-Path $PluginSourceDir "addon.xml"
+$HubSourceDir = Join-Path $Root "plugin.video.meoshub"
+$HubAddonXmlPath = Join-Path $HubSourceDir "addon.xml"
 $RepositoryAddonXmlPath = Join-Path $Root "addon.xml"
 $ZipsRoot = Join-Path $Root "zips"
 $AddonsXmlPath = Join-Path $Root "addons.xml"
@@ -61,6 +63,9 @@ if (-not (Test-Path $PluginAddonXmlPath)) {
 if (-not (Test-Path $RepositoryAddonXmlPath)) {
     throw "Missing repository addon.xml at $RepositoryAddonXmlPath"
 }
+if (-not (Test-Path $HubAddonXmlPath)) {
+    throw "Missing hub addon.xml at $HubAddonXmlPath"
+}
 
 @(
     (Join-Path $Root "MEOS_ADDON.zip"),
@@ -72,18 +77,23 @@ if (-not (Test-Path $RepositoryAddonXmlPath)) {
 }
 
 [xml]$pluginXml = Get-Content -Path $PluginAddonXmlPath
+[xml]$hubXml = Get-Content -Path $HubAddonXmlPath
 [xml]$repositoryXml = Get-Content -Path $RepositoryAddonXmlPath
 
 if (-not $NoAutoBump) {
     $pluginBump = Update-AddonVersion -AddonXmlPath $PluginAddonXmlPath
+    $hubBump = Update-AddonVersion -AddonXmlPath $HubAddonXmlPath
     $repositoryBump = Update-AddonVersion -AddonXmlPath $RepositoryAddonXmlPath
 
     [xml]$pluginXml = Get-Content -Path $PluginAddonXmlPath
+    [xml]$hubXml = Get-Content -Path $HubAddonXmlPath
     [xml]$repositoryXml = Get-Content -Path $RepositoryAddonXmlPath
 }
 
 $pluginId = $pluginXml.addon.id
 $pluginVersion = $pluginXml.addon.version
+$hubId = $hubXml.addon.id
+$hubVersion = $hubXml.addon.version
 $repositoryId = $repositoryXml.addon.id
 $repositoryVersion = $repositoryXml.addon.version
 
@@ -97,6 +107,9 @@ Remove-Item -Force -ErrorAction SilentlyContinue
 
 if ([string]::IsNullOrWhiteSpace($pluginId) -or [string]::IsNullOrWhiteSpace($pluginVersion)) {
     throw "Plugin addon.xml is missing id or version"
+}
+if ([string]::IsNullOrWhiteSpace($hubId) -or [string]::IsNullOrWhiteSpace($hubVersion)) {
+    throw "Hub addon.xml is missing id or version"
 }
 if ([string]::IsNullOrWhiteSpace($repositoryId) -or [string]::IsNullOrWhiteSpace($repositoryVersion)) {
     throw "Repository addon.xml is missing id or version"
@@ -225,8 +238,16 @@ if (Test-Path $legacyPluginZipPath) {
     Remove-Item -Path $legacyPluginZipPath -Force
 }
 
+$hubZipDir = Join-Path $ZipsRoot $hubId
+if (-not (Test-Path $hubZipDir)) {
+    New-Item -ItemType Directory -Path $hubZipDir | Out-Null
+}
+Get-ChildItem -Path $hubZipDir -Filter ("{0}-*.zip" -f $hubId) -File -ErrorAction SilentlyContinue |
+Remove-Item -Force -ErrorAction SilentlyContinue
+
 $k18PluginZipPath = Join-Path $pluginZipDir ("{0}-{1}-k18.zip" -f $pluginId, $pluginVersion)
 $k21PluginZipPath = Join-Path $pluginZipDir ("{0}-{1}.zip" -f $pluginId, $pluginVersion)
+$hubZipPath = Join-Path $hubZipDir ("{0}-{1}.zip" -f $hubId, $hubVersion)
 
 $profileDefinitions = @(
     @{
@@ -264,10 +285,23 @@ foreach ($buildProfile in $profileDefinitions) {
     Remove-Item -Path $pluginStagingRoot -Recurse -Force
 }
 
+$hubStagingRoot = Join-Path $env:TEMP ("meoshub-stage-{0}" -f [guid]::NewGuid().ToString("N"))
+$hubStagingDir = Join-Path $hubStagingRoot $hubId
+New-Item -ItemType Directory -Path $hubStagingDir -Force | Out-Null
+
+Copy-Item -Path (Join-Path $HubSourceDir "*") -Destination $hubStagingDir -Recurse -Force
+Get-ChildItem -Path $hubStagingDir -Recurse -Directory -Filter "__pycache__" -ErrorAction SilentlyContinue |
+Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+Get-ChildItem -Path $hubStagingDir -Recurse -File -Include "*.pyc", "*.pyo" -ErrorAction SilentlyContinue |
+Remove-Item -Force -ErrorAction SilentlyContinue
+New-ZipFromFolder -SourceFolder $hubStagingRoot -DestinationZip $hubZipPath
+Remove-Item -Path $hubStagingRoot -Recurse -Force
+
 $addonsXmlContent = @(
     '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
     '<addons>'
     $pluginXml.addon.OuterXml
+    $hubXml.addon.OuterXml
     '</addons>'
 ) -join [Environment]::NewLine
 
@@ -344,6 +378,7 @@ function Write-DocsIndex {
     # listing; raw.githubusercontent.com only serves individual files.
     $links = @(
         @{ Name = "repository.meos.zip (install this first)"; Href = "$baseRaw/repository.meos.zip" },
+        @{ Name = "plugin.video.meoshub-$hubVersion.zip (all-in-one MEOS Hub)"; Href = "$baseRaw/zips/plugin.video.meoshub/plugin.video.meoshub-$hubVersion.zip" },
         @{ Name = "MEOS_ADDON_K18.zip (Kodi 18 direct install)"; Href = "$baseRaw/MEOS_ADDON_K18.zip" },
         @{ Name = "MEOS_ADDON_K20PLUS.zip (Kodi 19+/Firestick direct install)"; Href = "$baseRaw/MEOS_ADDON_K20PLUS.zip" }
     )
@@ -375,6 +410,7 @@ Write-DocsIndex -Root $Root -RepositoryVersion $repositoryVersion
 Write-Host "Build completed"
 if (-not $NoAutoBump) {
     Write-Host "Plugin version: $($pluginBump.OldVersion) -> $($pluginBump.NewVersion)"
+    Write-Host "Hub version: $($hubBump.OldVersion) -> $($hubBump.NewVersion)"
     Write-Host "Repository version: $($repositoryBump.OldVersion) -> $($repositoryBump.NewVersion)"
 }
 else {
@@ -382,6 +418,7 @@ else {
 }
 Write-Host "Plugin zip (Kodi 18): $k18PluginZipPath"
 Write-Host "Plugin zip (Kodi 21/22): $k21PluginZipPath"
+Write-Host "Hub zip: $hubZipPath"
 Write-Host "Single install zip (Kodi 18): $SingleInstallZipPath"
 Write-Host "Single install zip (Kodi 20+): $SingleInstallZipModernPath"
 Write-Host "Repository zip: $repositoryZipPath"
