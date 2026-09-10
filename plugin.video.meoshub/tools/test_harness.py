@@ -55,6 +55,7 @@ def check_router_smoke_test():
         'category&category=movies',
         'category&category=tvshows',
         'integrations',
+        'integration_discover',
         'favorites',
         'settings',
         'settings_categories',

@@ -13,6 +13,25 @@ standard `xbmcplugin.setResolvedUrl` API.
 
 ---
 
+## 0. Installing MEOS Hub (Kodi 18.7 and Kodi 19+/20+)
+
+MEOS Hub ships in two build profiles from the same source, produced by
+`scripts/build-kodi-repo.ps1`:
+
+| Kodi version | Zip | Install method |
+| --- | --- | --- |
+| 19+ / 20+ / Firestick (modern, Python 3) | `zips/plugin.video.meoshub/plugin.video.meoshub-<version>.zip` | Install the MEOS repository (`repository.meos.zip`), then **Add-ons -> Install from repository -> MEOS Repository -> MEOS Hub** (auto-updates), or install that zip directly. |
+| 18.7 / Leia (legacy, Python 2) | `MEOS_HUB_K18.zip` | **Add-ons -> Install from zip file** directly. The repository's `addons.xml` only targets Kodi 19+, so Kodi 18.7 always needs this zip installed manually and reinstalled for updates. |
+
+See the top-level [README.md](../README.md) for the full any-device
+install walkthrough (GitHub Pages source vs. manual zip transfer). Both
+build profiles are generated from this same `plugin.video.meoshub/`
+source folder - the code itself is written to run under both Python 2
+(Kodi 18.7) and Python 3 (Kodi 19+), only the `xbmc.python` dependency
+version in the packaged `addon.xml` differs between the two zips.
+
+---
+
 ## 1. How it works
 
 ```
@@ -72,28 +91,42 @@ Each unified category page shows:
 ### Addon Integrations menu
 
 Lists **Scrubs V2**, **The Loop**, **Ghost**, **The Crew**, plus **+ Add
-Your Own Add-on**. Each shows whether it's currently installed on this
-device. Selecting an installed integration opens its own unified
-Movies/TV Shows/.../Live TV categories *inside MEOS Hub*; selecting an
-item routes straight into that add-on's own `plugin://` URL, exactly like
-opening it directly - MEOS Hub does not need to understand its internal
-code to do this.
+Your Own Add-on** and **Discover All Installed Add-ons**. Each shows
+whether it's currently installed on this device. Selecting an installed
+integration opens its own unified Movies/TV Shows/.../Live TV categories
+*inside MEOS Hub*; selecting an item routes straight into that add-on's
+own `plugin://` URL, exactly like opening it directly - MEOS Hub does not
+need to understand its internal code to do this.
+
+**Discover All Installed Add-ons** lists every other video add-on already
+installed on the device (found via `Addons.GetAddons`) and lets you flip
+any of them into an integration with a single select - no need to type an
+add-on id. Discovered add-ons don't need a hand-written path mapping: MEOS
+Hub falls back to a bounded breadth-first scan of the add-on's own menu
+tree, scoring folder labels against generic category keywords (see
+`CATEGORY_KEYWORDS` in `known_addons.py`), and caches whatever folder it
+resolves so repeat visits are fast. This is what makes MEOS Hub a true
+"any and all add-ons" hub instead of a curated allow-list.
 
 ---
 
 ## 2. Adding a new integrated add-on
 
-You do **not** need to edit any code to add an add-on:
+You do **not** need to edit any code to add an add-on. Two ways:
 
-1. Go to **Addon Integrations -> + Add Your Own Add-on** (or **Settings ->
-   Manage Integrations -> + Add Your Own Add-on**).
-2. Enter the exact add-on id (e.g. `plugin.video.example`) - find this in
+1. **Fastest:** open **Addon Integrations -> Discover All Installed
+   Add-ons** and select the add-on from the list of everything already
+   installed on this device.
+2. **Manual:** go to **Addon Integrations -> + Add Your Own Add-on** (or
+   **Settings -> Manage Integrations -> + Add Your Own Add-on**) and enter
+   the exact add-on id (e.g. `plugin.video.example`) - find this in
    Kodi's *Add-ons -> My add-ons -> ... -> Information* screen.
-3. MEOS Hub will browse that add-on's own menu tree looking for folders
-   named things like "Movies", "TV Shows", "Live TV", etc. and merge
-   whatever it finds into the matching MEOS Hub category. If the add-on
-   uses different wording, its content still shows up as a folder shortcut
-   you can browse manually inside **Addon Integrations**.
+
+Either way, MEOS Hub will browse that add-on's own menu tree looking for
+folders named things like "Movies", "TV Shows", "Live TV", etc. and merge
+whatever it finds into the matching MEOS Hub category. If the add-on
+uses different wording, its content still shows up as a folder shortcut
+you can browse manually inside **Addon Integrations**.
 
 If you *are* editing code (e.g. to contribute a better path mapping for a
 popular add-on), add an entry to `BUILTIN_INTEGRATIONS` in

@@ -2406,7 +2406,7 @@ def _resolve_integrated_targets(addon_id, category, addon_name=""):
         label = entry.get("label") or entry.get("title") or file_path
         category_score = _score_category_match(label, category)
         inferred_category = _infer_category_from_text("{0} {1}".format(label, file_path), default="")
-        if category_score <= 0 and inferred_category != category:
+        if category_score <= 0 or inferred_category != category:
             continue
 
         if inferred_category == category:
@@ -2414,7 +2414,7 @@ def _resolve_integrated_targets(addon_id, category, addon_name=""):
         ranked_fallback.append((category_score, entry))
 
     if not ranked_fallback:
-        return [{"target": root_target, "is_folder": True, "matched_label": "", "thumbnail": "", "fanart": ""}]
+        return []
 
     ranked_fallback.sort(key=lambda row: row[0], reverse=True)
     fallback_results = []

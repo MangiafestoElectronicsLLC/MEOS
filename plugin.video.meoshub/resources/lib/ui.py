@@ -17,6 +17,7 @@ from resources.lib.content import categories as categories_content
 from resources.lib.content import favorites as favorites_content
 from resources.lib.content import importexport
 from resources.lib.content import search as search_content
+from resources.lib.integrations import base as integrations_base
 from resources.lib.integrations import manager as integrations_manager
 from resources.lib.integrations.known_addons import BUILTIN_TOGGLE_SETTING
 from resources.lib.scrapers import manager as scrapers_manager
@@ -208,6 +209,7 @@ def list_integrations_menu():
         else:
             add_folder(label, 'settings_integrations')
     add_folder('+ Add Your Own Add-on', 'integration_add_custom')
+    add_folder('Discover All Installed Add-ons', 'integration_discover')
     _finish(sort=False)
 
 
@@ -255,7 +257,36 @@ def integration_add_custom():
 
 def integration_remove_custom(addon_id):
     if integrations_manager.remove_custom_integration(addon_id):
+        integrations_base.clear_target_cache(addon_id)
         kodi.notify('Removed integration')
+
+
+def list_discover_addons():
+    """List every installed video add-on that isn't already a built-in or
+    custom integration, so any of them can be added as an integration with
+    a single click (no need to know/type its exact add-on id).
+    """
+    _content_type()
+    discoverable = integrations_manager.get_discoverable_addons()
+    enabled_ids = set(integrations_manager.get_auto_enabled_ids())
+    if not discoverable:
+        add_folder('No other installed video add-ons found', 'integrations')
+    for addon in discoverable:
+        addon_id = addon.get('addonid')
+        name = addon.get('name') or addon_id
+        status = 'Integrated - select to remove' if addon_id in enabled_ids else 'Select to integrate'
+        add_folder('{0}: {1}'.format(name, status), 'integration_auto_toggle', addon_id=addon_id)
+    add_folder('<< Back to Integrations', 'integrations')
+    _finish(sort=False)
+
+
+def integration_auto_toggle(addon_id):
+    enabled_ids = set(integrations_manager.get_auto_enabled_ids())
+    new_state = addon_id not in enabled_ids
+    integrations_manager.set_auto_enabled(addon_id, new_state)
+    integrations_base.clear_target_cache(addon_id)
+    kodi.notify('Integrated' if new_state else 'Removed from integrations')
+    list_discover_addons()
 
 
 # ---------------------------------------------------------------------------
@@ -356,9 +387,12 @@ def settings_integrations_menu():
         if toggle_id:
             enabled = kodi.get_setting_bool(toggle_id, True)
             add_folder('{0}: {1}'.format(spec.label, 'ON' if enabled else 'OFF'), 'integration_toggle', key=spec.key)
+        elif spec.key.startswith(integrations_manager.AUTO_KEY_PREFIX):
+            add_folder('{0} (discovered) - remove'.format(spec.label), 'integration_auto_toggle', addon_id=spec.addon_id_guess)
         else:
             add_folder('{0} (custom) - remove'.format(spec.label), 'integration_remove_custom', addon_id=spec.addon_id_guess)
     add_folder('+ Add Your Own Add-on', 'integration_add_custom')
+    add_folder('Discover All Installed Add-ons', 'integration_discover')
     _finish(sort=False)
 
 

@@ -129,3 +129,16 @@ BUILTIN_TOGGLE_SETTING = {
     'thecrew': 'integration_thecrew_enabled',
     'youtube': 'integration_youtube_enabled',
 }
+
+# Generic keyword hints used by the BFS folder-matching fallback (see
+# integrations/base.py) so ANY installed add-on can be integrated - even one
+# with no built-in/custom breadcrumb paths - by scoring its own menu labels
+# against these unified-category keywords.
+CATEGORY_KEYWORDS = {
+    'movies': ['movie', 'movies', 'film', 'films', 'cinema'],
+    'tvshows': ['tv show', 'tv shows', 'shows', 'series', 'tv-shows', 'television'],
+    'networks': ['network', 'networks', 'channel', 'channels'],
+    'sports': ['sport', 'sports'],
+    'ppv': ['ppv', 'pay per view', 'pay-per-view'],
+    'livetv': ['live', 'live tv', 'cable', 'iptv'],
+}

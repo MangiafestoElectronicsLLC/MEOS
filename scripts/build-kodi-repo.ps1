@@ -18,6 +18,7 @@ $AddonsMd5Path = Join-Path $Root "addons.xml.md5"
 $RepositoryZipConveniencePath = Join-Path $Root "repository.meos.zip"
 $SingleInstallZipPath = Join-Path $Root "MEOS_ADDON_K18.zip"
 $SingleInstallZipModernPath = Join-Path $Root "MEOS_ADDON_K20PLUS.zip"
+$HubSingleInstallZipPath = Join-Path $Root "MEOS_HUB_K18.zip"
 $KodiInstallDir = Join-Path $Root "KodiInstall"
 
 function Get-NextPatchVersion {
@@ -247,6 +248,7 @@ Remove-Item -Force -ErrorAction SilentlyContinue
 
 $k18PluginZipPath = Join-Path $pluginZipDir ("{0}-{1}-k18.zip" -f $pluginId, $pluginVersion)
 $k21PluginZipPath = Join-Path $pluginZipDir ("{0}-{1}.zip" -f $pluginId, $pluginVersion)
+$k18HubZipPath = Join-Path $hubZipDir ("{0}-{1}-k18.zip" -f $hubId, $hubVersion)
 $hubZipPath = Join-Path $hubZipDir ("{0}-{1}.zip" -f $hubId, $hubVersion)
 
 $profileDefinitions = @(
@@ -285,17 +287,45 @@ foreach ($buildProfile in $profileDefinitions) {
     Remove-Item -Path $pluginStagingRoot -Recurse -Force
 }
 
-$hubStagingRoot = Join-Path $env:TEMP ("meoshub-stage-{0}" -f [guid]::NewGuid().ToString("N"))
-$hubStagingDir = Join-Path $hubStagingRoot $hubId
-New-Item -ItemType Directory -Path $hubStagingDir -Force | Out-Null
+# Hub uses the same K18 (Python 2)/K21 (Python 3) split as the plugin, so
+# MEOS Hub - the all-in-one add-on - installs directly on Kodi 18.7 too,
+# not just Kodi 19+/Firestick.
+$hubProfileDefinitions = @(
+    @{
+        Name                    = "k18"
+        PythonDependencyVersion = "2.25.0"
+        ProfileZipPath          = $k18HubZipPath
+        InstallZipPath          = $HubSingleInstallZipPath
+    },
+    @{
+        Name                    = "k21"
+        PythonDependencyVersion = "3.0.0"
+        ProfileZipPath          = $hubZipPath
+        InstallZipPath          = $null
+    }
+)
 
-Copy-Item -Path (Join-Path $HubSourceDir "*") -Destination $hubStagingDir -Recurse -Force
-Get-ChildItem -Path $hubStagingDir -Recurse -Directory -Filter "__pycache__" -ErrorAction SilentlyContinue |
-Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-Get-ChildItem -Path $hubStagingDir -Recurse -File -Include "*.pyc", "*.pyo" -ErrorAction SilentlyContinue |
-Remove-Item -Force -ErrorAction SilentlyContinue
-New-ZipFromFolder -SourceFolder $hubStagingRoot -DestinationZip $hubZipPath
-Remove-Item -Path $hubStagingRoot -Recurse -Force
+foreach ($hubBuildProfile in $hubProfileDefinitions) {
+    $hubStagingRoot = Join-Path $env:TEMP ("meoshub-{0}-stage-{1}" -f $hubBuildProfile.Name, [guid]::NewGuid().ToString("N"))
+    $hubStagingDir = Join-Path $hubStagingRoot $hubId
+    New-Item -ItemType Directory -Path $hubStagingDir -Force | Out-Null
+
+    Copy-Item -Path (Join-Path $HubSourceDir "*") -Destination $hubStagingDir -Recurse -Force
+    Get-ChildItem -Path $hubStagingDir -Recurse -Directory -Filter "__pycache__" -ErrorAction SilentlyContinue |
+    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    Get-ChildItem -Path $hubStagingDir -Recurse -File -Include "*.pyc", "*.pyo" -ErrorAction SilentlyContinue |
+    Remove-Item -Force -ErrorAction SilentlyContinue
+
+    $stagedHubAddonXmlPath = Join-Path $hubStagingDir "addon.xml"
+    Set-PluginPythonDependencyVersion -AddonXmlPath $stagedHubAddonXmlPath -PythonDependencyVersion $hubBuildProfile.PythonDependencyVersion
+
+    New-ZipFromFolder -SourceFolder $hubStagingRoot -DestinationZip $hubBuildProfile.ProfileZipPath
+    if ($hubBuildProfile.InstallZipPath) {
+        Copy-Item -Path $hubBuildProfile.ProfileZipPath -Destination $hubBuildProfile.InstallZipPath -Force
+    }
+
+    Remove-Item -Path $hubStagingRoot -Recurse -Force
+}
 
 $addonsXmlContent = @(
     '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
@@ -355,11 +385,14 @@ Get-ChildItem -Path $KodiInstallDir -Filter "MEOS_ADDON_K18-*.zip" -File -ErrorA
 Remove-Item -Force -ErrorAction SilentlyContinue
 Get-ChildItem -Path $KodiInstallDir -Filter "MEOS_ADDON_K20PLUS-*.zip" -File -ErrorAction SilentlyContinue |
 Remove-Item -Force -ErrorAction SilentlyContinue
+Get-ChildItem -Path $KodiInstallDir -Filter "MEOS_HUB_K18-*.zip" -File -ErrorAction SilentlyContinue |
+Remove-Item -Force -ErrorAction SilentlyContinue
 Get-ChildItem -Path $KodiInstallDir -Filter "repository.meos-*.zip" -File -ErrorAction SilentlyContinue |
 Remove-Item -Force -ErrorAction SilentlyContinue
 
 Copy-Item -Path $SingleInstallZipPath -Destination (Join-Path $KodiInstallDir "MEOS_ADDON_K18.zip") -Force
 Copy-Item -Path $SingleInstallZipModernPath -Destination (Join-Path $KodiInstallDir "MEOS_ADDON_K20PLUS.zip") -Force
+Copy-Item -Path $HubSingleInstallZipPath -Destination (Join-Path $KodiInstallDir "MEOS_HUB_K18.zip") -Force
 Copy-Item -Path $RepositoryZipConveniencePath -Destination (Join-Path $KodiInstallDir "repository.meos.zip") -Force
 
 function Write-DocsIndex {
@@ -376,11 +409,13 @@ function Write-DocsIndex {
     Copy-Item -Path $RepositoryZipConveniencePath -Destination (Join-Path $docsDir "repository.meos.zip") -Force
     Copy-Item -Path $SingleInstallZipPath -Destination (Join-Path $docsDir "MEOS_ADDON_K18.zip") -Force
     Copy-Item -Path $SingleInstallZipModernPath -Destination (Join-Path $docsDir "MEOS_ADDON_K20PLUS.zip") -Force
+    Copy-Item -Path $HubSingleInstallZipPath -Destination (Join-Path $docsDir "MEOS_HUB_K18.zip") -Force
 
     $links = @(
-        @{ Name = "repository.meos.zip (install this first)"; Href = "repository.meos.zip" },
-        @{ Name = "MEOS_ADDON_K18.zip (Kodi 18 direct install)"; Href = "MEOS_ADDON_K18.zip" },
-        @{ Name = "MEOS_ADDON_K20PLUS.zip (Kodi 19+/Firestick direct install)"; Href = "MEOS_ADDON_K20PLUS.zip" }
+        @{ Name = "repository.meos.zip (install this first, Kodi 19+/20+ - auto-updates both add-ons)"; Href = "repository.meos.zip" },
+        @{ Name = "MEOS_ADDON_K18.zip (Kodi 18.7 direct install, classic add-on)"; Href = "MEOS_ADDON_K18.zip" },
+        @{ Name = "MEOS_ADDON_K20PLUS.zip (Kodi 19+/Firestick direct install, classic add-on)"; Href = "MEOS_ADDON_K20PLUS.zip" },
+        @{ Name = "MEOS_HUB_K18.zip (Kodi 18.7 direct install, MEOS Hub all-in-one)"; Href = "MEOS_HUB_K18.zip" }
     )
 
     $listItems = ($links | ForEach-Object { "    <li><a href=`"$($_.Href)`">$($_.Name)</a></li>" }) -join [Environment]::NewLine
@@ -418,9 +453,11 @@ else {
 }
 Write-Host "Plugin zip (Kodi 18): $k18PluginZipPath"
 Write-Host "Plugin zip (Kodi 21/22): $k21PluginZipPath"
-Write-Host "Hub zip: $hubZipPath"
+Write-Host "Hub zip (Kodi 18): $k18HubZipPath"
+Write-Host "Hub zip (Kodi 19+): $hubZipPath"
 Write-Host "Single install zip (Kodi 18): $SingleInstallZipPath"
 Write-Host "Single install zip (Kodi 20+): $SingleInstallZipModernPath"
+Write-Host "Hub single install zip (Kodi 18): $HubSingleInstallZipPath"
 Write-Host "Repository zip: $repositoryZipPath"
 Write-Host "Repository zip (convenience): $RepositoryZipConveniencePath"
 Write-Host "KodiInstall folder: $KodiInstallDir"

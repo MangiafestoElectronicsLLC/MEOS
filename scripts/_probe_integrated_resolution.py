@@ -102,6 +102,8 @@ import default as meos  # noqa: E402
 
 ADDON_ID = "plugin.video.fakegratis"
 ROOT = "plugin://{0}/".format(ADDON_ID)
+MIXED_ADDON_ID = "plugin.video.fakemixed"
+MIXED_ROOT = "plugin://{0}/".format(MIXED_ADDON_ID)
 
 # Fake filesystem: Movies -> Movies -> TMDB -> In Theaters -> 12 movies.
 FAKE_TREE = {
@@ -130,6 +132,10 @@ FAKE_TREE = {
     ROOT + "Movies/Movies/TMDB/Popular/": [
         {"file": ROOT + "play?id=p{0}".format(i), "label": "Fake Popular Movie {0}".format(i), "filetype": "file"}
         for i in range(5)
+    ],
+    MIXED_ROOT: [
+        {"file": MIXED_ROOT + "live/", "label": "Live TV", "filetype": "directory"},
+        {"file": MIXED_ROOT + "cable/", "label": "Cable Channels", "filetype": "directory"},
     ],
 }
 
@@ -176,3 +182,16 @@ for t in targets:
 
 print("\nTotal distinct playable movie entries discovered: {0}".format(total_playables))
 print("RESULT:", "PASS" if total_playables >= 12 else "FAIL - expected at least 12 fake movies")
+
+print("\nResolving 'movies' targets for live/cable-only addon...")
+mixed_targets = meos._resolve_integrated_targets(MIXED_ADDON_ID, "movies", addon_name="Mixed Live Addon")
+mixed_is_safe = not mixed_targets or all(
+    meos._infer_category_from_text(
+        "{0} {1}".format(target.get("matched_label", ""), target.get("target", "")),
+        default="",
+    ) == "movies"
+    for target in mixed_targets
+)
+print("RESULT:", "PASS" if mixed_is_safe else "FAIL - live/cable target leaked into movies")
+if not mixed_is_safe:
+    sys.exit(1)

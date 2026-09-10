@@ -8,6 +8,11 @@ from resources.lib.utils import jsonrpc, kodi
 from resources.lib.utils.settings import get_json_setting, set_json_setting
 
 CUSTOM_SETTING_ID = 'custom_integrations_json'
+# Addon ids the user has opted into via "Discover All Installed Add-ons",
+# stored separately from CUSTOM_SETTING_ID since these have no user-entered
+# label/paths - they rely entirely on the generic BFS fallback in base.py.
+AUTO_ENABLED_SETTING = 'auto_integrations_enabled_json'
+AUTO_KEY_PREFIX = 'auto:'
 
 
 def _builtin_specs():
@@ -45,20 +50,85 @@ def _custom_specs():
     return specs
 
 
+def _known_addon_ids():
+    """Addon ids already covered by a built-in or custom integration, so
+    the discovery list only offers add-ons that aren't already handled.
+    """
+    ids = set(item['addon_id_guess'] for item in BUILTIN_INTEGRATIONS)
+    ids.update(item['addon_id'] for item in get_json_setting(CUSTOM_SETTING_ID, []))
+    return ids
+
+
+def get_auto_enabled_ids():
+    return get_json_setting(AUTO_ENABLED_SETTING, [])
+
+
+def set_auto_enabled(addon_id, enabled):
+    """Turn any installed add-on into an integration (or remove it) without
+    the user having to type its exact add-on id.
+    """
+    ids = get_auto_enabled_ids()
+    if enabled and addon_id not in ids:
+        ids.append(addon_id)
+    elif not enabled and addon_id in ids:
+        ids.remove(addon_id)
+    set_json_setting(AUTO_ENABLED_SETTING, ids)
+
+
+def get_discoverable_addons():
+    """Every installed video add-on that isn't already a built-in/custom
+    integration and isn't MEOS Hub itself - candidates for one-click
+    "Discover All Installed Add-ons" integration.
+    """
+    known = _known_addon_ids()
+    discoverable = []
+    for addon in jsonrpc.get_installed_addons(enabled_only=False):
+        addon_id = addon.get('addonid')
+        if not addon_id or addon_id == kodi.ADDON_ID or addon_id in known:
+            continue
+        discoverable.append(addon)
+    return discoverable
+
+
+def _auto_specs():
+    """Specs for user-enabled auto-discovered add-ons. category_paths is
+    left empty so Integration.get_category_items relies entirely on the
+    generic BFS keyword fallback - no code change is needed to support a
+    new add-on.
+    """
+    enabled_ids = set(get_auto_enabled_ids())
+    if not enabled_ids:
+        return []
+    specs = []
+    for addon in jsonrpc.get_installed_addons(enabled_only=False):
+        addon_id = addon.get('addonid')
+        if addon_id in enabled_ids:
+            specs.append(IntegrationSpec(
+                key=AUTO_KEY_PREFIX + addon_id,
+                label=addon.get('name') or addon_id,
+                addon_id_guess=addon_id,
+                keywords=[addon_id],
+                category_paths={},
+                builtin=False,
+            ))
+    return specs
+
+
 def get_enabled_specs():
-    """All specs the user currently wants active (built-in toggles + custom)."""
+    """All specs the user currently wants active (built-in toggles + custom + auto-discovered)."""
     enabled = []
     for spec in _builtin_specs():
         toggle_id = BUILTIN_TOGGLE_SETTING.get(spec.key)
         if not toggle_id or kodi.get_setting_bool(toggle_id, True):
             enabled.append(spec)
     enabled.extend(_custom_specs())
+    enabled.extend(_auto_specs())
     return enabled
 
 
 def get_all_specs():
-    """Built-in + custom specs regardless of enabled state (for the manage screen)."""
-    return _builtin_specs() + _custom_specs()
+    """Built-in + custom + auto-discovered specs regardless of enabled state (for the manage screen)."""
+    return _builtin_specs() + _custom_specs() + _auto_specs()
 
 
 def resolve(spec):

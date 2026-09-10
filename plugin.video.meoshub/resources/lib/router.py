@@ -28,6 +28,10 @@ def _dispatch(action, params):
         return ui.integration_add_custom()
     if action == 'integration_remove_custom':
         return ui.integration_remove_custom(params['addon_id'])
+    if action == 'integration_discover':
+        return ui.list_discover_addons()
+    if action == 'integration_auto_toggle':
+        return ui.integration_auto_toggle(params['addon_id'])
     if action == 'search':
         return ui.do_search()
     if action == 'favorites':

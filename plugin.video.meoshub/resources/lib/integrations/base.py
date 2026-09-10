@@ -10,7 +10,41 @@ MEOS Hub never imports or copies a third-party add-on's code. Instead it:
   3. Hands back plain plugin:// URLs. Kodi's normal navigation takes care
      of actually invoking the target add-on when the user selects an item.
 """
+from resources.lib.integrations.known_addons import CATEGORY_KEYWORDS
 from resources.lib.utils import jsonrpc
+from resources.lib.utils.settings import get_json_setting, set_json_setting
+
+# Persisted addon_id -> {category: folder_url} cache so a resolved folder
+# (via breadcrumbs or the generic BFS fallback) doesn't need to be
+# re-discovered on every single menu open.
+TARGET_CACHE_SETTING = 'integration_target_cache_json'
+
+# BFS fallback bounds: keep any single "any add-on" scan fast and bounded,
+# since add-ons can have arbitrarily deep/large menu trees.
+BFS_MAX_DEPTH = 3
+BFS_MAX_NODES = 40
+
+
+def _get_target_cache():
+    return get_json_setting(TARGET_CACHE_SETTING, {})
+
+
+def _cache_target(addon_id, category, url):
+    cache = _get_target_cache()
+    cache.setdefault(addon_id, {})[category] = url
+    set_json_setting(TARGET_CACHE_SETTING, cache)
+
+
+def clear_target_cache(addon_id=None):
+    """Drop cached folder resolutions, forcing a fresh BFS/breadcrumb scan.
+    Called after enabling/removing an integration so stale targets never stick.
+    """
+    if addon_id is None:
+        set_json_setting(TARGET_CACHE_SETTING, {})
+        return
+    cache = _get_target_cache()
+    if cache.pop(addon_id, None) is not None:
+        set_json_setting(TARGET_CACHE_SETTING, cache)
 
 
 class IntegrationSpec(object):
@@ -45,8 +79,8 @@ class Integration(object):
 
     def _navigate(self, breadcrumbs):
         """Walk a list of folder labels from the add-on root, one level at
-        a time, returning the directory listing at the end of the path
-        (or None if any breadcrumb label could not be found).
+        a time, returning (final_folder_url, items) at the end of the path
+        (or (None, None) if any breadcrumb label could not be found).
         """
         current_url = self.root_url
         items = jsonrpc.get_directory(current_url)
@@ -58,20 +92,72 @@ class Integration(object):
                     match = entry
                     break
             if not match:
-                return None
+                return None, None
             current_url = match.get('file')
             if not current_url:
-                return None
+                return None, None
             items = jsonrpc.get_directory(current_url)
-        return items
+        return current_url, items
+
+    def _bfs_find_category_folder(self, category):
+        """Generic fallback: breadth-first search this add-on's own menu
+        tree, scoring folder labels against unified-category keywords, so
+        add-ons with no configured breadcrumb paths can still be matched.
+        Bounded by BFS_MAX_DEPTH/BFS_MAX_NODES to keep it fast.
+        """
+        keywords = CATEGORY_KEYWORDS.get(category, [])
+        if not keywords:
+            return None
+        queue = [(self.root_url, 0)]
+        visited = set()
+        best_url = None
+        best_score = 0
+        while queue and len(visited) < BFS_MAX_NODES:
+            url, depth = queue.pop(0)
+            if url in visited:
+                continue
+            visited.add(url)
+            for entry in jsonrpc.get_directory(url):
+                label = (entry.get('label') or '').strip().lower()
+                entry_url = entry.get('file')
+                if not entry_url:
+                    continue
+                is_folder = entry.get('filetype') == 'directory' or entry_url.startswith('plugin://')
+                if not is_folder:
+                    continue
+                score = sum(1 for keyword in keywords if keyword in label)
+                if score > best_score:
+                    best_score = score
+                    best_url = entry_url
+                if score > 0 and depth + 1 < BFS_MAX_DEPTH:
+                    queue.append((entry_url, depth + 1))
+        return best_url
 
     def get_category_items(self, category):
-        """Return (folder_url, items) for a unified category, trying each
-        configured breadcrumb path until one resolves to a non-empty
-        listing. Falls back to the add-on root if nothing matches.
+        """Return items for a unified category, in order of preference:
+        1. A previously cached, resolved folder for this add-on+category.
+        2. Each configured breadcrumb path, tried in order.
+        3. A generic BFS keyword scan of the add-on's own menu tree, so
+           add-ons with no configured breadcrumb paths still work.
+        Any newly resolved folder is cached for next time.
         """
-        for breadcrumbs in self.spec.category_paths.get(category, []):
-            items = self._navigate(breadcrumbs)
+        cached_url = _get_target_cache().get(self.addon_id, {}).get(category)
+        if cached_url:
+            items = jsonrpc.get_directory(cached_url)
             if items:
                 return items
+
+        for breadcrumbs in self.spec.category_paths.get(category, []):
+            folder_url, items = self._navigate(breadcrumbs)
+            if items:
+                _cache_target(self.addon_id, category, folder_url)
+                return items
+
+        discovered_url = self._bfs_find_category_folder(category)
+        if discovered_url:
+            items = jsonrpc.get_directory(discovered_url)
+            if items:
+                _cache_target(self.addon_id, category, discovered_url)
+                return items
+
         return []
