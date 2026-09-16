@@ -1,0 +1,6 @@
+# Kodi repository feed files must stay byte-identical to their published md5.
+addons.xml -text
+addons.xml.md5 -text
+addons-*.xml -text
+addons-*.xml.md5 -text
+*.zip binary

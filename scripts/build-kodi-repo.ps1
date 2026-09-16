@@ -333,12 +333,13 @@ $addonsXmlContent = @(
     $pluginXml.addon.OuterXml
     $hubXml.addon.OuterXml
     '</addons>'
-) -join [Environment]::NewLine
+) -join "`n"
 
+# LF only: git normalizes CRLF on commit, which would invalidate the published md5.
 [System.IO.File]::WriteAllText($AddonsXmlPath, $addonsXmlContent, (New-Object System.Text.UTF8Encoding($false)))
 
 $md5Hash = (Get-FileHash -Path $AddonsXmlPath -Algorithm MD5).Hash.ToLowerInvariant()
-Set-Content -Path $AddonsMd5Path -Value $md5Hash -Encoding ASCII
+[System.IO.File]::WriteAllText($AddonsMd5Path, $md5Hash, (New-Object System.Text.ASCIIEncoding))
 
 $VersionedAddonsXmlPath = Join-Path $Root ("addons-{0}.xml" -f $repositoryVersion)
 $VersionedAddonsMd5Path = Join-Path $Root ("addons-{0}.xml.md5" -f $repositoryVersion)
