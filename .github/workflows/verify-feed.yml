@@ -1,0 +1,25 @@
+name: Verify Kodi repository feed
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Verify committed feed files
+        shell: pwsh
+        run: ./scripts/verify-repo-feed.ps1
+      - name: Self-test the verifier
+        shell: pwsh
+        run: ./scripts/test-verify-repo-feed.ps1
+      - name: Verify published feed is reachable and consistent
+        if: github.event_name != 'pull_request'
+        shell: pwsh
+        run: ./scripts/check-live-feed.ps1

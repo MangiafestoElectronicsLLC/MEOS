@@ -15,6 +15,10 @@ $RepositoryAddonXmlPath = Join-Path $Root "addon.xml"
 $ZipsRoot = Join-Path $Root "zips"
 $AddonsXmlPath = Join-Path $Root "addons.xml"
 $AddonsMd5Path = Join-Path $Root "addons.xml.md5"
+# Kodi 18.7 (Leia) gets its own feed: same add-ons, but declaring xbmc.python 2.x.
+$ZipsK18Root = Join-Path $Root "zips-k18"
+$AddonsK18XmlPath = Join-Path $Root "addons-k18.xml"
+$AddonsK18Md5Path = Join-Path $Root "addons-k18.xml.md5"
 $RepositoryZipConveniencePath = Join-Path $Root "repository.meos.zip"
 $SingleInstallZipPath = Join-Path $Root "MEOS_ADDON_K18.zip"
 $SingleInstallZipModernPath = Join-Path $Root "MEOS_ADDON_K20PLUS.zip"
@@ -102,8 +106,10 @@ $repositoryVersion = $repositoryXml.addon.version
 Get-ChildItem -Path $Root -Filter "repository.meos-*.zip" -File -ErrorAction SilentlyContinue |
 Remove-Item -Force -ErrorAction SilentlyContinue
 Get-ChildItem -Path $Root -Filter "addons-*.xml" -File -ErrorAction SilentlyContinue |
+Where-Object { $_.Name -ne "addons-k18.xml" } |
 Remove-Item -Force -ErrorAction SilentlyContinue
 Get-ChildItem -Path $Root -Filter "addons-*.xml.md5" -File -ErrorAction SilentlyContinue |
+Where-Object { $_.Name -ne "addons-k18.xml.md5" } |
 Remove-Item -Force -ErrorAction SilentlyContinue
 
 if ([string]::IsNullOrWhiteSpace($pluginId) -or [string]::IsNullOrWhiteSpace($pluginVersion)) {
@@ -204,17 +210,45 @@ function Set-RepositoryFeedUrls {
     [xml]$xmlDoc = Get-Content -Path $AddonXmlPath
     $baseRaw = "https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main"
 
-    $infoNode = $xmlDoc.SelectSingleNode('/addon/extension[@point="xbmc.addon.repository"]/dir/info')
-    $checksumNode = $xmlDoc.SelectSingleNode('/addon/extension[@point="xbmc.addon.repository"]/dir/checksum')
-    $datadirNode = $xmlDoc.SelectSingleNode('/addon/extension[@point="xbmc.addon.repository"]/dir/datadir')
-
-    if (-not $infoNode -or -not $checksumNode -or -not $datadirNode) {
-        throw "Missing repository feed nodes in $AddonXmlPath"
+    $extensionNode = $xmlDoc.SelectSingleNode('/addon/extension[@point="xbmc.addon.repository"]')
+    if (-not $extensionNode) {
+        throw "Missing xbmc.addon.repository extension in $AddonXmlPath"
     }
 
-    $infoNode.InnerText = "{0}/addons.xml" -f $baseRaw
-    $checksumNode.InnerText = "{0}/addons.xml.md5" -f $baseRaw
-    $datadirNode.InnerText = "{0}/zips/" -f $baseRaw
+    # Kodi filters <dir> blocks by the xbmc.addon version (ADDON_API): Leia is 18.x,
+    # Matrix 19.x, Nexus 20.x, Omega 21.x. Leia honours only @minversion, so the Leia
+    # block must stay reachable via minversion 0.0.0 while @maxversion hides it from 19+.
+    $dirDefinitions = @(
+        @{ MinVersion = "19.0.0"; MaxVersion = $null; Info = "addons.xml"; Checksum = "addons.xml.md5"; DataDir = "zips/" },
+        @{ MinVersion = "0.0.0"; MaxVersion = "18.9.9"; Info = "addons-k18.xml"; Checksum = "addons-k18.xml.md5"; DataDir = "zips-k18/" }
+    )
+
+    $extensionNode.SelectNodes("dir") | ForEach-Object { $extensionNode.RemoveChild($_) | Out-Null }
+
+    foreach ($definition in $dirDefinitions) {
+        $dirNode = $xmlDoc.CreateElement("dir")
+        $dirNode.SetAttribute("minversion", $definition.MinVersion)
+        if ($definition.MaxVersion) {
+            $dirNode.SetAttribute("maxversion", $definition.MaxVersion)
+        }
+
+        $infoNode = $xmlDoc.CreateElement("info")
+        $infoNode.SetAttribute("compressed", "false")
+        $infoNode.InnerText = "{0}/{1}" -f $baseRaw, $definition.Info
+        $dirNode.AppendChild($infoNode) | Out-Null
+
+        $checksumNode = $xmlDoc.CreateElement("checksum")
+        $checksumNode.InnerText = "{0}/{1}" -f $baseRaw, $definition.Checksum
+        $dirNode.AppendChild($checksumNode) | Out-Null
+
+        $datadirNode = $xmlDoc.CreateElement("datadir")
+        $datadirNode.SetAttribute("zip", "true")
+        $datadirNode.InnerText = "{0}/{1}" -f $baseRaw, $definition.DataDir
+        $dirNode.AppendChild($datadirNode) | Out-Null
+
+        $extensionNode.AppendChild($dirNode) | Out-Null
+    }
+
     $xmlDoc.Save($AddonXmlPath)
 }
 
@@ -246,9 +280,21 @@ if (-not (Test-Path $hubZipDir)) {
 Get-ChildItem -Path $hubZipDir -Filter ("{0}-*.zip" -f $hubId) -File -ErrorAction SilentlyContinue |
 Remove-Item -Force -ErrorAction SilentlyContinue
 
-$k18PluginZipPath = Join-Path $pluginZipDir ("{0}-{1}-k18.zip" -f $pluginId, $pluginVersion)
+# Leia resolves downloads as <datadir>/<id>/<id>-<version>.zip, so the Kodi 18 builds
+# need their own datadir rather than a "-k18" filename suffix inside zips/.
+$pluginZipK18Dir = Join-Path $ZipsK18Root $pluginId
+$hubZipK18Dir = Join-Path $ZipsK18Root $hubId
+foreach ($k18Dir in @($pluginZipK18Dir, $hubZipK18Dir)) {
+    if (-not (Test-Path $k18Dir)) {
+        New-Item -ItemType Directory -Path $k18Dir -Force | Out-Null
+    }
+    Get-ChildItem -Path $k18Dir -Filter "*.zip" -File -ErrorAction SilentlyContinue |
+    Remove-Item -Force -ErrorAction SilentlyContinue
+}
+
+$k18PluginZipPath = Join-Path $pluginZipK18Dir ("{0}-{1}.zip" -f $pluginId, $pluginVersion)
 $k21PluginZipPath = Join-Path $pluginZipDir ("{0}-{1}.zip" -f $pluginId, $pluginVersion)
-$k18HubZipPath = Join-Path $hubZipDir ("{0}-{1}-k18.zip" -f $hubId, $hubVersion)
+$k18HubZipPath = Join-Path $hubZipK18Dir ("{0}-{1}.zip" -f $hubId, $hubVersion)
 $hubZipPath = Join-Path $hubZipDir ("{0}-{1}.zip" -f $hubId, $hubVersion)
 
 $profileDefinitions = @(
@@ -327,19 +373,52 @@ foreach ($hubBuildProfile in $hubProfileDefinitions) {
     Remove-Item -Path $hubStagingRoot -Recurse -Force
 }
 
-$addonsXmlContent = @(
-    '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-    '<addons>'
+function Write-AddonsFeed {
+    param(
+        [Parameter(Mandatory = $true)] [string]$XmlPath,
+        [Parameter(Mandatory = $true)] [string]$Md5Path,
+        [Parameter(Mandatory = $true)] [string[]]$AddonXmlFragments
+    )
+
+    $content = @(
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        '<addons>'
+        $AddonXmlFragments
+        '</addons>'
+    ) -join "`n"
+
+    # LF only: git normalizes CRLF on commit, which would invalidate the published md5.
+    [System.IO.File]::WriteAllText($XmlPath, $content, (New-Object System.Text.UTF8Encoding($false)))
+
+    $hash = (Get-FileHash -Path $XmlPath -Algorithm MD5).Hash.ToLowerInvariant()
+    [System.IO.File]::WriteAllText($Md5Path, $hash, (New-Object System.Text.ASCIIEncoding))
+}
+
+function Get-AddonXmlWithPythonVersion {
+    param(
+        [Parameter(Mandatory = $true)] [System.Xml.XmlElement]$AddonElement,
+        [Parameter(Mandatory = $true)] [string]$PythonDependencyVersion
+    )
+
+    $clone = $AddonElement.CloneNode($true)
+    $importNode = $clone.SelectSingleNode('requires/import[@addon="xbmc.python"]')
+    if (-not $importNode) {
+        throw "Missing xbmc.python import in addon $($clone.id)"
+    }
+
+    $importNode.SetAttribute("version", $PythonDependencyVersion)
+    return $clone.OuterXml
+}
+
+Write-AddonsFeed -XmlPath $AddonsXmlPath -Md5Path $AddonsMd5Path -AddonXmlFragments @(
     $pluginXml.addon.OuterXml
     $hubXml.addon.OuterXml
-    '</addons>'
-) -join "`n"
+)
 
-# LF only: git normalizes CRLF on commit, which would invalidate the published md5.
-[System.IO.File]::WriteAllText($AddonsXmlPath, $addonsXmlContent, (New-Object System.Text.UTF8Encoding($false)))
-
-$md5Hash = (Get-FileHash -Path $AddonsXmlPath -Algorithm MD5).Hash.ToLowerInvariant()
-[System.IO.File]::WriteAllText($AddonsMd5Path, $md5Hash, (New-Object System.Text.ASCIIEncoding))
+Write-AddonsFeed -XmlPath $AddonsK18XmlPath -Md5Path $AddonsK18Md5Path -AddonXmlFragments @(
+    (Get-AddonXmlWithPythonVersion -AddonElement $pluginXml.addon -PythonDependencyVersion "2.25.0")
+    (Get-AddonXmlWithPythonVersion -AddonElement $hubXml.addon -PythonDependencyVersion "2.25.0")
+)
 
 $VersionedAddonsXmlPath = Join-Path $Root ("addons-{0}.xml" -f $repositoryVersion)
 $VersionedAddonsMd5Path = Join-Path $Root ("addons-{0}.xml.md5" -f $repositoryVersion)
@@ -413,7 +492,7 @@ function Write-DocsIndex {
     Copy-Item -Path $HubSingleInstallZipPath -Destination (Join-Path $docsDir "MEOS_HUB_K18.zip") -Force
 
     $links = @(
-        @{ Name = "repository.meos.zip (install this first, Kodi 19+/20+ - auto-updates both add-ons)"; Href = "repository.meos.zip" },
+        @{ Name = "repository.meos.zip (install this first - auto-updates both add-ons on Kodi 18.7 and Kodi 19+/20+)"; Href = "repository.meos.zip" },
         @{ Name = "MEOS_ADDON_K18.zip (Kodi 18.7 direct install, classic add-on)"; Href = "MEOS_ADDON_K18.zip" },
         @{ Name = "MEOS_ADDON_K20PLUS.zip (Kodi 19+/Firestick direct install, classic add-on)"; Href = "MEOS_ADDON_K20PLUS.zip" },
         @{ Name = "MEOS_HUB_K18.zip (Kodi 18.7 direct install, MEOS Hub all-in-one)"; Href = "MEOS_HUB_K18.zip" }
@@ -464,4 +543,11 @@ Write-Host "Repository zip (convenience): $RepositoryZipConveniencePath"
 Write-Host "KodiInstall folder: $KodiInstallDir"
 Write-Host "Updated: $AddonsXmlPath"
 Write-Host "Updated: $AddonsMd5Path"
+Write-Host "Updated: $AddonsK18XmlPath"
+Write-Host "Updated: $AddonsK18Md5Path"
 Write-Host "Repository zip includes: addon.xml, addons.xml, addons.xml.md5, and zips/"
+
+& (Join-Path $PSScriptRoot "verify-repo-feed.ps1") -Root $Root
+if ($LASTEXITCODE -ne 0) {
+    throw "Repository feed verification failed - do not publish this build"
+}

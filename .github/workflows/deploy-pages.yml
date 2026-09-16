@@ -7,8 +7,11 @@ on:
     paths:
       - "docs/**"
       - "zips/**"
+      - "zips-k18/**"
       - "addons.xml"
       - "addons.xml.md5"
+      - "addons-k18.xml"
+      - "addons-k18.xml.md5"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 
@@ -34,8 +37,9 @@ jobs:
         run: |
           mkdir -p _site
           cp -r docs/. _site/
-          cp addons.xml addons.xml.md5 _site/
+          cp addons.xml addons.xml.md5 addons-k18.xml addons-k18.xml.md5 _site/
           cp -r zips _site/zips
+          cp -r zips-k18 _site/zips-k18
           ls -R _site
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
