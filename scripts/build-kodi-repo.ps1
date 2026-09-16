@@ -410,12 +410,16 @@ function Get-AddonXmlWithPythonVersion {
     return $clone.OuterXml
 }
 
+# The repository add-on lists itself so existing installs can pick up feed/URL changes;
+# without this entry a client is stuck on whatever addon.xml it was first installed with.
 Write-AddonsFeed -XmlPath $AddonsXmlPath -Md5Path $AddonsMd5Path -AddonXmlFragments @(
+    $repositoryXml.addon.OuterXml
     $pluginXml.addon.OuterXml
     $hubXml.addon.OuterXml
 )
 
 Write-AddonsFeed -XmlPath $AddonsK18XmlPath -Md5Path $AddonsK18Md5Path -AddonXmlFragments @(
+    $repositoryXml.addon.OuterXml
     (Get-AddonXmlWithPythonVersion -AddonElement $pluginXml.addon -PythonDependencyVersion "2.25.0")
     (Get-AddonXmlWithPythonVersion -AddonElement $hubXml.addon -PythonDependencyVersion "2.25.0")
 )
@@ -433,7 +437,6 @@ New-Item -ItemType Directory -Path $repositoryStagingDir -Force | Out-Null
 Copy-Item -Path $RepositoryAddonXmlPath -Destination (Join-Path $repositoryStagingDir "addon.xml") -Force
 Copy-Item -Path $AddonsXmlPath -Destination (Join-Path $repositoryStagingDir "addons.xml") -Force
 Copy-Item -Path $AddonsMd5Path -Destination (Join-Path $repositoryStagingDir "addons.xml.md5") -Force
-Copy-Item -Path $ZipsRoot -Destination (Join-Path $repositoryStagingDir "zips") -Recurse -Force
 
 $optionalRepositoryFiles = @("icon.png", "fanart.jpg", "README.md", "LICENSE")
 foreach ($fileName in $optionalRepositoryFiles) {
@@ -445,6 +448,16 @@ foreach ($fileName in $optionalRepositoryFiles) {
 
 New-ZipFromFolder -SourceFolder $repositoryStagingRoot -DestinationZip $repositoryZipPath
 Remove-Item -Path $repositoryStagingRoot -Recurse -Force
+
+# Serve the repository from both feeds so Kodi can upgrade it in place.
+foreach ($repoFeedDir in @((Join-Path $ZipsRoot $repositoryId), (Join-Path $ZipsK18Root $repositoryId))) {
+    if (-not (Test-Path $repoFeedDir)) {
+        New-Item -ItemType Directory -Path $repoFeedDir -Force | Out-Null
+    }
+    Get-ChildItem -Path $repoFeedDir -Filter "*.zip" -File -ErrorAction SilentlyContinue |
+    Remove-Item -Force -ErrorAction SilentlyContinue
+    Copy-Item -Path $repositoryZipPath -Destination (Join-Path $repoFeedDir ("{0}-{1}.zip" -f $repositoryId, $repositoryVersion)) -Force
+}
 
 Copy-Item -Path $repositoryZipPath -Destination $RepositoryZipConveniencePath -Force
 
@@ -545,7 +558,7 @@ Write-Host "Updated: $AddonsXmlPath"
 Write-Host "Updated: $AddonsMd5Path"
 Write-Host "Updated: $AddonsK18XmlPath"
 Write-Host "Updated: $AddonsK18Md5Path"
-Write-Host "Repository zip includes: addon.xml, addons.xml, addons.xml.md5, and zips/"
+Write-Host "Repository zip includes: addon.xml, addons.xml, and addons.xml.md5"
 
 & (Join-Path $PSScriptRoot "verify-repo-feed.ps1") -Root $Root
 if ($LASTEXITCODE -ne 0) {

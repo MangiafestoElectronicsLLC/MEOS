@@ -90,8 +90,12 @@ function Test-Feed {
         $addonId = $addon.GetAttribute("id")
         $addonVersion = $addon.GetAttribute("version")
 
+        $isRepositoryAddon = $null -ne $addon.SelectSingleNode('extension[@point="xbmc.addon.repository"]')
         $import = $addon.SelectSingleNode('requires/import[@addon="xbmc.python"]')
-        if (-not $import) {
+        if ($isRepositoryAddon) {
+            Add-Pass ("{0} {1} (repository add-on, no Python dependency)" -f $addonId, $addonVersion)
+        }
+        elseif (-not $import) {
             Add-Failure ("{0}: no xbmc.python import" -f $addonId)
         }
         elseif (-not $import.GetAttribute("version").StartsWith($ExpectedPythonMajor)) {
@@ -121,7 +125,7 @@ function Test-Feed {
         }
 
         $packagedImport = $packaged.addon.SelectSingleNode('requires/import[@addon="xbmc.python"]')
-        if (-not $packagedImport -or -not $packagedImport.GetAttribute("version").StartsWith($ExpectedPythonMajor)) {
+        if (-not $isRepositoryAddon -and (-not $packagedImport -or -not $packagedImport.GetAttribute("version").StartsWith($ExpectedPythonMajor))) {
             Add-Failure ("{0}: packaged zip declares the wrong xbmc.python version for this feed" -f $addonId)
             continue
         }
