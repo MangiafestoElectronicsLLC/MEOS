@@ -208,7 +208,9 @@ function Set-RepositoryFeedUrls {
     )
 
     [xml]$xmlDoc = Get-Content -Path $AddonXmlPath
-    $baseRaw = "https://raw.githubusercontent.com/MangiafestoElectronicsLLC/MEOS/main"
+    # Use the same GitHub Pages origin as the install source. Some Fire OS/Kodi
+    # builds can browse Pages but fail silently when fetching raw.githubusercontent.com.
+    $baseRaw = "https://mangiafestoelectronicsllc.github.io/MEOS"
 
     $extensionNode = $xmlDoc.SelectSingleNode('/addon/extension[@point="xbmc.addon.repository"]')
     if (-not $extensionNode) {
@@ -511,7 +513,9 @@ function Write-DocsIndex {
         @{ Name = "MEOS_HUB_K18.zip (Kodi 18.7 direct install, MEOS Hub all-in-one)"; Href = "MEOS_HUB_K18.zip" }
     )
 
-    $listItems = ($links | ForEach-Object { "    <li><a href=`"$($_.Href)`">$($_.Name)</a></li>" }) -join [Environment]::NewLine
+    # Keep this as a plain link list. Kodi's HTTP directory parser on Android is
+    # stricter than a desktop browser and may ignore links nested in list markup.
+    $listItems = ($links | ForEach-Object { '<a href="' + $_.Href + '">' + $_.Name + '</a><br />' }) -join [Environment]::NewLine
 
     $html = @"
 <!DOCTYPE html>
@@ -523,9 +527,7 @@ function Write-DocsIndex {
 <body>
 <h1>MEOS Kodi Repository (v$RepositoryVersion)</h1>
 <p>Add this URL as a Kodi File Manager source, then use Install from zip file.</p>
-<ul>
 $listItems
-</ul>
 </body>
 </html>
 "@
