@@ -23,6 +23,8 @@ TARGET_CACHE_SETTING = 'integration_target_cache_json'
 # since add-ons can have arbitrarily deep/large menu trees.
 BFS_MAX_DEPTH = 3
 BFS_MAX_NODES = 40
+CONTENT_MAX_DEPTH = 3
+CONTENT_MAX_NODES = 80
 
 
 def _get_target_cache():
@@ -99,6 +101,46 @@ class Integration(object):
             items = jsonrpc.get_directory(current_url)
         return current_url, items
 
+    @staticmethod
+    def _is_folder(entry):
+        file_url = entry.get('file') or ''
+        filetype = entry.get('filetype')
+        return entry.get('isdir') is True or filetype == 'directory' or (
+            file_url.startswith('plugin://') and filetype not in ('file', 'video')
+        )
+
+    def _content_items(self, items, depth=0, visited=None):
+        """Flatten small nested category menus while retaining empty folders."""
+        visited = visited or set()
+        if depth >= CONTENT_MAX_DEPTH:
+            return items
+
+        flattened = []
+        expanded = False
+        for entry in items:
+            if not self._is_folder(entry):
+                entry['_meos_is_folder'] = False
+                flattened.append(entry)
+                continue
+            folder_url = entry.get('file') or ''
+            if not folder_url or folder_url in visited or len(visited) >= CONTENT_MAX_NODES:
+                entry['_meos_is_folder'] = True
+                flattened.append(entry)
+                continue
+            visited.add(folder_url)
+            children = jsonrpc.get_directory(folder_url)
+            if children:
+                expanded = True
+                flattened.extend(self._content_items(children, depth + 1, visited))
+            else:
+                entry['_meos_is_folder'] = True
+                flattened.append(entry)
+        return flattened if expanded else items
+
+    @staticmethod
+    def _content_score(items):
+        return sum(1 for entry in items if not Integration._is_folder(entry))
+
     def _bfs_find_category_folder(self, category):
         """Generic fallback: breadth-first search this add-on's own menu
         tree, scoring folder labels against unified-category keywords, so
@@ -145,19 +187,24 @@ class Integration(object):
         if cached_url:
             items = jsonrpc.get_directory(cached_url)
             if items:
-                return items
+                return self._content_items(items)
 
+        candidates = []
         for breadcrumbs in self.spec.category_paths.get(category, []):
             folder_url, items = self._navigate(breadcrumbs)
             if items:
-                _cache_target(self.addon_id, category, folder_url)
-                return items
+                candidates.append((self._content_score(items), len(breadcrumbs), folder_url, items))
+
+        if candidates:
+            _, _, folder_url, items = max(candidates, key=lambda candidate: (candidate[0], candidate[1]))
+            _cache_target(self.addon_id, category, folder_url)
+            return self._content_items(items)
 
         discovered_url = self._bfs_find_category_folder(category)
         if discovered_url:
             items = jsonrpc.get_directory(discovered_url)
             if items:
                 _cache_target(self.addon_id, category, discovered_url)
-                return items
+                return self._content_items(items)
 
         return []

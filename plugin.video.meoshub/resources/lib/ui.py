@@ -158,7 +158,9 @@ def list_category(category):
 def _add_integration_entry(integration, entry):
     label = entry.get('label') or 'Untitled'
     file_url = entry.get('file', '')
-    is_folder = entry.get('filetype') == 'directory'
+    is_folder = entry.get('_meos_is_folder')
+    if is_folder is None:
+        is_folder = entry.get('isdir') is True or entry.get('filetype') == 'directory'
     thumb = entry.get('thumbnail', '') or (entry.get('art') or {}).get('poster', '')
     if is_folder or not file_url:
         add_addon_folder('[{0}] {1}'.format(integration.name, label), file_url or integration.root_url, thumb)

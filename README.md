@@ -38,13 +38,13 @@ Use this for devices that can't browse the GitHub Pages source, or for offline i
 | File | Add-on | Kodi version | Install method |
 | --- | --- | --- | --- |
 | `repository.meos.zip` | MEOS Repository (both add-ons) | 18.7 and 19+/20+/Firestick | Add source + Install from zip, then Install from repository (auto-updates) |
-| `MEOS_ADDON_K20PLUS.zip` | `plugin.video.meos` | 19+/20+/Firestick | Direct Install from zip file |
+| `MEOS_ADDON_K20PLUS.zip` | `plugin.video.meos` + MEOS Hub | 19+/20+/Firestick | Direct Install from zip file |
 | `MEOS_ADDON_K18.zip` | `plugin.video.meos` | 18.7 (Leia) | Direct Install from zip file |
 | `MEOS_HUB_K18.zip` | MEOS Hub (`plugin.video.meoshub`) | 18.7 (Leia) | Direct Install from zip file |
 
 Notes:
 - The repository is the recommended path on every supported version, including Kodi 18.7. Its `addon.xml` declares two version-scoped `<dir>` blocks: Kodi 19+ reads `addons.xml` + `zips/` (Python 3) and Kodi 18.7 reads `addons-k18.xml` + `zips-k18/` (Python 2). Kodi selects the correct one from its `xbmc.addon` version, so Leia devices get working auto-updates too.
-- The `_K18` / `_K20PLUS` direct-install zips remain available for offline installs or devices that cannot reach the Pages source. Installed that way, they do not auto-update.
+- The `_K18` / `_K20PLUS` direct-install zips remain available for offline installs or devices that cannot reach the Pages source. The modern `_K20PLUS` bundle installs both MEOS and MEOS Hub; the Kodi 18.7 `_K18` package is the classic MEOS add-on and uses `MEOS_HUB_K18.zip` for Hub. Direct installs do not auto-update.
 - MEOS Hub is installed via the repository (step A.4 above) or by downloading `plugin.video.meoshub-<version>.zip` from `zips/plugin.video.meoshub/` (Kodi 19+) or `zips-k18/plugin.video.meoshub/` (Kodi 18.7) and installing it directly.
 
 ## Releasing

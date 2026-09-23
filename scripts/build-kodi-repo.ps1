@@ -375,6 +375,21 @@ foreach ($hubBuildProfile in $hubProfileDefinitions) {
     Remove-Item -Path $hubStagingRoot -Recurse -Force
 }
 
+# The direct Kodi 20+ installer is intentionally a bundle: selecting one zip
+# installs both the classic MEOS catalog and MEOS Hub. Repository feeds still
+# publish each add-on separately so Kodi can update them independently.
+$modernBundleRoot = Join-Path $env:TEMP ("meos-modern-bundle-{0}" -f [guid]::NewGuid().ToString("N"))
+$modernPluginDir = Join-Path $modernBundleRoot $pluginId
+$modernHubDir = Join-Path $modernBundleRoot $hubId
+New-Item -ItemType Directory -Path $modernPluginDir -Force | Out-Null
+New-Item -ItemType Directory -Path $modernHubDir -Force | Out-Null
+Copy-Item -Path (Join-Path $PluginSourceDir "*") -Destination $modernPluginDir -Recurse -Force
+Copy-Item -Path (Join-Path $HubSourceDir "*") -Destination $modernHubDir -Recurse -Force
+Set-PluginPythonDependencyVersion -AddonXmlPath (Join-Path $modernPluginDir "addon.xml") -PythonDependencyVersion "3.0.0"
+Set-PluginPythonDependencyVersion -AddonXmlPath (Join-Path $modernHubDir "addon.xml") -PythonDependencyVersion "3.0.0"
+New-ZipFromFolder -SourceFolder $modernBundleRoot -DestinationZip $SingleInstallZipModernPath
+Remove-Item -Path $modernBundleRoot -Recurse -Force
+
 function Write-AddonsFeed {
     param(
         [Parameter(Mandatory = $true)] [string]$XmlPath,
@@ -509,7 +524,7 @@ function Write-DocsIndex {
     $links = @(
         @{ Name = "repository.meos.zip (install this first - auto-updates both add-ons on Kodi 18.7 and Kodi 19+/20+)"; Href = "repository.meos.zip" },
         @{ Name = "MEOS_ADDON_K18.zip (Kodi 18.7 direct install, classic add-on)"; Href = "MEOS_ADDON_K18.zip" },
-        @{ Name = "MEOS_ADDON_K20PLUS.zip (Kodi 19+/Firestick direct install, classic add-on)"; Href = "MEOS_ADDON_K20PLUS.zip" },
+        @{ Name = "MEOS_ADDON_K20PLUS.zip (Kodi 19+/Firestick direct install, MEOS + MEOS Hub bundle)"; Href = "MEOS_ADDON_K20PLUS.zip" },
         @{ Name = "MEOS_HUB_K18.zip (Kodi 18.7 direct install, MEOS Hub all-in-one)"; Href = "MEOS_HUB_K18.zip" }
     )
 
