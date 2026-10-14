@@ -522,15 +522,15 @@ function Write-DocsIndex {
     Copy-Item -Path $HubSingleInstallZipPath -Destination (Join-Path $docsDir "MEOS_HUB_K18.zip") -Force
 
     $links = @(
-        @{ Name = "repository.meos.zip (install this first - auto-updates both add-ons on Kodi 18.7 and Kodi 19+/20+)"; Href = "repository.meos.zip" },
-        @{ Name = "MEOS_ADDON_K18.zip (Kodi 18.7 direct install, classic add-on)"; Href = "MEOS_ADDON_K18.zip" },
-        @{ Name = "MEOS_ADDON_K20PLUS.zip (Kodi 19+/Firestick direct install, MEOS + MEOS Hub bundle)"; Href = "MEOS_ADDON_K20PLUS.zip" },
-        @{ Name = "MEOS_HUB_K18.zip (Kodi 18.7 direct install, MEOS Hub all-in-one)"; Href = "MEOS_HUB_K18.zip" }
+        @{ Href = "repository.meos.zip"; Note = "install this first - auto-updates both add-ons on Kodi 18.7 and Kodi 19+/20+" },
+        @{ Href = "MEOS_ADDON_K18.zip"; Note = "Kodi 18.7 direct install, classic add-on" },
+        @{ Href = "MEOS_ADDON_K20PLUS.zip"; Note = "Kodi 19+/Firestick direct install, MEOS + MEOS Hub bundle" },
+        @{ Href = "MEOS_HUB_K18.zip"; Note = "Kodi 18.7 direct install, MEOS Hub all-in-one" }
     )
 
-    # Keep this as a plain link list. Kodi's HTTP directory parser on Android is
-    # stricter than a desktop browser and may ignore links nested in list markup.
-    $listItems = ($links | ForEach-Object { '<a href="' + $_.Href + '">' + $_.Name + '</a><br />' }) -join [Environment]::NewLine
+    # Kodi's HTTP directory parser skips links whose visible text differs from the
+    # href, so the anchor text must be the exact filename; notes go outside the anchor.
+    $listItems = ($links | ForEach-Object { '<a href="' + $_.Href + '">' + $_.Href + '</a> - ' + $_.Note + '<br />' }) -join [Environment]::NewLine
 
     $html = @"
 <!DOCTYPE html>
