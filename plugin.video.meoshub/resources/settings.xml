@@ -12,12 +12,17 @@
     <setting id="cat_sports_enabled" type="bool" label="Show Sports" default="true" />
     <setting id="cat_ppv_enabled" type="bool" label="Show PPV" default="true" />
     <setting id="cat_livetv_enabled" type="bool" label="Show Live TV / Cable" default="true" />
+    <setting id="cat_holidays_enabled" type="bool" label="Show Holidays" default="true" />
   </category>
   <category label="Integrations">
     <setting id="integration_scrubsv2_enabled" type="bool" label="Enable Scrubs V2" default="true" />
     <setting id="integration_theloop_enabled" type="bool" label="Enable The Loop" default="true" />
     <setting id="integration_ghost_enabled" type="bool" label="Enable Ghost" default="true" />
     <setting id="integration_thecrew_enabled" type="bool" label="Enable The Crew" default="true" />
+    <setting id="integration_redgratis_enabled" type="bool" label="Enable Red Gratis" default="true" />
+    <setting id="integration_risingtides_enabled" type="bool" label="Enable Rising Tides" default="true" />
+    <setting id="auto_install_defaults" type="bool" label="Auto-install default add-ons at startup (from your installed repositories)" default="true" />
+    <setting id="bootstrap_attempted_json" type="text" label="Bootstrap state (internal)" default="" visible="false" />
     <setting id="integration_youtube_enabled" type="bool" label="Enable YouTube" default="true" />
     <setting id="custom_integrations_json" type="text" label="Custom integrations (internal, use in-addon menu)" default="" visible="false" />
   </category>
@@ -27,6 +32,7 @@
     <setting id="scraper_tmdb_api_base" type="text" label="TMDB API base URL" default="https://api.themoviedb.org/3" />
     <setting id="scraper_archiveorg_enabled" type="bool" label="Enable archive.org free public-domain streams" default="true" />
     <setting id="scraper_archiveorg_api_base" type="text" label="archive.org API base URL" default="https://archive.org" />
+    <setting id="custom_m3u_url" type="text" label="My live channel playlist (M3U URL or file path)" default="" />
     <setting id="custom_scrapers_json" type="text" label="Custom scrapers (internal, use in-addon menu)" default="" visible="false" />
   </category>
   <category label="Import / Export">

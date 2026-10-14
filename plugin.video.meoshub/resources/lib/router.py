@@ -16,6 +16,30 @@ def _dispatch(action, params):
         return ui.list_main_menu()
     if action == 'category':
         return ui.list_category(params['category'])
+    if action == 'category_all':
+        return ui.list_category_all(params['category'])
+    if action == 'genre':
+        return ui.list_genre(params.get('media', 'movies'), params.get('genre', ''), params.get('page', 1), params.get('source', 'tmdb'))
+    if action == 'genres':
+        return ui.list_genres(params.get('media', 'movies'), params.get('source', 'tmdb'))
+    if action == 'tmdb_menu':
+        return ui.list_tmdb_menu(params.get('media', 'movies'))
+    if action == 'tmdb_list':
+        return ui.list_tmdb_list(params.get('media', 'movies'), params.get('kind', 'popular'), params.get('page', 1))
+    if action == 'free_menu':
+        return ui.list_free_menu(params.get('media', 'movies'))
+    if action == 'channel_groups':
+        return ui.list_channel_groups(params.get('category', ''))
+    if action == 'channels':
+        return ui.list_channels(params.get('group', 'general'))
+    if action == 'holidays':
+        return ui.list_holidays(params.get('media', ''))
+    if action == 'holiday':
+        return ui.list_holiday(params.get('holiday', ''), params.get('media', ''), params.get('page', 1))
+    if action == 'holiday_search':
+        return ui.holiday_search(params.get('media', ''))
+    if action == 'title_search':
+        return ui.title_search(params.get('query', ''))
     if action == 'archive_search':
         return ui.archive_search(params['category'])
     if action == 'integrations':
@@ -24,6 +48,8 @@ def _dispatch(action, params):
         return ui.list_integration_menu(params['key'])
     if action == 'integration_category':
         return ui.list_integration_category(params['key'], params['category'])
+    if action == 'bootstrap_defaults':
+        return ui.bootstrap_defaults()
     if action == 'integration_add_custom':
         return ui.integration_add_custom()
     if action == 'integration_remove_custom':

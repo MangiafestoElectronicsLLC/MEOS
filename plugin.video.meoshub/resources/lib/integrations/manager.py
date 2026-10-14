@@ -114,6 +114,10 @@ def _auto_specs():
     return specs
 
 
+def builtin_specs():
+    return _builtin_specs()
+
+
 def get_enabled_specs():
     """All specs the user currently wants active (built-in toggles + custom + auto-discovered)."""
     enabled = []

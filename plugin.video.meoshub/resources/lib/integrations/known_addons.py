@@ -106,6 +106,34 @@ BUILTIN_INTEGRATIONS = [
         },
     },
     {
+        'key': 'redgratis',
+        'label': 'Red Gratis',
+        'addon_id_guess': 'plugin.video.redgratis',
+        'keywords': ['redgratis', 'red gratis'],
+        'category_paths': {
+            'movies': MOVIE_PATHS,
+            'tvshows': TVSHOW_PATHS,
+            'sports': SPORTS_PATHS,
+            'ppv': PPV_PATHS,
+            'livetv': LIVE_PATHS,
+            'networks': NETWORK_PATHS,
+        },
+    },
+    {
+        'key': 'risingtides',
+        'label': 'Rising Tides',
+        'addon_id_guess': 'plugin.video.risingtides',
+        'keywords': ['risingtides', 'rising tides'],
+        'category_paths': {
+            'movies': MOVIE_PATHS,
+            'tvshows': TVSHOW_PATHS,
+            'sports': SPORTS_PATHS,
+            'ppv': PPV_PATHS,
+            'livetv': LIVE_PATHS,
+            'networks': NETWORK_PATHS,
+        },
+    },
+    {
         'key': 'youtube',
         'label': 'YouTube',
         'addon_id_guess': 'plugin.video.youtube',
@@ -127,6 +155,8 @@ BUILTIN_TOGGLE_SETTING = {
     'theloop': 'integration_theloop_enabled',
     'ghost': 'integration_ghost_enabled',
     'thecrew': 'integration_thecrew_enabled',
+    'redgratis': 'integration_redgratis_enabled',
+    'risingtides': 'integration_risingtides_enabled',
     'youtube': 'integration_youtube_enabled',
 }
 

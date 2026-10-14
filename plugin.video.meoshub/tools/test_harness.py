@@ -112,10 +112,76 @@ def check_nested_integration_content():
         kodi_mocks.xbmc.executeJSONRPC = kodi_mocks._execute_json_rpc
 
 
+def check_holidays_and_genres():
+    import datetime
+    import tools.kodi_mocks as kodi_mocks
+    kodi_mocks.install()
+
+    from resources.lib import router
+    from resources.lib.content import browse
+    from resources.lib.scrapers import archive_org_scraper
+
+    assert ('christmas', 'Christmas') in browse.match_holidays('xmas')
+    assert ('july4', 'Independence Day (4th of July)') in browse.match_holidays('4th of July')
+    assert ('halloween', 'Halloween') in browse.match_holidays('HALLOWEEN')
+    assert browse.match_holidays('zz') == []
+    assert 'christmas' in [k for k, _ in browse.current_holidays(datetime.date(2026, 12, 10))]
+    assert 'newyear' in [k for k, _ in browse.current_holidays(datetime.date(2027, 1, 1))]
+    assert 'easter' in [k for k, _ in browse.current_holidays(datetime.date(2026, 4, 3))]
+    assert 'halloween' not in [k for k, _ in browse.current_holidays(datetime.date(2026, 12, 10))]
+
+    archive_org_scraper.ArchiveOrgScraper._get_json = lambda self, url: {
+        'response': {'docs': [{'identifier': 'demo-id', 'title': 'Demo Holiday Film', 'year': 1950}]}
+    }
+    queries = [
+        'category&category=movies', 'category&category=tvshows', 'category_all&category=movies',
+        'genre&media=movies&genre=horror', 'genre&media=tvshows&genre=comedy',
+        'genre&media=movies&genre=horror&source=free', 'genre&media=tvshows&genre=_all&source=free',
+        'genres&media=movies&source=tmdb', 'tmdb_menu&media=movies', 'tmdb_list&media=tvshows&kind=top_rated',
+        'free_menu&media=tvshows', 'category&category=livetv', 'channel_groups&category=sports',
+        'holidays', 'holidays&media=movies', 'holiday&holiday=christmas',
+        'holiday&holiday=christmas&media=movies', 'holiday&holiday=halloween&media=tvshows',
+    ]
+    for query in queries:
+        kodi_mocks.DIRECTORY_ITEMS[:] = []
+        router.run(['plugin://plugin.video.meoshub', '1', '?action=' + query])
+        assert kodi_mocks.DIRECTORY_ITEMS, 'no items for ' + query
+    assert any('Demo Holiday Film' in str(item) for item in kodi_mocks.DIRECTORY_ITEMS)
+
+    from resources.lib.content import livetv
+    sample = '#EXTM3U\n#EXTINF:-1 tvg-logo="http://x/l.png" group-title="News",Demo News\nhttp://example.com/a.m3u8\n'
+    parsed = livetv.parse_m3u(sample)
+    assert parsed == [{'name': 'Demo News', 'url': 'http://example.com/a.m3u8', 'logo': 'http://x/l.png', 'group': 'News'}]
+    livetv._fetch = lambda url: parsed
+    kodi_mocks.DIRECTORY_ITEMS[:] = []
+    router.run(['plugin://plugin.video.meoshub', '1', '?action=channels&group=news'])
+    assert any(i['label'] == 'Demo News' for i in kodi_mocks.DIRECTORY_ITEMS)
+
+
+def check_bootstrap_defaults():
+    import tools.kodi_mocks as kodi_mocks
+    kodi_mocks.install()
+
+    from resources.lib.integrations import bootstrap, manager
+    calls = []
+    bootstrap.xbmc.executebuiltin = lambda cmd: calls.append(cmd)
+    keys = [s.key for s in manager.builtin_specs()]
+    for expected in ('redgratis', 'ghost', 'theloop', 'risingtides'):
+        assert expected in keys, expected
+    summary = bootstrap.ensure_defaults(force=True)
+    assert 'InstallAddon(plugin.video.redgratis)' in calls, calls
+    assert 'Red Gratis' in summary['install_requested']
+    calls[:] = []
+    bootstrap.ensure_defaults()
+    assert not calls, 'should not retry automatically'
+
+
 def main():
+    check('Default integrations bootstrap', check_bootstrap_defaults)
     check('XML files are well-formed', check_xml_files)
     check('All Python files compile', check_python_compiles)
     check('Router builds core screens without crashing', check_router_smoke_test)
+    check('Genre/holiday browsing and holiday search work', check_holidays_and_genres)
     check('Nested third-party content is merged as playable items', check_nested_integration_content)
 
     print('')

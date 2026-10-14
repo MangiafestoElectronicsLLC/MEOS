@@ -83,6 +83,47 @@ class ArchiveOrgScraper(StreamScraper):
         cache.set(cache_key, results)
         return results
 
+    def search_terms(self, terms, media_type='movies', page=1, max_results=25):
+        """Browse by subject/title keywords (genres, holidays); any term may match."""
+        terms = [t for t in terms if t]
+        if not terms:
+            return []
+        cache_key = 'archiveorg_terms_{0}_{1}_{2}'.format(media_type, '_'.join(terms), page)
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return cached
+
+        clauses = ' OR '.join('subject:("{0}") OR title:("{0}")'.format(t) for t in terms)
+        params = {
+            'q': 'mediatype:({0}) AND ({1})'.format(media_type, clauses),
+            'fl[]': ['identifier', 'title', 'year', 'description'],
+            'rows': str(max_results),
+            'page': str(page),
+            'sort[]': 'downloads desc',
+            'output': 'json',
+        }
+        data = self._get_json('{0}/advancedsearch.php?{1}'.format(self.api_base, urlencode(params, doseq=True)))
+        results = []
+        for doc in data.get('response', {}).get('docs', []) or []:
+            identifier = doc.get('identifier')
+            if not identifier:
+                continue
+            description = doc.get('description', '')
+            if isinstance(description, list):
+                description = ' '.join(str(d) for d in description)
+            title = doc.get('title', identifier)
+            results.append({
+                'title': title if isinstance(title, str) else identifier,
+                'year': str(doc.get('year', '')),
+                'plot': description if isinstance(description, str) else '',
+                'identifier': identifier,
+                'poster': '{0}/services/img/{1}'.format(self.api_base, identifier),
+                'source': 'archive.org',
+                'url': '',
+            })
+        cache.set(cache_key, results)
+        return results
+
     def resolve(self, identifier):
         """Resolve a lazy archive.org search result into a real stream URL."""
         cache_key = 'archiveorg_stream_' + identifier

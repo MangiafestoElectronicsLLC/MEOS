@@ -13,11 +13,14 @@ except ImportError:  # pragma: no cover
 import xbmcgui
 import xbmcplugin
 
+from resources.lib.content import browse as browse_content
 from resources.lib.content import categories as categories_content
 from resources.lib.content import favorites as favorites_content
+from resources.lib.content import livetv as livetv_content
 from resources.lib.content import importexport
 from resources.lib.content import search as search_content
 from resources.lib.integrations import base as integrations_base
+from resources.lib.integrations import bootstrap
 from resources.lib.integrations import manager as integrations_manager
 from resources.lib.integrations.known_addons import BUILTIN_TOGGLE_SETTING
 from resources.lib.scrapers import manager as scrapers_manager
@@ -26,6 +29,9 @@ from resources.lib.utils import kodi
 
 BASE_URL = ''
 HANDLE = -1
+
+FREE_CHANNEL_CATEGORIES = ('livetv', 'sports', 'networks')
+FREE_CHANNEL_FOR_MEDIA = {'movies': 'movies', 'tvshows': 'series'}
 
 THEME_ICONS = {
     0: 'DefaultAddonVideo.png',   # Default
@@ -121,6 +127,10 @@ def list_main_menu():
     _content_type()
     for key, label in categories_content.enabled_categories():
         add_folder(label, 'category', category=key)
+    if kodi.get_setting_bool(categories_content.HOLIDAYS_TOGGLE_SETTING, True):
+        now = browse_content.current_holidays()
+        suffix = ' - {0} season!'.format(now[0][1]) if now else ''
+        add_folder('Holidays' + suffix, 'holidays')
     add_folder('Addon Integrations', 'integrations')
     add_folder('Search', 'search')
     add_folder('Favorites', 'favorites')
@@ -133,6 +143,86 @@ def list_main_menu():
 # ---------------------------------------------------------------------------
 
 def list_category(category):
+    """Movies/TV Shows open a pick-a-source menu; other categories list directly."""
+    if category not in categories_content.SUBMENU_CATEGORIES:
+        _content_type()
+        if category in FREE_CHANNEL_CATEGORIES:
+            add_folder('Free Live Channels', 'channel_groups', category=category)
+            if kodi.get_setting('custom_m3u_url', ''):
+                add_folder('My Playlist (M3U)', 'channels', group='_custom')
+        return list_category_all(category)
+
+    _content_type()
+    label = categories_content.label_for(category)
+    add_folder('TMDB {0} (popular, top rated, genres)'.format(label), 'tmdb_menu', media=category)
+    add_folder('Free {0} (public domain, no sign-up)'.format(label), 'free_menu', media=category)
+    add_folder('Free {0} Channels (live)'.format(label), 'channels', group=FREE_CHANNEL_FOR_MEDIA[category])
+    add_folder('{0} from your add-ons'.format(label), 'category_all', category=category)
+    if kodi.get_setting_bool(categories_content.HOLIDAYS_TOGGLE_SETTING, True):
+        add_folder('Holidays', 'holidays', media=category)
+    _finish(sort=False)
+
+
+def list_tmdb_menu(media):
+    _content_type()
+    for key, label in browse_content.TMDB_LISTS:
+        add_folder(label, 'tmdb_list', media=media, kind=key)
+    add_folder('Browse by genre', 'genres', media=media, source='tmdb')
+    add_folder('Search by title', 'search')
+    if not browse_content.tmdb_ready():
+        add_folder('Add your free TMDB API key (Settings)', 'settings_scrapers')
+    _finish(sort=False)
+
+
+def list_free_menu(media):
+    _content_type()
+    add_folder('Browse by genre', 'genres', media=media, source='free')
+    add_folder('Popular free {0}'.format(browse_content.media_label(media)), 'genre', media=media, genre='_all', source='free')
+    add_folder('Search free public-domain', 'archive_search', category=media)
+    _finish(sort=False)
+
+
+def list_genres(media, source):
+    _content_type()
+    for key, genre_label, _, _, _ in browse_content.GENRES:
+        add_folder(genre_label, 'genre', media=media, genre=key, source=source)
+    _finish(sort=False)
+
+
+def list_tmdb_list(media, kind, page=1):
+    _content_type()
+    page = int(page or 1)
+    results = browse_content.tmdb_list_results(media, kind, page)
+    _render_browse(results, 'tmdb_list', {'media': media, 'kind': kind}, page)
+    _finish(sort=False)
+
+
+def list_channel_groups(category=''):
+    _content_type()
+    groups = livetv_content.CHANNEL_GROUPS
+    if category == 'sports':
+        groups = [g for g in groups if g[0] in ('sports',)] + [g for g in groups if g[0] != 'sports']
+    for key, label in groups:
+        add_folder(label, 'channels', group=key)
+    if kodi.get_setting('custom_m3u_url', ''):
+        add_folder('My Playlist (M3U)', 'channels', group='_custom')
+    _finish(sort=False)
+
+
+def list_channels(group):
+    _content_type()
+    channels = livetv_content.custom_channels() if group == '_custom' else livetv_content.group_channels(group)
+    if not channels:
+        add_folder('No channels loaded - check your internet connection', 'channel_groups')
+    for channel in channels:
+        add_playable(
+            title=channel['name'], url=channel['url'], poster=channel.get('logo', ''),
+            plot=channel.get('group', ''), source='Live',
+        )
+    _finish(sort=False)
+
+
+def list_category_all(category):
     _content_type()
     label = categories_content.label_for(category)
 
@@ -191,6 +281,85 @@ def archive_search(category):
                 year=entry.get('year', ''),
                 source='archive.org',
             )
+    _finish()
+
+
+def _render_browse(results, next_action, next_params, page):
+    any_items = False
+    for match in results['integration']:
+        any_items = True
+        _add_integration_entry(match['integration'], match['entry'])
+    for entry in results['free']:
+        any_items = True
+        add_playable(
+            title='{0} (free)'.format(entry['title']),
+            url='archive:' + entry['identifier'],
+            poster=entry.get('poster', ''),
+            plot=entry.get('plot', ''),
+            year=entry.get('year', ''),
+            source='archive.org',
+        )
+    for entry in results['tmdb']:
+        any_items = True
+        year = ' ({0})'.format(entry['year']) if entry.get('year') else ''
+        add_folder('{0}{1} [TMDB]'.format(entry['title'], year), 'title_search',
+                   icon=entry.get('poster') or None, plot=entry.get('plot') or None, query=entry['title'])
+    if results['has_more']:
+        add_folder('Next page >>', next_action, page=page + 1, **next_params)
+    if not any_items and page == 1:
+        add_folder('Nothing found yet - add a TMDB key or integrate more add-ons in Settings', 'settings')
+
+
+def list_genre(media, genre, page=1, source='tmdb'):
+    _content_type()
+    page = int(page or 1)
+    results = browse_content.genre_results(media, genre, page, source)
+    _render_browse(results, 'genre', {'media': media, 'genre': genre, 'source': source}, page)
+    _finish(sort=False)
+
+
+def list_holidays(media=''):
+    _content_type()
+    add_folder('Search Holidays', 'holiday_search', media=media)
+    now = browse_content.current_holidays()
+    now_keys = set(key for key, _ in now)
+    for key, label in now:
+        add_folder('* {0} - in season now'.format(label), 'holiday', holiday=key, media=media)
+    for key, label in browse_content.all_holidays():
+        if key not in now_keys:
+            add_folder(label, 'holiday', holiday=key, media=media)
+    _finish(sort=False)
+
+
+def list_holiday(holiday, media='', page=1):
+    _content_type()
+    if media not in ('movies', 'tvshows'):
+        label = browse_content.holiday_label(holiday)
+        for key, media_label in browse_content.MEDIA_TYPES:
+            add_folder('{0} {1}'.format(label, media_label), 'holiday', holiday=holiday, media=key)
+        _finish(sort=False)
+        return
+    page = int(page or 1)
+    results = browse_content.holiday_results(media, holiday, page)
+    _render_browse(results, 'holiday', {'holiday': holiday, 'media': media}, page)
+    _finish(sort=False)
+
+
+def holiday_search(media=''):
+    query = kodi.input_text('Which holiday? (e.g. Christmas, Halloween, 4th of July)')
+    _content_type()
+    if query:
+        matches = browse_content.match_holidays(query)
+        for key, label in matches:
+            add_folder(label, 'holiday', holiday=key, media=media)
+        if not matches:
+            add_folder('No holiday matches "{0}" - search everything instead'.format(query), 'title_search', query=query)
+    _finish(sort=False)
+
+
+def title_search(query):
+    _content_type()
+    _render_search_results(query)
     _finish()
 
 
@@ -296,23 +465,29 @@ def integration_auto_toggle(addon_id):
 # ---------------------------------------------------------------------------
 
 def do_search():
-    query = kodi.input_text('Search MEOS Hub (free content, add-ons, metadata)')
+    query = kodi.input_text('Search MEOS Hub (free content, add-ons, metadata, holidays)')
     _content_type()
     if query:
-        results = search_content.unified_search(query)
-        if not results:
-            add_folder('No results for "{0}"'.format(query), 'search')
-        for entry in results:
-            add_playable(
-                title='{0} ({1})'.format(entry.get('title', ''), entry.get('source', '')),
-                url=entry.get('url', ''),
-                poster=entry.get('poster', ''),
-                plot=entry.get('plot', ''),
-                year=entry.get('year', ''),
-                is_addon_route=bool(entry.get('is_addon_route')),
-                source=entry.get('source', ''),
-            )
+        for key, label in browse_content.match_holidays(query):
+            add_folder('Holiday: {0}'.format(label), 'holiday', holiday=key)
+        _render_search_results(query)
     _finish()
+
+
+def _render_search_results(query):
+    results = search_content.unified_search(query)
+    if not results:
+        add_folder('No results for "{0}"'.format(query), 'search')
+    for entry in results:
+        add_playable(
+            title='{0} ({1})'.format(entry.get('title', ''), entry.get('source', '')),
+            url=entry.get('url', ''),
+            poster=entry.get('poster', ''),
+            plot=entry.get('plot', ''),
+            year=entry.get('year', ''),
+            is_addon_route=bool(entry.get('is_addon_route')),
+            source=entry.get('source', ''),
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -372,11 +547,15 @@ def settings_categories_menu():
     for key, label in categories_content.CATEGORIES:
         enabled = kodi.get_setting_bool(categories_content.CATEGORY_TOGGLE_SETTING[key], True)
         add_folder('{0}: {1}'.format(label, 'ON' if enabled else 'OFF'), 'toggle_category', category=key)
+    holidays_on = kodi.get_setting_bool(categories_content.HOLIDAYS_TOGGLE_SETTING, True)
+    add_folder('Holidays: {0}'.format('ON' if holidays_on else 'OFF'), 'toggle_category', category='holidays')
     _finish(sort=False)
 
 
 def toggle_category(category):
     setting_id = categories_content.CATEGORY_TOGGLE_SETTING.get(category)
+    if category == 'holidays':
+        setting_id = categories_content.HOLIDAYS_TOGGLE_SETTING
     if setting_id:
         current = kodi.get_setting_bool(setting_id, True)
         kodi.set_setting(setting_id, not current)
@@ -394,8 +573,21 @@ def settings_integrations_menu():
         else:
             add_folder('{0} (custom) - remove'.format(spec.label), 'integration_remove_custom', addon_id=spec.addon_id_guess)
     add_folder('+ Add Your Own Add-on', 'integration_add_custom')
+    add_folder('Install / refresh default add-ons', 'bootstrap_defaults')
     add_folder('Discover All Installed Add-ons', 'integration_discover')
     _finish(sort=False)
+
+
+def bootstrap_defaults():
+    summary = bootstrap.ensure_defaults(force=True)
+    parts = []
+    if summary['install_requested']:
+        parts.append('Installing: ' + ', '.join(summary['install_requested']))
+    if summary['enabled']:
+        parts.append('Enabled: ' + ', '.join(summary['enabled']))
+    if summary['ready']:
+        parts.append('Ready: ' + ', '.join(summary['ready']))
+    kodi.ok_dialog('\n'.join(parts) or 'Nothing to do.\nAdd-ons not found in your repositories must be installed from their own repo first.')
 
 
 def integration_toggle(key):

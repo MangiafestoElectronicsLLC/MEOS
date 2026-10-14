@@ -21,6 +21,14 @@ CATEGORY_TOGGLE_SETTING = {
     'livetv': 'cat_livetv_enabled',
 }
 
+# Categories that open a "pick a type of content" menu (genres/holidays)
+# instead of jumping straight into the content.
+SUBMENU_CATEGORIES = ('movies', 'tvshows')
+
+# Holidays sit beside the unified categories on the main menu but are not
+# part of CATEGORIES: add-on integrations have no "Holidays" folder to map.
+HOLIDAYS_TOGGLE_SETTING = 'cat_holidays_enabled'
+
 # Free stream scraper media-type hint per unified category (archive.org
 # mediatype values). Categories with no sensible free-content mapping are
 # left to integrations only.

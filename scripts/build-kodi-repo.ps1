@@ -542,6 +542,7 @@ function Write-DocsIndex {
 <body>
 <h1>MEOS Kodi Repository (v$RepositoryVersion)</h1>
 <p>Add this URL as a Kodi File Manager source, then use Install from zip file.</p>
+<p>Firestick / Fire TV / Android TV: install Kodi, open the Downloader app and enter this page's URL, or in Kodi use Settings &gt; File manager &gt; Add source with the same URL. Install repository.meos.zip first, then install MEOS Hub from the MEOS Repository (Install from repository &gt; Video add-ons). Works on any device that runs Kodi 18.7 or newer (Windows, macOS, Linux, Android, Fire TV, Raspberry Pi, iOS/tvOS).</p>
 $listItems
 </body>
 </html>

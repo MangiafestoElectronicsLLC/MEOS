@@ -32,6 +32,44 @@ version in the packaged `addon.xml` differs between the two zips.
 
 ---
 
+## 0b. Source menus, genres, free content and holidays
+
+Movies and TV Shows open a menu where you pick where content comes from:
+
+- **TMDB** - Popular, Top Rated, Trending, Now Playing, or **Browse by genre** (needs your free TMDB key). Choosing a title searches the whole hub for it.
+- **Free Movies / TV Shows** - public-domain titles from archive.org, by genre (no key, directly playable).
+- **Free Channels (live)** - free live channels in the Movies / Series groups.
+- **From your add-ons** - Ghost, Scrubs V2 and anything you integrate.
+- **Holidays**.
+
+**Live TV, Sports and Networks** gain **Free Live Channels** (News, Sports, Movies,
+Kids, Music, Documentary, ...) loaded from public iptv-org playlists, plus
+**My Playlist (M3U)** if you set your own M3U URL or file in Settings -> Scrapers.
+The **Holidays** entry on the main menu (toggle it under Settings ->
+Toggle Categories) lists Christmas, Halloween, Thanksgiving, Easter,
+Valentine's Day, New Year's, Independence Day, St. Patrick's Day,
+Hanukkah, Kwanzaa, Mother's/Father's Day, Memorial/Veterans Day, MLK Day
+and Groundhog Day. Holidays that are in season today are listed first and
+flagged on the main menu. Use **Search Holidays** (or the main Search) and
+type any name or nickname ("xmas", "4th of july") to jump straight to it.
+
+Genre and holiday pages combine: matching titles from your integrated
+add-ons, free archive.org titles, and (with your own free TMDB API key)
+popular TMDB titles - choosing a TMDB title searches the whole hub for it.
+
+## 0c. Default integrations
+
+Red Gratis, Ghost, The Loop, The Crew, Scrubs V2, Rising Tides and YouTube
+are built in. A startup service (`service.py`) enables any that are installed
+but disabled, and asks Kodi to install missing ones from the repositories you
+already have (once each, no nagging). Retry anytime via Settings -> Manage
+Integrations -> Install / refresh default add-ons; turn auto-install off in
+the add-on settings. MEOS never bundles third-party code, so an add-on can
+only be auto-installed if one of your repositories provides it. Add more with
+"+ Add Your Own Add-on" or "Discover All Installed Add-ons".
+
+---
+
 ## 1. How it works
 
 ```
@@ -68,6 +106,7 @@ plugin.video.meoshub/
         manager.py        # Registry of enabled scrapers
       content/
         categories.py     # Unified category list + toggles
+        browse.py         # Genre + holiday definitions and result gathering
         favorites.py       # Favorites persistence (JSON in settings)
         search.py          # Unified search across all of the above
         importexport.py    # CSV/XLSX import, JSON export
