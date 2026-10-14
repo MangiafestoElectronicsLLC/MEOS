@@ -530,7 +530,8 @@ function Write-DocsIndex {
 
     # Kodi's HTTP directory parser skips links whose visible text differs from the
     # href, so the anchor text must be the exact filename; notes go outside the anchor.
-    $listItems = ($links | ForEach-Object { '<a href="' + $_.Href + '">' + $_.Href + '</a> - ' + $_.Note + '<br />' }) -join [Environment]::NewLine
+    $listItems = ($links | ForEach-Object { '<a href="' + $_.Href + '">' + $_.Href + '</a><br />' }) -join [Environment]::NewLine
+    $notes = ($links | ForEach-Object { '<li>' + $_.Href + ': ' + $_.Note + '</li>' }) -join [Environment]::NewLine
 
     $html = @"
 <!DOCTYPE html>
@@ -544,6 +545,10 @@ function Write-DocsIndex {
 <p>Add this URL as a Kodi File Manager source, then use Install from zip file.</p>
 <p>Firestick / Fire TV / Android TV: install Kodi, open the Downloader app and enter this page's URL, or in Kodi use Settings &gt; File manager &gt; Add source with the same URL. Install repository.meos.zip first, then install MEOS Hub from the MEOS Repository (Install from repository &gt; Video add-ons). Works on any device that runs Kodi 18.7 or newer (Windows, macOS, Linux, Android, Fire TV, Raspberry Pi, iOS/tvOS).</p>
 $listItems
+<hr />
+<ul>
+$notes
+</ul>
 </body>
 </html>
 "@
